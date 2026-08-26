@@ -19,7 +19,7 @@ class StoreProjectRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'client_name' => ['required', 'string', 'max:255'],
-            'project_number' => ['required', 'string', 'max:50', 'unique:projects,project_number'],
+            'project_number' => ['nullable', 'string', 'max:50', 'unique:projects,project_number'],
             'awarded_date' => ['required', 'date'],
             'estimated_completion_date' => ['nullable', 'date', 'after_or_equal:awarded_date'],
             'notes' => ['nullable', 'string', 'max:5000'],

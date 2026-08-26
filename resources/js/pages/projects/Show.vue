@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Pencil } from '@lucide/vue';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
@@ -7,7 +7,6 @@ import StageTimeline from '@/components/StageTimeline.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { edit as projectEdit } from '@/routes/projects';
 import type { ProjectDetail, StageOption, Team } from '@/types';
 
@@ -16,8 +15,15 @@ const props = defineProps<{
     stages: StageOption[];
 }>();
 
+const page = usePage();
+
 const editUrl = computed(() =>
-    props.currentTeam ? projectEdit({ current_team: props.currentTeam.slug, project: props.project.id }).url : '#',
+    page.props.currentTeam
+        ? projectEdit({
+              current_team: page.props.currentTeam.slug,
+              project: props.project.id,
+          }).url
+        : '#',
 );
 
 const statusVariant = (status: string) => {
@@ -67,7 +73,9 @@ defineOptions({
 
     <h1 class="sr-only">{{ project.name }}</h1>
 
-    <div class="flex flex-col space-y-6">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center justify-between">
             <Heading
                 variant="small"
@@ -135,10 +143,8 @@ defineOptions({
                             </dd>
                         </div>
                         <div v-if="project.notes" class="sm:col-span-2">
-                            <dt class="text-sm text-muted-foreground">
-                                Notes
-                            </dt>
-                            <dd class="mt-1 whitespace-pre-wrap text-sm">
+                            <dt class="text-sm text-muted-foreground">Notes</dt>
+                            <dd class="mt-1 text-sm whitespace-pre-wrap">
                                 {{ project.notes }}
                             </dd>
                         </div>
@@ -166,7 +172,9 @@ defineOptions({
                                 <p class="truncate text-sm font-medium">
                                     {{ member.name }}
                                 </p>
-                                <p class="truncate text-xs text-muted-foreground">
+                                <p
+                                    class="truncate text-xs text-muted-foreground"
+                                >
                                     {{ member.email }}
                                 </p>
                             </div>
@@ -175,10 +183,7 @@ defineOptions({
                             </Badge>
                         </li>
                     </ul>
-                    <p
-                        v-else
-                        class="text-sm text-muted-foreground"
-                    >
+                    <p v-else class="text-sm text-muted-foreground">
                         No team members assigned.
                     </p>
                 </CardContent>
@@ -216,7 +221,9 @@ defineOptions({
                                 </span>
                             </p>
                             <p class="mt-0.5 text-xs text-muted-foreground">
-                                {{ new Date(entry.changed_at).toLocaleString() }}
+                                {{
+                                    new Date(entry.changed_at).toLocaleString()
+                                }}
                             </p>
                             <p
                                 v-if="entry.notes"

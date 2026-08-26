@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import TeamAssignment from '@/components/TeamAssignment.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import DatePicker from '@/components/ui/date-picker/DatePicker.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -14,12 +15,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { index as projectsIndex, update, show as projectShow } from '@/routes/projects';
+import { update, show as projectShow } from '@/routes/projects';
 import type {
     ProjectDetail,
     ProjectRoleOption,
     StageOption,
+    Team,
     TeamAssignment as TeamAssignmentType,
     UserOption,
 } from '@/types';
@@ -33,16 +34,22 @@ const props = defineProps<{
 
 const page = usePage();
 
-const indexUrl = computed(() =>
-    page.props.currentTeam ? projectsIndex(page.props.currentTeam.slug).url : '#',
-);
-
 const showUrl = computed(() =>
-    page.props.currentTeam ? projectShow({ current_team: page.props.currentTeam.slug, project: props.project.id }).url : '#',
+    page.props.currentTeam
+        ? projectShow({
+              current_team: page.props.currentTeam.slug,
+              project: props.project.id,
+          }).url
+        : '#',
 );
 
 const updateUrl = computed(() =>
-    page.props.currentTeam ? update({ current_team: page.props.currentTeam.slug, project: props.project.id }).url : '#',
+    page.props.currentTeam
+        ? update({
+              current_team: page.props.currentTeam.slug,
+              project: props.project.id,
+          }).url
+        : '#',
 );
 
 const form = useForm({
@@ -64,18 +71,18 @@ const submit = () => {
 };
 
 defineOptions({
-    layout: {
+    layout: (layoutProps: { currentTeam?: Team | null }) => ({
         breadcrumbs: [
             {
                 title: 'Projects',
-                href: indexUrl.value,
+                href: layoutProps.currentTeam ? '/projects' : '/',
             },
             {
                 title: 'Edit',
-                href: indexUrl.value,
+                href: layoutProps.currentTeam ? '/projects' : '/',
             },
         ],
-    },
+    }),
 });
 </script>
 
@@ -84,7 +91,9 @@ defineOptions({
 
     <h1 class="sr-only">Edit {{ project.name }}</h1>
 
-    <div class="flex flex-col space-y-6">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center justify-between">
             <Heading
                 variant="small"
@@ -152,10 +161,9 @@ defineOptions({
 
                         <div class="space-y-2">
                             <Label for="awarded_date">Award Date</Label>
-                            <Input
+                            <DatePicker
                                 id="awarded_date"
                                 v-model="form.awarded_date"
-                                type="date"
                                 required
                             />
                             <p
@@ -170,10 +178,9 @@ defineOptions({
                             <Label for="estimated_completion_date">
                                 Est. Completion
                             </Label>
-                            <Input
+                            <DatePicker
                                 id="estimated_completion_date"
                                 v-model="form.estimated_completion_date"
-                                type="date"
                             />
                             <p
                                 v-if="form.errors.estimated_completion_date"
@@ -212,11 +219,12 @@ defineOptions({
 
                     <div class="space-y-2">
                         <Label for="notes">Notes</Label>
-                        <Textarea
+                        <textarea
                             id="notes"
                             v-model="form.notes"
                             placeholder="Optional project notes..."
                             rows="3"
+                            class="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                         />
                         <p
                             v-if="form.errors.notes"

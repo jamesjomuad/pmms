@@ -47,6 +47,22 @@ class Project extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Get the route key name for model binding.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
+    /**
+     * Get the type of the primary key.
+     */
+    public function getKeyType(): string
+    {
+        return 'int';
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

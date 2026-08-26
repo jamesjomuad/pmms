@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Plus, X } from '@lucide/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     Select,
@@ -21,16 +21,22 @@ const model = defineModel<TeamAssignment[]>({
     set: (value) => value,
 });
 
+const members = computed(() => model.value ?? []);
+
 const selectedUserId = ref<number | null>(null);
 const selectedRole = ref<string>('');
 
 const addMember = () => {
-    if (!selectedUserId.value || !selectedRole.value) return;
+    if (!selectedUserId.value || !selectedRole.value) {
+        return;
+    }
 
-    if (model.value.some((m) => m.user_id === selectedUserId.value)) return;
+    if (members.value.some((m) => m.user_id === selectedUserId.value)) {
+        return;
+    }
 
     model.value = [
-        ...model.value,
+        ...members.value,
         {
             user_id: selectedUserId.value,
             project_role: selectedRole.value as TeamAssignment['project_role'],
@@ -42,7 +48,7 @@ const addMember = () => {
 };
 
 const removeMember = (userId: number) => {
-    model.value = model.value.filter((m) => m.user_id !== userId);
+    model.value = members.value.filter((m) => m.user_id !== userId);
 };
 
 const getUserName = (userId: number) =>
@@ -53,12 +59,16 @@ const getUserEmail = (userId: number) =>
 
 const getRoleLabel = (value: string) =>
     props.roles.find((r) => r.value === value)?.label ?? value;
+
+const availableUsers = computed(() =>
+    props.users.filter((u) => !members.value.some((m) => m.user_id === u.id)),
+);
 </script>
 
 <template>
     <div class="space-y-3">
         <div
-            v-for="member in model"
+            v-for="member in members"
             :key="member.user_id"
             class="flex items-center gap-3 rounded-lg border px-3 py-2"
         >
@@ -100,12 +110,7 @@ const getRoleLabel = (value: string) =>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem
-                            v-for="user in users.filter(
-                                (u) =>
-                                    !model.some(
-                                        (m) => m.user_id === u.id,
-                                    ),
-                            )"
+                            v-for="user in availableUsers"
                             :key="user.id"
                             :value="user.id"
                         >

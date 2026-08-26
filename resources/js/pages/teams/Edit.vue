@@ -99,7 +99,9 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
 
     <h1 class="sr-only">{{ pageTitle }}</h1>
 
-    <div class="flex flex-col space-y-10">
+    <div
+        class="flex h-full flex-1 flex-col gap-10 overflow-x-auto rounded-xl p-4"
+    >
         <!-- Team Name Section -->
         <div v-if="permissions.canUpdateTeam" class="space-y-6">
             <Heading

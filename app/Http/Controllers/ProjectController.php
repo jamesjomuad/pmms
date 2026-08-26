@@ -53,6 +53,11 @@ class ProjectController extends Controller
 
         return Inertia::render('projects/Index', [
             'projects' => $projects,
+            'stages' => Stage::orderBy('sort_order')->get()->map(fn (Stage $stage) => [
+                'id' => $stage->id,
+                'key' => $stage->key,
+                'label' => $stage->label,
+            ]),
         ]);
     }
 
@@ -73,7 +78,28 @@ class ProjectController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
             ]),
+            'nextProjectNumber' => self::generateProjectNumber(),
         ]);
+    }
+
+    /**
+     * Generate the next available project number.
+     */
+    private static function generateProjectNumber(): string
+    {
+        $lastProject = Project::withTrashed()
+            ->where('project_number', 'like', 'PMMS-%')
+            ->orderByRaw('substring(project_number from 6)::int desc')
+            ->first();
+
+        if ($lastProject) {
+            $lastNumber = (int) substr($lastProject->project_number, 5);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        return 'PMMS-'.str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -84,11 +110,13 @@ class ProjectController extends Controller
         $project = DB::transaction(function () use ($request) {
             $awardedStage = Stage::where('key', 'awarded')->firstOrFail();
 
+            $projectNumber = $request->validated('project_number') ?? self::generateProjectNumber();
+
             $project = Project::create([
                 'current_stage_id' => $awardedStage->id,
                 'name' => $request->validated('name'),
                 'client_name' => $request->validated('client_name'),
-                'project_number' => $request->validated('project_number'),
+                'project_number' => $projectNumber,
                 'awarded_date' => $request->validated('awarded_date'),
                 'estimated_completion_date' => $request->validated('estimated_completion_date'),
                 'notes' => $request->validated('notes'),
@@ -122,8 +150,9 @@ class ProjectController extends Controller
     /**
      * Display the specified project.
      */
-    public function show(Project $project): Response
+    public function show(string $id): Response
     {
+        $project = Project::findOrFail((int) $id);
         Gate::authorize('view', $project);
 
         $project->load(['currentStage', 'teamMembers', 'stageHistory.fromStage', 'stageHistory.toStage', 'stageHistory.changedByUser']);
@@ -170,8 +199,9 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified project.
      */
-    public function edit(Project $project): Response
+    public function edit(string $id): Response
     {
+        $project = Project::findOrFail((int) $id);
         Gate::authorize('update', $project);
 
         $project->load('teamMembers');
@@ -214,8 +244,9 @@ class ProjectController extends Controller
     /**
      * Update the specified project.
      */
-    public function update(UpdateProjectRequest $request, Project $project): RedirectResponse
+    public function update(UpdateProjectRequest $request, string $id): RedirectResponse
     {
+        $project = Project::findOrFail((int) $id);
         Gate::authorize('update', $project);
 
         DB::transaction(function () use ($request, $project) {

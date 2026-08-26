@@ -6,6 +6,9 @@ defineProps<{
     stages: ProjectStage[];
     currentStageId: number;
 }>();
+
+const getStageIndex = (stages: ProjectStage[], id: number) =>
+    stages.findIndex((s) => s.id === id);
 </script>
 
 <template>
@@ -19,32 +22,27 @@ defineProps<{
             >
                 <div class="flex flex-col items-center">
                     <div
-                        class="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-medium transition-colors"
+                        class="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-medium transition-all duration-200"
                         :class="
                             stage.id === currentStageId
-                                ? 'border-primary bg-primary text-primary-foreground'
-                                : stages.findIndex((s) => s.id === stage.id) <
-                                    stages.findIndex(
-                                        (s) => s.id === currentStageId,
-                                    )
-                                    ? 'border-primary bg-primary/10 text-primary'
-                                    : 'border-muted-foreground/25 text-muted-foreground'
+                                ? 'border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20'
+                                : getStageIndex(stages, stage.id) <
+                                    getStageIndex(stages, currentStageId)
+                                  ? 'border-primary bg-primary/10 text-primary'
+                                  : 'border-border bg-background text-muted-foreground'
                         "
                     >
                         <Check
                             v-if="
-                                stages.findIndex(
-                                    (s) => s.id === stage.id,
-                                ) < stages.findIndex(
-                                    (s) => s.id === currentStageId,
-                                )
+                                getStageIndex(stages, stage.id) <
+                                getStageIndex(stages, currentStageId)
                             "
                             class="h-4 w-4"
                         />
                         <span v-else>{{ index + 1 }}</span>
                     </div>
                     <span
-                        class="mt-1.5 hidden text-center text-xs leading-tight sm:block"
+                        class="mt-1.5 max-w-[5rem] text-center text-[11px] leading-tight sm:text-xs"
                         :class="
                             stage.id === currentStageId
                                 ? 'font-medium text-foreground'
@@ -58,10 +56,10 @@ defineProps<{
                     v-if="index < stages.length - 1"
                     class="mx-1 h-0.5 flex-1"
                     :class="
-                        stages.findIndex((s) => s.id === stage.id) <
-                        stages.findIndex((s) => s.id === currentStageId)
+                        getStageIndex(stages, stage.id) <
+                        getStageIndex(stages, currentStageId)
                             ? 'bg-primary'
-                            : 'bg-muted-foreground/25'
+                            : 'bg-border'
                     "
                 />
             </li>

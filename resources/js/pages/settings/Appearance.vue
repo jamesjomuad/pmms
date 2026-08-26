@@ -21,7 +21,9 @@ defineOptions({
 
     <h1 class="sr-only">Appearance settings</h1>
 
-    <div class="space-y-6">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <Heading
             variant="small"
             title="Appearance settings"

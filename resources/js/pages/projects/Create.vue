@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import TeamAssignment from '@/components/TeamAssignment.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import DatePicker from '@/components/ui/date-picker/DatePicker.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { store } from '@/routes/projects';
 import type {
     ProjectRoleOption,
     StageOption,
-    TeamAssignment as TeamAssignmentType,
     Team,
+    TeamAssignment as TeamAssignmentType,
     UserOption,
 } from '@/types';
 
@@ -21,16 +21,19 @@ const props = defineProps<{
     stages: StageOption[];
     projectRoles: ProjectRoleOption[];
     users: UserOption[];
+    nextProjectNumber: string;
 }>();
 
+const page = usePage();
+
 const storeUrl = computed(() =>
-    props.currentTeam ? store(props.currentTeam.slug).url : '#',
+    page.props.currentTeam ? store(page.props.currentTeam.slug).url : '#',
 );
 
 const form = useForm({
     name: '',
     client_name: '',
-    project_number: '',
+    project_number: props.nextProjectNumber,
     awarded_date: new Date().toISOString().split('T')[0],
     estimated_completion_date: '',
     notes: '',
@@ -62,7 +65,9 @@ defineOptions({
 
     <h1 class="sr-only">New Project</h1>
 
-    <div class="flex flex-col space-y-6">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center justify-between">
             <Heading
                 variant="small"
@@ -130,10 +135,9 @@ defineOptions({
 
                         <div class="space-y-2">
                             <Label for="awarded_date">Award Date</Label>
-                            <Input
+                            <DatePicker
                                 id="awarded_date"
                                 v-model="form.awarded_date"
-                                type="date"
                                 required
                             />
                             <p
@@ -148,10 +152,9 @@ defineOptions({
                             <Label for="estimated_completion_date">
                                 Estimated Completion
                             </Label>
-                            <Input
+                            <DatePicker
                                 id="estimated_completion_date"
                                 v-model="form.estimated_completion_date"
-                                type="date"
                             />
                             <p
                                 v-if="form.errors.estimated_completion_date"
@@ -164,11 +167,12 @@ defineOptions({
 
                     <div class="space-y-2">
                         <Label for="notes">Notes</Label>
-                        <Textarea
+                        <textarea
                             id="notes"
                             v-model="form.notes"
                             placeholder="Optional project notes..."
                             rows="3"
+                            class="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                         />
                         <p
                             v-if="form.errors.notes"
