@@ -14,7 +14,7 @@ import Heading from '@/components/Heading.vue';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { create as projectCreate } from '@/routes/projects';
+import { index as projectIndex, create as projectCreate } from '@/routes/projects';
 import type { Project, Team } from '@/types';
 
 const props = defineProps<{
@@ -93,7 +93,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Projects',
-                href: layoutProps.currentTeam ? `/projects` : '/',
+                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
             },
         ],
     }),

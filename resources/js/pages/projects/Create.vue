@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import DatePicker from '@/components/ui/date-picker/DatePicker.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { store } from '@/routes/projects';
+import { index as projectIndex, create as projectCreate, store } from '@/routes/projects';
 import type {
     ProjectRoleOption,
     StageOption,
@@ -30,6 +30,12 @@ const storeUrl = computed(() =>
     page.props.currentTeam ? store(page.props.currentTeam.slug).url : '#',
 );
 
+const cancelUrl = computed(() =>
+    page.props.currentTeam
+        ? projectIndex(page.props.currentTeam.slug).url
+        : '/projects',
+);
+
 const form = useForm({
     name: '',
     client_name: '',
@@ -49,11 +55,11 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Projects',
-                href: layoutProps.currentTeam ? '/projects' : '/',
+                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
             },
             {
                 title: 'New Project',
-                href: layoutProps.currentTeam ? '/projects/create' : '/',
+                href: layoutProps.currentTeam ? projectCreate(layoutProps.currentTeam.slug).url : '/',
             },
         ],
     }),
@@ -201,7 +207,7 @@ defineOptions({
                 <Button
                     type="button"
                     variant="outline"
-                    @click="router.visit('/projects')"
+                    @click="router.visit(cancelUrl)"
                 >
                     Cancel
                 </Button>

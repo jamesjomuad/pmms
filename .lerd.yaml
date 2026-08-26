@@ -12,5 +12,4 @@ services:
   - soketi:
       preset: soketi
 workers:
-  - queue
   - vite

@@ -7,7 +7,7 @@ import StageTimeline from '@/components/StageTimeline.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { edit as projectEdit } from '@/routes/projects';
+import { index as projectIndex, show as projectShow, edit as projectEdit } from '@/routes/projects';
 import type { ProjectDetail, StageOption, Team } from '@/types';
 
 const props = defineProps<{
@@ -53,15 +53,17 @@ const statusLabel = (status: string) => {
 };
 
 defineOptions({
-    layout: (layoutProps: { currentTeam?: Team | null }) => ({
+    layout: (layoutProps: { currentTeam?: Team | null; project: ProjectDetail }) => ({
         breadcrumbs: [
             {
                 title: 'Projects',
-                href: layoutProps.currentTeam ? '/projects' : '/',
+                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
             },
             {
-                title: 'Project',
-                href: layoutProps.currentTeam ? '/projects' : '/',
+                title: layoutProps.project.name,
+                href: layoutProps.currentTeam
+                    ? projectShow({ current_team: layoutProps.currentTeam.slug, project: layoutProps.project.id }).url
+                    : '/',
             },
         ],
     }),

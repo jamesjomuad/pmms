@@ -144,20 +144,24 @@ class ProjectController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project created.')]);
 
-        return to_route('projects.show', $project);
+        return to_route('projects.show', [$request->route('current_team'), $project]);
     }
 
     /**
      * Display the specified project.
      */
-    public function show(string $id): Response
+    public function show(Project $project): Response
     {
-        $project = Project::findOrFail((int) $id);
         Gate::authorize('view', $project);
 
         $project->load(['currentStage', 'teamMembers', 'stageHistory.fromStage', 'stageHistory.toStage', 'stageHistory.changedByUser']);
 
         return Inertia::render('projects/Show', [
+            'stages' => Stage::orderBy('sort_order')->get()->map(fn (Stage $stage) => [
+                'id' => $stage->id,
+                'key' => $stage->key,
+                'label' => $stage->label,
+            ]),
             'project' => [
                 'id' => $project->id,
                 'name' => $project->name,
@@ -199,9 +203,8 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified project.
      */
-    public function edit(string $id): Response
+    public function edit(Project $project): Response
     {
-        $project = Project::findOrFail((int) $id);
         Gate::authorize('update', $project);
 
         $project->load('teamMembers');
@@ -244,9 +247,8 @@ class ProjectController extends Controller
     /**
      * Update the specified project.
      */
-    public function update(UpdateProjectRequest $request, string $id): RedirectResponse
+    public function update(UpdateProjectRequest $request, Project $project): RedirectResponse
     {
-        $project = Project::findOrFail((int) $id);
         Gate::authorize('update', $project);
 
         DB::transaction(function () use ($request, $project) {
@@ -273,6 +275,6 @@ class ProjectController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project updated.')]);
 
-        return to_route('projects.show', $project);
+        return to_route('projects.show', [$request->route('current_team'), $project]);
     }
 }

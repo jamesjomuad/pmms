@@ -15,7 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { update, show as projectShow } from '@/routes/projects';
+import { index as projectIndex, update, show as projectShow } from '@/routes/projects';
 import type {
     ProjectDetail,
     ProjectRoleOption,
@@ -71,15 +71,23 @@ const submit = () => {
 };
 
 defineOptions({
-    layout: (layoutProps: { currentTeam?: Team | null }) => ({
+    layout: (layoutProps: { currentTeam?: Team | null; project: ProjectDetail }) => ({
         breadcrumbs: [
             {
                 title: 'Projects',
-                href: layoutProps.currentTeam ? '/projects' : '/',
+                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
+            },
+            {
+                title: layoutProps.project.name,
+                href: layoutProps.currentTeam
+                    ? projectShow({ current_team: layoutProps.currentTeam.slug, project: layoutProps.project.id }).url
+                    : '/',
             },
             {
                 title: 'Edit',
-                href: layoutProps.currentTeam ? '/projects' : '/',
+                href: layoutProps.currentTeam
+                    ? projectShow({ current_team: layoutProps.currentTeam.slug, project: layoutProps.project.id }).url
+                    : '/',
             },
         ],
     }),
