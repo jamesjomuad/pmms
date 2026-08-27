@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Project;
+use App\Models\Stage;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+
+class DeliverableController extends Controller
+{
+    /**
+     * Store a new deliverable for a project.
+     */
+    public function store(Request $request, Project $project): RedirectResponse
+    {
+        Gate::authorize('update', $project);
+
+        $validated = $request->validate([
+            'file' => ['required', 'file', 'max:20480'],
+            'stage_id' => ['required', 'exists:stages,id'],
+            'description' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        /** @var Stage $stage */
+        $stage = Stage::findOrFail($validated['stage_id']);
+
+        $project->addMedia($request->file('file'))
+            ->withCustomProperties([
+                'stage_id' => $stage->id,
+                'stage_key' => $stage->key,
+                'description' => $validated['description'] ?? null,
+                'uploaded_by' => $request->user()->id,
+            ])
+            ->toMediaCollection('deliverables');
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Deliverable uploaded.']);
+
+        return to_route('projects.show', $project);
+    }
+
+    /**
+     * Remove a deliverable from a project.
+     */
+    public function destroy(Project $project, int $mediaId): RedirectResponse
+    {
+        Gate::authorize('update', $project);
+
+        $media = $project->getMedia('deliverables')->firstWhere('id', $mediaId);
+
+        if (! $media) {
+            throw ValidationException::withMessages([
+                'media_id' => 'Deliverable not found.',
+            ]);
+        }
+
+        $media->delete();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Deliverable deleted.']);
+
+        return to_route('projects.show', $project);
+    }
+}

@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { Pencil } from '@lucide/vue';
 import { computed } from 'vue';
+import DeliverablesCard from '@/components/DeliverablesCard.vue';
 import Heading from '@/components/Heading.vue';
 import StageTimeline from '@/components/StageTimeline.vue';
 import { Badge } from '@/components/ui/badge';
@@ -47,6 +48,7 @@ defineOptions({
     layout: () => {
         const pathMatch = window.location.pathname.match(/\/projects\/(\d+)/);
         const projectId = pathMatch ? pathMatch[1] : '';
+
         return {
             breadcrumbs: [
                 {
@@ -234,5 +236,12 @@ defineOptions({
                 </p>
             </CardContent>
         </Card>
+
+        <DeliverablesCard
+            :project-id="project.id"
+            :deliverables="project.deliverables"
+            :stages="stages"
+            :current-stage-id="project.current_stage.id"
+        />
     </div>
 </template>

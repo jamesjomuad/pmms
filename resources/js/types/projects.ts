@@ -34,6 +34,23 @@ export type Project = {
 export type ProjectDetail = Project & {
     team: ProjectTeamMember[];
     stage_history: ProjectStageHistoryEntry[];
+    deliverables: Deliverable[];
+};
+
+export type Deliverable = {
+    id: number;
+    name: string;
+    file_name: string;
+    mime_type: string;
+    size: number;
+    human_size: string;
+    description: string | null;
+    stage_id: number;
+    stage_key: string;
+    uploaded_by: number;
+    created_at: string;
+    url: string;
+    preview_url: string | null;
 };
 
 export type ProjectStageHistoryEntry = {

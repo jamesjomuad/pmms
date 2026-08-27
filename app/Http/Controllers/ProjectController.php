@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProjectController extends Controller
 {
@@ -156,6 +157,26 @@ class ProjectController extends Controller
 
         $project->load(['currentStage', 'teamMembers', 'stageHistory.fromStage', 'stageHistory.toStage', 'stageHistory.changedByUser']);
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Media> $mediaItems */
+        $mediaItems = $project->getMedia('deliverables');
+        $deliverables = $mediaItems->map(function (Media $media) {
+            return [
+                'id' => $media->id,
+                'name' => $media->name,
+                'file_name' => $media->file_name,
+                'mime_type' => $media->mime_type,
+                'size' => $media->size,
+                'human_size' => $media->human_readable_size,
+                'description' => $media->getCustomProperty('description'),
+                'stage_id' => $media->getCustomProperty('stage_id'),
+                'stage_key' => $media->getCustomProperty('stage_key'),
+                'uploaded_by' => $media->getCustomProperty('uploaded_by'),
+                'created_at' => $media->created_at->toISOString(),
+                'url' => $media->getUrl(),
+                'preview_url' => null,
+            ];
+        })->values();
+
         return Inertia::render('projects/Show', [
             'stages' => Stage::orderBy('sort_order')->get()->map(fn (Stage $stage) => [
                 'id' => $stage->id,
@@ -196,6 +217,7 @@ class ProjectController extends Controller
                     'changed_at' => $entry->changed_at->toISOString(),
                     'notes' => $entry->notes,
                 ]),
+                'deliverables' => $deliverables,
             ],
         ]);
     }

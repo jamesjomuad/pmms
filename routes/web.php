@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeliverableController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Controllers\UserController;
@@ -17,6 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
     Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
     Route::patch('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+
+    Route::post('projects/{project}/deliverables', [DeliverableController::class, 'store'])->name('projects.deliverables.store');
+    Route::delete('projects/{project}/deliverables/{mediaId}', [DeliverableController::class, 'destroy'])->name('projects.deliverables.destroy');
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('users', [UserController::class, 'store'])->name('users.store');

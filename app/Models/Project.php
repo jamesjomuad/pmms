@@ -11,8 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $id
@@ -41,10 +44,10 @@ use Illuminate\Support\Carbon;
     'status',
     'notes',
 ])]
-class Project extends Model
+class Project extends Model implements HasMedia
 {
     /** @use HasFactory<ProjectFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, InteractsWithMedia, SoftDeletes;
 
     /**
      * Get the route key name for model binding.
@@ -124,5 +127,23 @@ class Project extends Model
     public function scopeActive($query): Builder
     {
         return $query->where('status', 'active');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('deliverables')
+            ->acceptsMimeTypes([
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/msword',
+                'application/vnd.ms-excel',
+                'text/csv',
+                'application/zip',
+            ]);
     }
 }
