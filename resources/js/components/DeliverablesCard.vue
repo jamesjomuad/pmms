@@ -43,6 +43,7 @@ const props = defineProps<{
 }>();
 
 const uploadOpen = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
 const expandedStages = ref<Set<number>>(new Set([props.currentStageId]));
 
 const form = useForm({
@@ -223,7 +224,11 @@ const formatBytes = (bytes: number) => {
                             <Input
                                 type="file"
                                 class="hidden"
-                                ref="fileInput"
+                                :ref="
+                                    (el: any) => {
+                                        fileInput = el?.$el ?? el;
+                                    }
+                                "
                                 @change="onFileChange"
                                 accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.zip"
                             />
@@ -231,11 +236,7 @@ const formatBytes = (bytes: number) => {
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                @click="
-                                    (
-                                        $refs.fileInput as HTMLInputElement
-                                    ).click()
-                                "
+                                @click="fileInput?.click()"
                             >
                                 Choose File
                             </Button>
