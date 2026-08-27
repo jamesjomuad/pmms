@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
@@ -59,11 +59,7 @@ const handleOpenChange = (value: boolean) => {
 };
 
 const submit = () => {
-    const match = window.location.pathname.match(/^\/([^/]+)/);
-    const slug = match ? match[1] : null;
-    if (!slug) return;
-
-    form.post(`/${slug}/users`, {
+    form.post('/users', {
         preserveScroll: true,
         onSuccess: () => {
             emit('update:open', false);

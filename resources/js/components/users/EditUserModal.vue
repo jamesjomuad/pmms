@@ -63,11 +63,11 @@ const handleOpenChange = (value: boolean) => {
 };
 
 const submit = () => {
-    const match = window.location.pathname.match(/^\/([^/]+)/);
-    const slug = match ? match[1] : null;
-    if (!slug || !props.user) return;
+    if (!props.user) {
+        return;
+    }
 
-    form.patch(`/${slug}/users/${props.user.id}`, {
+    form.patch(`/users/${props.user.id}`, {
         preserveScroll: true,
         onSuccess: () => {
             emit('update:open', false);
