@@ -45,10 +45,6 @@ class TeamMemberController extends Controller
             ->where('user_id', $user->id)
             ->delete();
 
-        if ($user->isCurrentTeam($team)) {
-            $user->switchTeam($user->personalTeam());
-        }
-
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Member removed.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);

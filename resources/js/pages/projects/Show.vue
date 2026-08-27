@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Pencil } from '@lucide/vue';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
@@ -7,24 +7,15 @@ import StageTimeline from '@/components/StageTimeline.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { index as projectIndex, show as projectShow, edit as projectEdit } from '@/routes/projects';
-import type { ProjectDetail, StageOption, Team } from '@/types';
+import { edit as projectEdit } from '@/routes/projects';
+import type { ProjectDetail, StageOption } from '@/types';
 
 const props = defineProps<{
     project: ProjectDetail;
     stages: StageOption[];
 }>();
 
-const page = usePage();
-
-const editUrl = computed(() =>
-    page.props.currentTeam
-        ? projectEdit({
-              current_team: page.props.currentTeam.slug,
-              project: props.project.id,
-          }).url
-        : '#',
-);
+const editUrl = computed(() => projectEdit(props.project.id).url);
 
 const statusVariant = (status: string) => {
     switch (status) {
@@ -53,20 +44,22 @@ const statusLabel = (status: string) => {
 };
 
 defineOptions({
-    layout: (layoutProps: { currentTeam?: Team | null; project: ProjectDetail }) => ({
-        breadcrumbs: [
-            {
-                title: 'Projects',
-                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
-            },
-            {
-                title: layoutProps.project.name,
-                href: layoutProps.currentTeam
-                    ? projectShow({ current_team: layoutProps.currentTeam.slug, project: layoutProps.project.id }).url
-                    : '/',
-            },
-        ],
-    }),
+    layout: () => {
+        const pathMatch = window.location.pathname.match(/\/projects\/(\d+)/);
+        const projectId = pathMatch ? pathMatch[1] : '';
+        return {
+            breadcrumbs: [
+                {
+                    title: 'Projects',
+                    href: '/projects',
+                },
+                {
+                    title: 'Project Details',
+                    href: `/projects/${projectId}`,
+                },
+            ],
+        };
+    },
 });
 </script>
 

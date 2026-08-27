@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import {
     Briefcase,
     CheckCircle2,
@@ -14,25 +14,19 @@ import Heading from '@/components/Heading.vue';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { index as projectIndex, create as projectCreate } from '@/routes/projects';
-import type { Project, Team } from '@/types';
+import { create as projectCreate } from '@/routes/projects';
+import type { Project } from '@/types';
 
 const props = defineProps<{
     projects: Project[];
     stages: { id: number; key: string; label: string }[];
 }>();
 
-const page = usePage();
-
 const searchQuery = ref('');
 const activeStatusFilter = ref<string>('all');
 const activeStageFilter = ref<string>('all');
 
-const createUrl = computed(() =>
-    page.props.currentTeam
-        ? projectCreate(page.props.currentTeam.slug).url
-        : '#',
-);
+const createUrl = projectCreate().url;
 
 const stats = computed(() => {
     const active = props.projects.filter((p) => p.status === 'active').length;
@@ -89,11 +83,11 @@ const hasActiveFilters = computed(
 );
 
 defineOptions({
-    layout: (layoutProps: { currentTeam?: Team | null }) => ({
+    layout: () => ({
         breadcrumbs: [
             {
                 title: 'Projects',
-                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
+                href: '/projects',
             },
         ],
     }),

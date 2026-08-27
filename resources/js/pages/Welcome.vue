@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import {
     Award,
     BarChart3,
@@ -18,13 +18,7 @@ import {
     Zap,
     ArrowRight,
 } from '@lucide/vue';
-import { computed } from 'vue';
 import { dashboard, login, register } from '@/routes';
-
-const page = usePage();
-const dashboardUrl = computed(() =>
-    page.props.currentTeam ? dashboard(page.props.currentTeam.slug).url : '/',
-);
 
 const stages = [
     { icon: Award, label: 'Awarded', color: 'text-blue-400' },
@@ -100,7 +94,7 @@ const features = [
                 <nav class="flex items-center gap-1">
                     <template v-if="$page.props.auth.user">
                         <Link
-                            :href="dashboardUrl"
+                            :href="dashboard().url"
                             class="inline-flex items-center gap-2 rounded-md bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-400 ring-1 ring-sky-500/20 transition hover:bg-sky-500/20 hover:ring-sky-500/30"
                         >
                             Dashboard

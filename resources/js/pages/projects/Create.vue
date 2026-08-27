@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useForm, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import Heading from '@/components/Heading.vue';
 import TeamAssignment from '@/components/TeamAssignment.vue';
 import { Button } from '@/components/ui/button';
@@ -8,11 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import DatePicker from '@/components/ui/date-picker/DatePicker.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { index as projectIndex, create as projectCreate, store } from '@/routes/projects';
+import { create as projectCreate, index as projectsIndex } from '@/routes/projects';
 import type {
     ProjectRoleOption,
     StageOption,
-    Team,
     TeamAssignment as TeamAssignmentType,
     UserOption,
 } from '@/types';
@@ -24,17 +22,8 @@ const props = defineProps<{
     nextProjectNumber: string;
 }>();
 
-const page = usePage();
-
-const storeUrl = computed(() =>
-    page.props.currentTeam ? store(page.props.currentTeam.slug).url : '#',
-);
-
-const cancelUrl = computed(() =>
-    page.props.currentTeam
-        ? projectIndex(page.props.currentTeam.slug).url
-        : '/projects',
-);
+const storeUrl = projectCreate().url;
+const cancelUrl = projectsIndex().url;
 
 const form = useForm({
     name: '',
@@ -47,19 +36,19 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(storeUrl.value);
+    form.post(storeUrl);
 };
 
 defineOptions({
-    layout: (layoutProps: { currentTeam?: Team | null }) => ({
+    layout: () => ({
         breadcrumbs: [
             {
                 title: 'Projects',
-                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
+                href: '/projects',
             },
             {
                 title: 'New Project',
-                href: layoutProps.currentTeam ? projectCreate(layoutProps.currentTeam.slug).url : '/',
+                href: '/projects/create',
             },
         ],
     }),

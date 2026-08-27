@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { show as projectShow } from '@/routes/projects';
 import type { Project } from '@/types';
@@ -9,16 +9,7 @@ const props = defineProps<{
     totalStages?: number;
 }>();
 
-const page = usePage();
-
-const projectUrl = computed(() =>
-    page.props.currentTeam
-        ? projectShow({
-              current_team: page.props.currentTeam.slug,
-              project: props.project.id,
-          }).url
-        : '#',
-);
+const projectUrl = computed(() => projectShow(props.project.id).url);
 
 const statusConfig = computed(() => {
     switch (props.project.status) {

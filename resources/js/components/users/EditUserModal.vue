@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm, usePage } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
@@ -35,8 +35,6 @@ const emit = defineEmits<{
     'update:open': [value: boolean];
 }>();
 
-const page = usePage();
-
 const form = useForm({
     name: '',
     email: '',
@@ -65,7 +63,8 @@ const handleOpenChange = (value: boolean) => {
 };
 
 const submit = () => {
-    const slug = page.props.currentTeam?.slug;
+    const match = window.location.pathname.match(/^\/([^/]+)/);
+    const slug = match ? match[1] : null;
     if (!slug || !props.user) return;
 
     form.patch(`/${slug}/users/${props.user.id}`, {

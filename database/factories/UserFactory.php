@@ -51,8 +51,6 @@ class UserFactory extends Factory
             $team->members()->attach($user, [
                 'role' => TeamRole::Owner->value,
             ]);
-
-            $user->switchTeam($team);
         });
     }
 

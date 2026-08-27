@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { router, usePage } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { AlertTriangle } from '@lucide/vue';
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,6 @@ const emit = defineEmits<{
     'update:open': [value: boolean];
 }>();
 
-const page = usePage();
 const processing = ref(false);
 
 const handleOpenChange = (value: boolean) => {
@@ -32,7 +31,8 @@ const handleOpenChange = (value: boolean) => {
 };
 
 const submit = () => {
-    const slug = page.props.currentTeam?.slug;
+    const match = window.location.pathname.match(/^\/([^/]+)/);
+    const slug = match ? match[1] : null;
     if (!slug || !props.user) return;
 
     processing.value = true;

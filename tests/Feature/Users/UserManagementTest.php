@@ -8,7 +8,6 @@ test('users can be listed by team members', function () {
     $owner = User::factory()->create();
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $owner->update(['current_team_id' => $team->id]);
 
     $member = User::factory()->create();
     $team->members()->attach($member, ['role' => TeamRole::Member->value]);
@@ -44,7 +43,6 @@ test('team owner can create a new user', function () {
     $owner = User::factory()->create();
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $owner->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($owner)
@@ -74,7 +72,6 @@ test('team admin can create a new member', function () {
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
     $team->members()->attach($admin, ['role' => TeamRole::Admin->value]);
-    $admin->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($admin)
@@ -101,7 +98,6 @@ test('regular member cannot create a user', function () {
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
     $team->members()->attach($member, ['role' => TeamRole::Member->value]);
-    $member->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($member)
@@ -121,7 +117,6 @@ test('creating a user requires unique email and valid password', function () {
     $existing = User::factory()->create(['email' => 'existing@example.com']);
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $owner->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($owner)
@@ -145,7 +140,6 @@ test('team owner can update user details and role', function () {
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
     $team->members()->attach($member, ['role' => TeamRole::Member->value]);
-    $owner->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($owner)
@@ -169,7 +163,6 @@ test('admin cannot update team owner', function () {
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
     $team->members()->attach($admin, ['role' => TeamRole::Admin->value]);
-    $admin->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($admin)
@@ -185,12 +178,9 @@ test('admin cannot update team owner', function () {
 test('team owner can remove a user from the team', function () {
     $owner = User::factory()->create();
     $member = User::factory()->create();
-    $personalTeam = $member->personalTeam();
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
     $team->members()->attach($member, ['role' => TeamRole::Member->value]);
-    $owner->update(['current_team_id' => $team->id]);
-    $member->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($owner)
@@ -199,16 +189,12 @@ test('team owner can remove a user from the team', function () {
     $response->assertRedirect(route('users.index', $team));
 
     expect($member->fresh()->belongsToTeam($team))->toBeFalse();
-    if ($personalTeam) {
-        expect($member->fresh()->current_team_id)->toBe($personalTeam->id);
-    }
 });
 
 test('cannot remove team owner', function () {
     $owner = User::factory()->create();
     $team = Team::factory()->create();
     $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $owner->update(['current_team_id' => $team->id]);
 
     $response = $this
         ->actingAs($owner)

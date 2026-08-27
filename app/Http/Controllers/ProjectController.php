@@ -144,7 +144,7 @@ class ProjectController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project created.')]);
 
-        return to_route('projects.show', [$request->route('current_team'), $project]);
+        return to_route('projects.show', $project);
     }
 
     /**
@@ -275,6 +275,6 @@ class ProjectController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project updated.')]);
 
-        return to_route('projects.show', [$request->route('current_team'), $project]);
+        return to_route('projects.show', $project);
     }
 }

@@ -8,12 +8,10 @@ use App\Enums\TeamPermission;
 use App\Enums\TeamRole;
 use App\Models\Membership;
 use App\Models\Team;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
 
 trait HasTeams
 {
@@ -57,16 +55,6 @@ trait HasTeams
     }
 
     /**
-     * Get the user's current team.
-     *
-     * @return BelongsTo<Team, $this>
-     */
-    public function currentTeam(): BelongsTo
-    {
-        return $this->belongsTo(Team::class, 'current_team_id');
-    }
-
-    /**
      * Get the user's personal team.
      */
     public function personalTeam(): ?Team
@@ -77,36 +65,11 @@ trait HasTeams
     }
 
     /**
-     * Switch to the given team.
-     */
-    public function switchTeam(Team $team): bool
-    {
-        if (! $this->belongsToTeam($team)) {
-            return false;
-        }
-
-        $this->update(['current_team_id' => $team->id]);
-        $this->setRelation('currentTeam', $team);
-
-        URL::defaults(['current_team' => $team->slug]);
-
-        return true;
-    }
-
-    /**
      * Determine if the user belongs to the given team.
      */
     public function belongsToTeam(Team $team): bool
     {
         return $this->teams()->where('teams.id', $team->id)->exists();
-    }
-
-    /**
-     * Determine if the given team is the user's current team.
-     */
-    public function isCurrentTeam(Team $team): bool
-    {
-        return $this->current_team_id === $team->id;
     }
 
     /**
@@ -133,12 +96,11 @@ trait HasTeams
      *
      * @return Collection<int, UserTeam>
      */
-    public function toUserTeams(bool $includeCurrent = false): Collection
+    public function toUserTeams(): Collection
     {
         return $this->teams()
             ->get()
-            ->map(fn (Team $team) => ! $includeCurrent && $this->isCurrentTeam($team) ? null : $this->toUserTeam($team))
-            ->filter()
+            ->map(fn (Team $team) => $this->toUserTeam($team))
             ->values();
     }
 
@@ -156,7 +118,6 @@ trait HasTeams
             isPersonal: $team->is_personal,
             role: $role?->value,
             roleLabel: $role?->label(),
-            isCurrent: $this->isCurrentTeam($team),
         );
     }
 
@@ -176,14 +137,6 @@ trait HasTeams
             canCreateInvitation: $role?->hasPermission(TeamPermission::CreateInvitation) ?? false,
             canCancelInvitation: $role?->hasPermission(TeamPermission::CancelInvitation) ?? false,
         );
-    }
-
-    public function fallbackTeam(?Team $excluding = null): ?Team
-    {
-        return $this->teams()
-            ->when($excluding, fn ($query) => $query->where('teams.id', '!=', $excluding->id))
-            ->orderByRaw('LOWER(teams.name)')
-            ->first();
     }
 
     /**

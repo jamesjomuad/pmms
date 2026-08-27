@@ -33,7 +33,7 @@ import DeleteUserModal from '@/components/users/DeleteUserModal.vue';
 import EditUserModal from '@/components/users/EditUserModal.vue';
 import UserDetailsSheet from '@/components/users/UserDetailsSheet.vue';
 import { useInitials } from '@/composables/useInitials';
-import type { ManagedUser, RoleOption, Team, UserStats } from '@/types';
+import type { ManagedUser, RoleOption, UserStats } from '@/types';
 
 type Props = {
     users: ManagedUser[];
@@ -131,11 +131,11 @@ const formatDate = (dateString: string) => {
 };
 
 defineOptions({
-    layout: (layoutProps: { currentTeam?: Team | null }) => ({
+    layout: () => ({
         breadcrumbs: [
             {
                 title: 'Users',
-                href: layoutProps.currentTeam ? `/${layoutProps.currentTeam.slug}/users` : '/users',
+                href: '/users',
             },
         ],
     }),

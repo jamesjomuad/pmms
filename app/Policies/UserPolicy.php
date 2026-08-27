@@ -13,8 +13,6 @@ class UserPolicy
      */
     public function viewAny(User $user, ?Team $team = null): bool
     {
-        $team = $team ?? $user->currentTeam;
-
         return $team !== null && $user->belongsToTeam($team);
     }
 
@@ -23,8 +21,6 @@ class UserPolicy
      */
     public function view(User $user, User $model, ?Team $team = null): bool
     {
-        $team = $team ?? $user->currentTeam;
-
         return $team !== null && $user->belongsToTeam($team) && $model->belongsToTeam($team);
     }
 
@@ -33,8 +29,6 @@ class UserPolicy
      */
     public function create(User $user, ?Team $team = null): bool
     {
-        $team = $team ?? $user->currentTeam;
-
         return $team !== null && ($user->teamRole($team)?->isAtLeast(TeamRole::Admin) ?? false);
     }
 
@@ -43,8 +37,6 @@ class UserPolicy
      */
     public function update(User $user, User $model, ?Team $team = null): bool
     {
-        $team = $team ?? $user->currentTeam;
-
         if ($team === null || ! $model->belongsToTeam($team)) {
             return false;
         }
@@ -72,8 +64,6 @@ class UserPolicy
      */
     public function delete(User $user, User $model, ?Team $team = null): bool
     {
-        $team = $team ?? $user->currentTeam;
-
         if ($team === null || ! $model->belongsToTeam($team)) {
             return false;
         }

@@ -71,8 +71,6 @@ class TeamInvitationController extends Controller
             );
 
             $invitation->update(['accepted_at' => now()]);
-
-            $user->switchTeam($team);
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation accepted.')]);

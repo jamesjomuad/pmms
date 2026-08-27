@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import TeamAssignment from '@/components/TeamAssignment.vue';
@@ -15,12 +15,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { index as projectIndex, update, show as projectShow } from '@/routes/projects';
+import { show as projectShow, update as projectUpdate } from '@/routes/projects';
 import type {
     ProjectDetail,
     ProjectRoleOption,
     StageOption,
-    Team,
     TeamAssignment as TeamAssignmentType,
     UserOption,
 } from '@/types';
@@ -32,25 +31,8 @@ const props = defineProps<{
     users: UserOption[];
 }>();
 
-const page = usePage();
-
-const showUrl = computed(() =>
-    page.props.currentTeam
-        ? projectShow({
-              current_team: page.props.currentTeam.slug,
-              project: props.project.id,
-          }).url
-        : '#',
-);
-
-const updateUrl = computed(() =>
-    page.props.currentTeam
-        ? update({
-              current_team: page.props.currentTeam.slug,
-              project: props.project.id,
-          }).url
-        : '#',
-);
+const showUrl = computed(() => projectShow(props.project.id).url);
+const updateUrl = computed(() => projectUpdate(props.project.id).url);
 
 const form = useForm({
     name: props.project.name,
@@ -71,26 +53,26 @@ const submit = () => {
 };
 
 defineOptions({
-    layout: (layoutProps: { currentTeam?: Team | null; project: ProjectDetail }) => ({
-        breadcrumbs: [
-            {
-                title: 'Projects',
-                href: layoutProps.currentTeam ? projectIndex(layoutProps.currentTeam.slug).url : '/',
-            },
-            {
-                title: layoutProps.project.name,
-                href: layoutProps.currentTeam
-                    ? projectShow({ current_team: layoutProps.currentTeam.slug, project: layoutProps.project.id }).url
-                    : '/',
-            },
-            {
-                title: 'Edit',
-                href: layoutProps.currentTeam
-                    ? projectShow({ current_team: layoutProps.currentTeam.slug, project: layoutProps.project.id }).url
-                    : '/',
-            },
-        ],
-    }),
+    layout: () => {
+        const pathMatch = window.location.pathname.match(/\/projects\/(\d+)/);
+        const projectId = pathMatch ? pathMatch[1] : '';
+        return {
+            breadcrumbs: [
+                {
+                    title: 'Projects',
+                    href: '/projects',
+                },
+                {
+                    title: 'Project Details',
+                    href: `/projects/${projectId}`,
+                },
+                {
+                    title: 'Edit',
+                    href: `/projects/${projectId}/edit`,
+                },
+            ],
+        };
+    },
 });
 </script>
 

@@ -6,7 +6,6 @@ import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
-import TeamSwitcher from '@/components/TeamSwitcher.vue';
 import {
     Sidebar,
     SidebarContent,
@@ -22,32 +21,20 @@ import type { NavItem } from '@/types';
 
 const page = usePage();
 
-const dashboardUrl = computed(() =>
-    page.props.currentTeam ? dashboard(page.props.currentTeam.slug).url : '/',
-);
-
-const projectsUrl = computed(() =>
-    page.props.currentTeam ? projectsIndex(page.props.currentTeam.slug).url : '/',
-);
-
-const usersUrl = computed(() =>
-    page.props.currentTeam ? `/${page.props.currentTeam.slug}/users` : '/users',
-);
-
 const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Dashboard',
-        href: dashboardUrl.value,
+        href: dashboard().url,
         icon: LayoutGrid,
     },
     {
         title: 'Projects',
-        href: projectsUrl.value,
+        href: projectsIndex().url,
         icon: Briefcase,
     },
     {
         title: 'Users',
-        href: usersUrl.value,
+        href: '/users',
         icon: Users,
     },
 ]);
@@ -77,15 +64,10 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboardUrl">
+                        <Link :href="dashboard().url">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <TeamSwitcher />
                 </SidebarMenuItem>
             </SidebarMenu>
         </SidebarHeader>

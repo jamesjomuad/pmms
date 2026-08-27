@@ -146,81 +146,6 @@ test('team deletion requires name confirmation', function () {
     ]);
 });
 
-test('deleting current team switches to alphabetically first remaining team', function () {
-    $user = User::factory()->create(['name' => 'Mike']);
-
-    $zuluTeam = Team::factory()->create(['name' => 'Zulu Team']);
-    $zuluTeam->members()->attach($user, ['role' => TeamRole::Owner->value]);
-
-    $alphaTeam = Team::factory()->create(['name' => 'Alpha Team']);
-    $alphaTeam->members()->attach($user, ['role' => TeamRole::Owner->value]);
-
-    $betaTeam = Team::factory()->create(['name' => 'Beta Team']);
-    $betaTeam->members()->attach($user, ['role' => TeamRole::Owner->value]);
-
-    $user->update(['current_team_id' => $zuluTeam->id]);
-
-    $response = $this
-        ->actingAs($user)
-        ->delete(route('teams.destroy', $zuluTeam), [
-            'name' => $zuluTeam->name,
-        ]);
-
-    $response->assertRedirect();
-
-    $this->assertSoftDeleted('teams', [
-        'id' => $zuluTeam->id,
-    ]);
-
-    expect($user->fresh()->current_team_id)->toEqual($alphaTeam->id);
-});
-
-test('deleting current team falls back to personal team when alphabetically first', function () {
-    $user = User::factory()->create();
-    $personalTeam = $user->personalTeam();
-    $team = Team::factory()->create(['name' => 'Zulu Team']);
-    $team->members()->attach($user, ['role' => TeamRole::Owner->value]);
-
-    $user->update(['current_team_id' => $team->id]);
-
-    $response = $this
-        ->actingAs($user)
-        ->delete(route('teams.destroy', $team), [
-            'name' => $team->name,
-        ]);
-
-    $response->assertRedirect();
-
-    $this->assertSoftDeleted('teams', [
-        'id' => $team->id,
-    ]);
-
-    expect($user->fresh()->current_team_id)->toEqual($personalTeam->id);
-});
-
-test('deleting non current team leaves current team unchanged', function () {
-    $user = User::factory()->create();
-    $personalTeam = $user->personalTeam();
-    $team = Team::factory()->create();
-    $team->members()->attach($user, ['role' => TeamRole::Owner->value]);
-
-    $user->update(['current_team_id' => $personalTeam->id]);
-
-    $response = $this
-        ->actingAs($user)
-        ->delete(route('teams.destroy', $team), [
-            'name' => $team->name,
-        ]);
-
-    $response->assertRedirect();
-
-    $this->assertSoftDeleted('teams', [
-        'id' => $team->id,
-    ]);
-
-    expect($user->fresh()->current_team_id)->toEqual($personalTeam->id);
-});
-
 test('members can leave non personal teams', function () {
     $owner = User::factory()->create();
     $member = User::factory()->create();
@@ -237,32 +162,6 @@ test('members can leave non personal teams', function () {
     $response->assertInertiaFlash('toast', ['type' => 'success', 'message' => "You left the team \"{$team->name}\""]);
 
     expect($member->fresh()->belongsToTeam($team))->toBeFalse();
-});
-
-test('leaving current team switches to alphabetically first remaining team', function () {
-    $owner = User::factory()->create();
-    $member = User::factory()->create(['name' => 'Mike']);
-
-    $zuluTeam = Team::factory()->create(['name' => 'Zulu Team']);
-    $zuluTeam->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $zuluTeam->members()->attach($member, ['role' => TeamRole::Member->value]);
-
-    $alphaTeam = Team::factory()->create(['name' => 'Alpha Team']);
-    $alphaTeam->members()->attach($member, ['role' => TeamRole::Member->value]);
-
-    $betaTeam = Team::factory()->create(['name' => 'Beta Team']);
-    $betaTeam->members()->attach($member, ['role' => TeamRole::Member->value]);
-
-    $member->update(['current_team_id' => $zuluTeam->id]);
-
-    $response = $this
-        ->actingAs($member)
-        ->delete(route('teams.leave', $zuluTeam));
-
-    $response->assertRedirect(route('teams.index'));
-
-    expect($member->fresh()->belongsToTeam($zuluTeam))->toBeFalse();
-    expect($member->fresh()->current_team_id)->toEqual($alphaTeam->id);
 });
 
 test('personal teams cannot be left', function () {
@@ -304,28 +203,6 @@ test('users cannot leave teams they dont belong to', function () {
     $response->assertForbidden();
 });
 
-test('deleting team switches other affected users to their personal team', function () {
-    $owner = User::factory()->create();
-    $member = User::factory()->create();
-
-    $team = Team::factory()->create();
-    $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-    $team->members()->attach($member, ['role' => TeamRole::Member->value]);
-
-    $owner->update(['current_team_id' => $team->id]);
-    $member->update(['current_team_id' => $team->id]);
-
-    $response = $this
-        ->actingAs($owner)
-        ->delete(route('teams.destroy', $team), [
-            'name' => $team->name,
-        ]);
-
-    $response->assertRedirect();
-
-    expect($member->fresh()->current_team_id)->toEqual($member->personalTeam()->id);
-});
-
 test('personal teams cannot be deleted', function () {
     $user = User::factory()->create();
 
@@ -358,32 +235,6 @@ test('teams cannot be deleted by non owners', function () {
         ->delete(route('teams.destroy', $team), [
             'name' => $team->name,
         ]);
-
-    $response->assertForbidden();
-});
-
-test('users can switch teams', function () {
-    $user = User::factory()->create();
-    $team = Team::factory()->create();
-
-    $team->members()->attach($user, ['role' => TeamRole::Member->value]);
-
-    $response = $this
-        ->actingAs($user)
-        ->post(route('teams.switch', $team));
-
-    $response->assertRedirect();
-
-    expect($user->fresh()->current_team_id)->toEqual($team->id);
-});
-
-test('users cannot switch to team they dont belong to', function () {
-    $user = User::factory()->create();
-    $team = Team::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->post(route('teams.switch', $team));
 
     $response->assertForbidden();
 });

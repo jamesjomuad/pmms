@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `{team}` route prefix and team-switching UI from authenticated routes, flattening all paths to `/dashboard`, `/projects/{id}`, `/users`, etc
+
 ## [0.1.0] - 2026-08-25
 
 ### Added

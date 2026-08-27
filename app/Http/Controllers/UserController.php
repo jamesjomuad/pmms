@@ -26,11 +26,21 @@ class UserController extends Controller
     }
 
     /**
+     * Resolve the team for the authenticated user.
+     */
+    private function resolveTeam(Request $request): Team
+    {
+        $user = $request->user();
+
+        return $user->teams()->firstOrFail();
+    }
+
+    /**
      * Display a listing of users in the current team.
      */
-    public function index(Request $request, string $current_team): Response
+    public function index(Request $request): Response
     {
-        $currentTeam = Team::where('slug', $current_team)->firstOrFail();
+        $currentTeam = $this->resolveTeam($request);
         $authUser = $request->user();
 
         Gate::authorize('viewAny', [User::class, $currentTeam]);
@@ -101,9 +111,9 @@ class UserController extends Controller
     /**
      * Store a newly created user in the current team.
      */
-    public function store(StoreUserRequest $request, string $current_team): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        $currentTeam = Team::where('slug', $current_team)->firstOrFail();
+        $currentTeam = $this->resolveTeam($request);
         $authUser = $request->user();
 
         Gate::authorize('create', [User::class, $currentTeam]);
@@ -123,22 +133,19 @@ class UserController extends Controller
             $currentTeam->members()->attach($user, [
                 'role' => $request->validated('role'),
             ]);
-
-            // Set current team to active team
-            $user->update(['current_team_id' => $currentTeam->id]);
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('User created successfully.')]);
 
-        return to_route('users.index', [$current_team]);
+        return to_route('users.index');
     }
 
     /**
      * Update the specified user in the current team.
      */
-    public function update(UpdateUserRequest $request, string $current_team, string $user): RedirectResponse
+    public function update(UpdateUserRequest $request, string $user): RedirectResponse
     {
-        $currentTeam = Team::where('slug', $current_team)->firstOrFail();
+        $currentTeam = $this->resolveTeam($request);
         $targetUser = User::findOrFail((int) $user);
         $authUser = $request->user();
 
@@ -166,15 +173,15 @@ class UserController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('User updated successfully.')]);
 
-        return to_route('users.index', [$current_team]);
+        return to_route('users.index');
     }
 
     /**
      * Remove the specified user from the current team.
      */
-    public function destroy(Request $request, string $current_team, string $user): RedirectResponse
+    public function destroy(Request $request, string $user): RedirectResponse
     {
-        $currentTeam = Team::where('slug', $current_team)->firstOrFail();
+        $currentTeam = $this->resolveTeam($request);
         $targetUser = User::findOrFail((int) $user);
         $authUser = $request->user();
 
@@ -188,14 +195,10 @@ class UserController extends Controller
             $currentTeam->memberships()
                 ->where('user_id', $targetUser->id)
                 ->delete();
-
-            if ($targetUser->isCurrentTeam($currentTeam)) {
-                $targetUser->switchTeam($targetUser->personalTeam() ?? $targetUser->fallbackTeam());
-            }
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('User removed from team.')]);
 
-        return to_route('users.index', [$current_team]);
+        return to_route('users.index');
     }
 }
