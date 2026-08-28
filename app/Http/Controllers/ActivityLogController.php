@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Models\Activity;
@@ -17,7 +16,6 @@ class ActivityLogController extends Controller
      */
     public function index(Request $request): Response
     {
-        Gate::authorize('viewAny', Activity::class);
 
         /** @var Builder<Activity> $query */
         $query = Activity::query()
