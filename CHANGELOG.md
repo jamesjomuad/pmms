@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Architecture audit report with health scores across 7 dimensions (`docs/ARCHITECTURE-AUDIT.md`)
+- 10-phase architecture roadmap (`docs/ROADMAP.md`)
+- Architecture Decision Records ADR-001 through ADR-007 covering modular monolith, Laravel+Inertia, PostgreSQL, authorization, approval engine, workflow architecture, and AI recommendations
+- Activity log page at `/activity-log` with search and event filters
+- Activity log tab on project detail page showing recent project changes
+- Reusable `ActivityLog` Vue component with table, search, and event filtering
+- `ActivityLogController` for paginated, filterable global activity log
+- `StoreDeliverableRequest` form request for deliverable validation
+- `ApprovalRequest` and `ApprovalStep` models with migration for approval workflow engine
+- `HasApprovals` trait for project approval workflow
+- `notification_rules` table migration for configurable notification routing
+- `ActivityLogEntry` TypeScript type definition
+- Tabs and Table shadcn-vue UI components
+- Activity Log link in sidebar navigation
+
+### Changed
+
+- Updated `PMMS-ARCHITECTURE.md` with CURRENT/TARGET/RULES/DECISIONS/ROADMAP sections
+- Refactored `DeliverableController` to use `StoreDeliverableRequest` for validation
+- Project detail page now uses tabbed layout (Details, Stage History, Deliverables, Activity)
+
+### Fixed
+
+- Removed broken `TeamController::switch` route that caused C3 404 errors
+- Sanitized user data in `HandleInertiaRequests` to only expose safe fields (id, name, email, verified_at, 2fa_confirmed_at, created_at)
+- Added `ProjectController::destroy` method for DELETE `/projects/{project}` endpoint
+- Removed unauthenticated `Gate::authorize` from `ActivityLogController` that caused 403/404 on `/activity-log`
+
 ### Removed
 
 - Remove `{team}` route prefix and team-switching UI from authenticated routes, flattening all paths to `/dashboard`, `/projects/{id}`, `/users`, etc
