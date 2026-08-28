@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDeliverableRequest;
 use App\Models\Project;
 use App\Models\Stage;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -15,15 +15,11 @@ class DeliverableController extends Controller
     /**
      * Store a new deliverable for a project.
      */
-    public function store(Request $request, Project $project): RedirectResponse
+    public function store(StoreDeliverableRequest $request, Project $project): RedirectResponse
     {
         Gate::authorize('update', $project);
 
-        $validated = $request->validate([
-            'file' => ['required', 'file', 'max:20480'],
-            'stage_id' => ['required', 'exists:stages,id'],
-            'description' => ['nullable', 'string', 'max:500'],
-        ]);
+        $validated = $request->validated();
 
         /** @var Stage $stage */
         $stage = Stage::findOrFail($validated['stage_id']);

@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\ProjectStageHistory;
 use App\Models\Stage;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -157,7 +158,7 @@ class ProjectController extends Controller
 
         $project->load(['currentStage', 'teamMembers', 'stageHistory.fromStage', 'stageHistory.toStage', 'stageHistory.changedByUser']);
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, Media> $mediaItems */
+        /** @var Collection<int, Media> $mediaItems */
         $mediaItems = $project->getMedia('deliverables');
         $deliverables = $mediaItems->map(function (Media $media) {
             return [
@@ -218,6 +219,22 @@ class ProjectController extends Controller
                     'notes' => $entry->notes,
                 ]),
                 'deliverables' => $deliverables,
+                'activity_log' => $project->activitiesAsSubject()
+                    ->latest()
+                    ->with('causer')
+                    ->limit(50)
+                    ->get()
+                    ->map(fn ($activity) => [
+                        'id' => $activity->id,
+                        'description' => $activity->description,
+                        'event' => $activity->event,
+                        'causer' => $activity->causer ? [
+                            'id' => $activity->causer->id,
+                            'name' => $activity->causer->name,
+                        ] : null,
+                        'properties' => $activity->properties->toArray(),
+                        'created_at' => $activity->created_at->toISOString(),
+                    ]),
             ],
         ]);
     }
@@ -298,5 +315,19 @@ class ProjectController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project updated.')]);
 
         return to_route('projects.show', $project);
+    }
+
+    /**
+     * Remove the specified project.
+     */
+    public function destroy(Project $project): RedirectResponse
+    {
+        Gate::authorize('delete', $project);
+
+        $project->delete();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Project deleted.')]);
+
+        return to_route('projects.index');
     }
 }

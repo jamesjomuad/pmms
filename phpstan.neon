@@ -11,3 +11,9 @@ parameters:
         - routes/
 
     level: 7
+
+    ignoreErrors:
+        # Spatie Activity Log v5 lacks generic type hints on Activity model
+        - '#contains unresolvable type#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$id#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$name#'

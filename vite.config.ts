@@ -32,6 +32,13 @@ export default defineConfig({
         }),
     ],
     server: {
+        proxy: {
+            '/api': {
+                target: 'https://pmms.test',
+                changeOrigin: true,
+                secure: false,
+            },
+        },
         watch: {
             ignored: [
                 '**/.agents/**',

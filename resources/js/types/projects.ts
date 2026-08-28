@@ -35,6 +35,7 @@ export type ProjectDetail = Project & {
     team: ProjectTeamMember[];
     stage_history: ProjectStageHistoryEntry[];
     deliverables: Deliverable[];
+    activity_log: ActivityLogEntry[];
 };
 
 export type Deliverable = {
@@ -82,4 +83,16 @@ export type UserOption = {
 export type TeamAssignment = {
     user_id: number;
     project_role: ProjectRole;
+};
+
+export type ActivityLogEntry = {
+    id: number;
+    description: string;
+    event: string | null;
+    causer: {
+        id: number;
+        name: string;
+    } | null;
+    properties: Record<string, unknown>;
+    created_at: string;
 };

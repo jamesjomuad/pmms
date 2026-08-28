@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Briefcase, LayoutGrid, SquareText, Users } from '@lucide/vue';
+import { BookOpen, Briefcase, Clock, LayoutGrid, SquareText, Users } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -36,6 +36,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Users',
         href: '/users',
         icon: Users,
+    },
+    {
+        title: 'Activity Log',
+        href: '/activity-log',
+        icon: Clock,
     },
 ]);
 
