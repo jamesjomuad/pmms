@@ -11,3 +11,5 @@ services:
   - redis
   - soketi:
       preset: soketi
+workers:
+  - vite
