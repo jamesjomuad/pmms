@@ -5,11 +5,14 @@ use App\Http\Controllers\ChangeOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliverableController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\EquipmentInspectionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PunchListItemController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\RfiController;
 use App\Http\Controllers\ShopDrawingController;
 use App\Http\Controllers\SubmittalController;
+use App\Http\Controllers\SupplierQuotationController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +76,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('projects/{project}/equipment/{equipment}', [EquipmentController::class, 'update'])->name('projects.equipment.update');
     Route::delete('projects/{project}/equipment/{equipment}', [EquipmentController::class, 'destroy'])->name('projects.equipment.destroy');
     Route::post('projects/{project}/equipment/{equipment}/receive', [EquipmentController::class, 'receive'])->name('projects.equipment.receive');
+
+    Route::get('projects/{project}/equipment/{equipment}/quotations', [SupplierQuotationController::class, 'index'])->name('projects.equipment.quotations.index');
+    Route::get('projects/{project}/equipment/{equipment}/quotations/create', [SupplierQuotationController::class, 'create'])->name('projects.equipment.quotations.create');
+    Route::post('projects/{project}/equipment/{equipment}/quotations', [SupplierQuotationController::class, 'store'])->name('projects.equipment.quotations.store');
+    Route::get('projects/{project}/equipment/{equipment}/quotations/{quotation}', [SupplierQuotationController::class, 'show'])->name('projects.equipment.quotations.show');
+    Route::get('projects/{project}/equipment/{equipment}/quotations/{quotation}/edit', [SupplierQuotationController::class, 'edit'])->name('projects.equipment.quotations.edit');
+    Route::patch('projects/{project}/equipment/{equipment}/quotations/{quotation}', [SupplierQuotationController::class, 'update'])->name('projects.equipment.quotations.update');
+    Route::delete('projects/{project}/equipment/{equipment}/quotations/{quotation}', [SupplierQuotationController::class, 'destroy'])->name('projects.equipment.quotations.destroy');
+    Route::post('projects/{project}/equipment/{equipment}/quotations/{quotation}/select', [SupplierQuotationController::class, 'select'])->name('projects.equipment.quotations.select');
+    Route::post('projects/{project}/equipment/{equipment}/quotations/{quotation}/decline', [SupplierQuotationController::class, 'decline'])->name('projects.equipment.quotations.decline');
+
+    Route::get('projects/{project}/equipment/{equipment}/purchase-orders', [PurchaseOrderController::class, 'index'])->name('projects.equipment.purchase-orders.index');
+    Route::get('projects/{project}/equipment/{equipment}/purchase-orders/create', [PurchaseOrderController::class, 'create'])->name('projects.equipment.purchase-orders.create');
+    Route::post('projects/{project}/equipment/{equipment}/purchase-orders', [PurchaseOrderController::class, 'store'])->name('projects.equipment.purchase-orders.store');
+    Route::get('projects/{project}/equipment/{equipment}/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'show'])->name('projects.equipment.purchase-orders.show');
+    Route::get('projects/{project}/equipment/{equipment}/purchase-orders/{purchaseOrder}/edit', [PurchaseOrderController::class, 'edit'])->name('projects.equipment.purchase-orders.edit');
+    Route::patch('projects/{project}/equipment/{equipment}/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('projects.equipment.purchase-orders.update');
+    Route::delete('projects/{project}/equipment/{equipment}/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('projects.equipment.purchase-orders.destroy');
+    Route::post('projects/{project}/equipment/{equipment}/purchase-orders/{purchaseOrder}/deliver', [PurchaseOrderController::class, 'markDelivered'])->name('projects.equipment.purchase-orders.deliver');
+
+    Route::get('projects/{project}/equipment/{equipment}/inspections', [EquipmentInspectionController::class, 'index'])->name('projects.equipment.inspections.index');
+    Route::get('projects/{project}/equipment/{equipment}/inspections/create', [EquipmentInspectionController::class, 'create'])->name('projects.equipment.inspections.create');
+    Route::post('projects/{project}/equipment/{equipment}/inspections', [EquipmentInspectionController::class, 'store'])->name('projects.equipment.inspections.store');
+    Route::get('projects/{project}/equipment/{equipment}/inspections/{inspection}', [EquipmentInspectionController::class, 'show'])->name('projects.equipment.inspections.show');
+    Route::get('projects/{project}/equipment/{equipment}/inspections/{inspection}/edit', [EquipmentInspectionController::class, 'edit'])->name('projects.equipment.inspections.edit');
+    Route::patch('projects/{project}/equipment/{equipment}/inspections/{inspection}', [EquipmentInspectionController::class, 'update'])->name('projects.equipment.inspections.update');
+    Route::delete('projects/{project}/equipment/{equipment}/inspections/{inspection}', [EquipmentInspectionController::class, 'destroy'])->name('projects.equipment.inspections.destroy');
 
     Route::get('projects/{project}/punch-list', [PunchListItemController::class, 'index'])->name('projects.punch-list.index');
     Route::get('projects/{project}/punch-list/create', [PunchListItemController::class, 'create'])->name('projects.punch-list.create');

@@ -126,6 +126,11 @@ class EquipmentController extends Controller
                     'id' => $equipment->assignee->id,
                     'name' => $equipment->assignee->name,
                 ] : null,
+                'procurement' => [
+                    'quotation_count' => $equipment->supplierQuotations()->count(),
+                    'purchase_order_count' => $equipment->purchaseOrders()->count(),
+                    'inspection_count' => $equipment->inspections()->count(),
+                ],
                 'comments' => $equipment->comments->map(fn ($comment) => [
                     'id' => $comment->id,
                     'body' => $comment->body,

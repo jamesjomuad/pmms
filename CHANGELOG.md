@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - RFI (Request for Information) workflow (create, submit, respond) at `/projects/{project}/rfis`
 - Shop drawing workflow (create, revise, approve/reject, request revision) at `/projects/{project}/shop-drawings`
 - Equipment tracking (create, receive, status) at `/projects/{project}/equipment`
+- Supplier quotation workflow (create, select/decline) nested under equipment at `/projects/{project}/equipment/{equipment}/quotations`
+- Purchase order workflow (issue, track, mark delivered) nested under equipment at `/projects/{project}/equipment/{equipment}/purchase-orders`
+- Equipment inspection workflow (create, edit, record result) nested under equipment at `/projects/{project}/equipment/{equipment}/inspections`
+- `SupplierQuotation`, `PurchaseOrder`, and `EquipmentInspection` models with migrations, factories, form requests, and controllers
 - Punch list management (create, resolve) at `/projects/{project}/punch-list`
 - Change order workflow (create, submit, approve/reject) at `/projects/{project}/change-orders`
 - Shared `WorkflowStatus` enum, `HasWorkflowStatus` state machine, `HasAttachments` and `HasComments` concerns backing the project modules

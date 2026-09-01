@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     CheckCircle2,
+    ClipboardList,
     MessageSquare,
     Package,
     Paperclip,
@@ -33,6 +34,11 @@ const props = defineProps<{
         received_at: string | null;
         created_at: string;
         assignee: { id: number; name: string } | null;
+        procurement: {
+            quotation_count: number;
+            purchase_order_count: number;
+            inspection_count: number;
+        };
         comments: {
             id: number;
             body: string;
@@ -251,6 +257,16 @@ defineOptions({
                         {{ equipment.attachments.length }}
                     </Badge>
                 </TabsTrigger>
+                <TabsTrigger value="procurement">
+                    <ClipboardList class="mr-1 h-4 w-4" />
+                    Procurement
+                    <Badge variant="secondary" class="ml-1.5 text-xs">
+                        {{
+                            equipment.procurement.quotation_count +
+                            equipment.procurement.purchase_order_count
+                        }}
+                    </Badge>
+                </TabsTrigger>
             </TabsList>
 
             <TabsContent value="comments">
@@ -300,6 +316,62 @@ defineOptions({
                         <p v-else class="text-sm text-muted-foreground">No attachments.</p>
                     </CardContent>
                 </Card>
+            </TabsContent>
+
+            <TabsContent value="procurement">
+                <div class="grid gap-4 sm:grid-cols-3">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Quotations</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p class="mb-4 text-sm text-muted-foreground">
+                                {{ equipment.procurement.quotation_count }} quotation(s) received.
+                            </p>
+                            <Button variant="outline" size="sm" as-child>
+                                <Link
+                                    :href="`/projects/${project.id}/equipment/${equipment.id}/quotations`"
+                                >
+                                    View quotations
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Purchase Orders</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p class="mb-4 text-sm text-muted-foreground">
+                                {{ equipment.procurement.purchase_order_count }} PO(s) issued.
+                            </p>
+                            <Button variant="outline" size="sm" as-child>
+                                <Link
+                                    :href="`/projects/${project.id}/equipment/${equipment.id}/purchase-orders`"
+                                >
+                                    View purchase orders
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Inspections</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p class="mb-4 text-sm text-muted-foreground">
+                                {{ equipment.procurement.inspection_count }} inspection(s) recorded.
+                            </p>
+                            <Button variant="outline" size="sm" as-child>
+                                <Link
+                                    :href="`/projects/${project.id}/equipment/${equipment.id}/inspections`"
+                                >
+                                    View inspections
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
             </TabsContent>
         </Tabs>
     </div>

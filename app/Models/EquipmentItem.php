@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -104,6 +105,36 @@ class EquipmentItem extends Model
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    /**
+     * Get the supplier quotations for the equipment item.
+     *
+     * @return HasMany<SupplierQuotation, $this>
+     */
+    public function supplierQuotations(): HasMany
+    {
+        return $this->hasMany(SupplierQuotation::class);
+    }
+
+    /**
+     * Get the purchase orders for the equipment item.
+     *
+     * @return HasMany<PurchaseOrder, $this>
+     */
+    public function purchaseOrders(): HasMany
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
+
+    /**
+     * Get the inspections for the equipment item.
+     *
+     * @return HasMany<EquipmentInspection, $this>
+     */
+    public function inspections(): HasMany
+    {
+        return $this->hasMany(EquipmentInspection::class);
     }
 
     /**
