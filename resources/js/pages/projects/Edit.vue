@@ -56,6 +56,7 @@ defineOptions({
     layout: () => {
         const pathMatch = window.location.pathname.match(/\/projects\/(\d+)/);
         const projectId = pathMatch ? pathMatch[1] : '';
+
         return {
             breadcrumbs: [
                 {

@@ -24,6 +24,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tabs and Table shadcn-vue UI components
 - Activity Log link in sidebar navigation
 
+- Submittal workflow (create, revise, approve/reject, request revision) with project-scoped pages at `/projects/{project}/submittals`
+- RFI (Request for Information) workflow (create, submit, respond) at `/projects/{project}/rfis`
+- Shop drawing workflow (create, revise, approve/reject, request revision) at `/projects/{project}/shop-drawings`
+- Equipment tracking (create, receive, status) at `/projects/{project}/equipment`
+- Punch list management (create, resolve) at `/projects/{project}/punch-list`
+- Change order workflow (create, submit, approve/reject) at `/projects/{project}/change-orders`
+- Shared `WorkflowStatus` enum, `HasWorkflowStatus` state machine, `HasAttachments` and `HasComments` concerns backing the project modules
+- `Textarea` shadcn-vue UI component
+
 ### Changed
 
 - Updated `PMMS-ARCHITECTURE.md` with CURRENT/TARGET/RULES/DECISIONS/ROADMAP sections

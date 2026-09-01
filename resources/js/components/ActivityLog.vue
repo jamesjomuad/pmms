@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { Clock, User } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { index as activityLogIndex } from '@/routes/activity-log';
 import type { ActivityLogEntry } from '@/types/projects';
 
 const props = defineProps<{
@@ -30,7 +31,10 @@ const search = ref(props.filters?.search ?? '');
 const selectedEvent = ref(props.filters?.event ?? '');
 
 const eventLabel = (event: string | null) => {
-    if (!event) return '—';
+    if (!event) {
+return '—';
+}
+
     return event.split('.').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
@@ -38,7 +42,9 @@ const formatProperties = (properties: Record<string, unknown>) => {
     const attrs = properties.attributes as Record<string, unknown> | undefined;
     const old = properties.old as Record<string, unknown> | undefined;
 
-    if (!attrs && !old) return null;
+    if (!attrs && !old) {
+return null;
+}
 
     const changes: string[] = [];
 
@@ -57,7 +63,7 @@ const formatProperties = (properties: Record<string, unknown>) => {
 
 const applyFilters = () => {
     router.get(
-        route('activity-log.index'),
+        activityLogIndex(),
         {
             search: search.value || undefined,
             event: selectedEvent.value || undefined,

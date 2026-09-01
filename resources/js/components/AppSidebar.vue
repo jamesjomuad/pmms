@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { BookOpen, Briefcase, Clock, LayoutGrid, SquareText, Users } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -18,8 +18,6 @@ import {
 import { dashboard } from '@/routes';
 import { index as projectsIndex } from '@/routes/projects';
 import type { NavItem } from '@/types';
-
-const page = usePage();
 
 const mainNavItems = computed<NavItem[]>(() => [
     {

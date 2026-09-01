@@ -96,3 +96,74 @@ export type ActivityLogEntry = {
     properties: Record<string, unknown>;
     created_at: string;
 };
+
+export type WorkflowStatus =
+    | 'draft'
+    | 'pending'
+    | 'in_review'
+    | 'approved'
+    | 'rejected'
+    | 'revision'
+    | 'cancelled';
+
+export type Submittal = {
+    id: number;
+    title: string;
+    spec_section: string | null;
+    revision_number: number;
+    status: WorkflowStatus;
+    due_date: string | null;
+    assigned_to: string | null;
+    created_at: string;
+};
+
+export type SubmittalDetail = Submittal & {
+    description: string | null;
+    submitted_at: string | null;
+    approved_at: string | null;
+    rejection_reason: string | null;
+    assignee: {
+        id: number;
+        name: string;
+    } | null;
+    comments: Comment[];
+    attachments: Attachment[];
+    approval_requests: ApprovalRequest[];
+};
+
+export type Comment = {
+    id: number;
+    body: string;
+    user: {
+        id: number;
+        name: string;
+    };
+    created_at: string;
+};
+
+export type Attachment = {
+    id: number;
+    name: string;
+    file_name: string;
+    mime_type: string;
+    size: number;
+    human_size: string;
+    created_at: string;
+    url: string;
+};
+
+export type ApprovalRequest = {
+    id: number;
+    status: string;
+    requested_by: string;
+    created_at: string;
+    steps: ApprovalStep[];
+};
+
+export type ApprovalStep = {
+    id: number;
+    approver: string;
+    status: string;
+    decided_at: string | null;
+    comments: string | null;
+};

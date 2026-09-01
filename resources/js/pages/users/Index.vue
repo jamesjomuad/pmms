@@ -65,7 +65,10 @@ const filteredUsers = computed(() => {
             const query = searchQuery.value.toLowerCase();
             const matchesName = user.name.toLowerCase().includes(query);
             const matchesEmail = user.email.toLowerCase().includes(query);
-            if (!matchesName && !matchesEmail) return false;
+
+            if (!matchesName && !matchesEmail) {
+return false;
+}
         }
 
         if (roleFilter.value !== 'all' && user.role !== roleFilter.value) {
@@ -75,6 +78,7 @@ const filteredUsers = computed(() => {
         if (verifiedFilter.value === 'verified' && !user.email_verified_at) {
             return false;
         }
+
         if (verifiedFilter.value === 'unverified' && user.email_verified_at) {
             return false;
         }
@@ -82,6 +86,7 @@ const filteredUsers = computed(() => {
         if (twoFactorFilter.value === 'enabled' && !user.two_factor_enabled) {
             return false;
         }
+
         if (twoFactorFilter.value === 'disabled' && user.two_factor_enabled) {
             return false;
         }

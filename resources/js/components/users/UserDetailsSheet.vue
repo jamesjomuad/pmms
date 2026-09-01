@@ -3,7 +3,6 @@ import {
     Briefcase,
     Calendar,
     CheckCircle2,
-    Clock,
     Edit3,
     KeyRound,
     Lock,
@@ -40,7 +39,10 @@ const emit = defineEmits<{
 const { getInitials } = useInitials();
 
 const formatDate = (dateString?: string | null) => {
-    if (!dateString) return 'Never';
+    if (!dateString) {
+return 'Never';
+}
+
     return new Date(dateString).toLocaleDateString(undefined, {
         year: 'numeric',
         month: 'short',
