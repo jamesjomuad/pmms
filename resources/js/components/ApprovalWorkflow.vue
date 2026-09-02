@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Check, Circle, X } from '@lucide/vue';
 
-type StepStatus = 'approved' | 'rejected' | 'pending' | 'skipped';
+type StepStatus = 'approved' | 'rejected' | 'pending' | 'skipped' | string;
 
 defineProps<{
     steps: {
@@ -22,6 +22,7 @@ const stepClasses = (status: StepStatus) => {
         case 'pending':
             return 'border-primary bg-primary text-primary-foreground';
         case 'skipped':
+        default:
             return 'border-border bg-background text-muted-foreground';
     }
 };
@@ -63,9 +64,18 @@ const labelClasses = (status: StepStatus) => {
                         class="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-medium transition-all duration-200"
                         :class="stepClasses(step.status)"
                     >
-                        <Check v-if="step.status === 'approved'" class="h-4 w-4" />
-                        <X v-else-if="step.status === 'rejected'" class="h-4 w-4" />
-                        <Circle v-else-if="step.status === 'skipped'" class="h-2 w-2" />
+                        <Check
+                            v-if="step.status === 'approved'"
+                            class="h-4 w-4"
+                        />
+                        <X
+                            v-else-if="step.status === 'rejected'"
+                            class="h-4 w-4"
+                        />
+                        <Circle
+                            v-else-if="step.status === 'skipped'"
+                            class="h-2 w-2"
+                        />
                         <span v-else>{{ index + 1 }}</span>
                     </div>
                     <div class="mt-1.5 text-center">

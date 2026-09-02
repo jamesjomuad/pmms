@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ClipboardList, DraftingCompass, FileText, Pencil, Receipt } from '@lucide/vue';
+import {
+    ClipboardList,
+    DraftingCompass,
+    FileText,
+    Pencil,
+    Receipt,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import ActivityLog from '@/components/ActivityLog.vue';
 import DeliverablesCard from '@/components/DeliverablesCard.vue';
@@ -11,10 +17,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { edit as projectEdit } from '@/routes/projects';
-import { index as shopDrawingsIndex } from '@/routes/projects/shop-drawings';
-import { index as submittalsIndex } from '@/routes/projects/submittals';
 import { index as changeOrdersIndex } from '@/routes/projects/change-orders';
 import { index as punchListIndex } from '@/routes/projects/punch-list';
+import { index as shopDrawingsIndex } from '@/routes/projects/shop-drawings';
+import { index as submittalsIndex } from '@/routes/projects/submittals';
 import type { ProjectDetail, StageOption } from '@/types';
 
 const props = defineProps<{
@@ -159,7 +165,11 @@ defineOptions({
                                         Status
                                     </dt>
                                     <dd class="mt-1">
-                                        <Badge :variant="statusVariant(project.status)">
+                                        <Badge
+                                            :variant="
+                                                statusVariant(project.status)
+                                            "
+                                        >
                                             {{ statusLabel(project.status) }}
                                         </Badge>
                                     </dd>
@@ -187,12 +197,19 @@ defineOptions({
                                         Est. Completion
                                     </dt>
                                     <dd class="mt-1 text-sm">
-                                        {{ project.estimated_completion_date ?? '—' }}
+                                        {{
+                                            project.estimated_completion_date ??
+                                            '—'
+                                        }}
                                     </dd>
                                 </div>
                                 <div v-if="project.notes" class="sm:col-span-2">
-                                    <dt class="text-sm text-muted-foreground">Notes</dt>
-                                    <dd class="mt-1 text-sm whitespace-pre-wrap">
+                                    <dt class="text-sm text-muted-foreground">
+                                        Notes
+                                    </dt>
+                                    <dd
+                                        class="mt-1 text-sm whitespace-pre-wrap"
+                                    >
                                         {{ project.notes }}
                                     </dd>
                                 </div>
@@ -204,13 +221,18 @@ defineOptions({
                         <CardHeader>
                             <CardTitle>
                                 Team
-                                <span class="text-sm font-normal text-muted-foreground">
+                                <span
+                                    class="text-sm font-normal text-muted-foreground"
+                                >
                                     ({{ project.team.length }})
                                 </span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ul v-if="project.team.length > 0" class="space-y-3">
+                            <ul
+                                v-if="project.team.length > 0"
+                                class="space-y-3"
+                            >
                                 <li
                                     v-for="member in project.team"
                                     :key="member.id"
@@ -226,7 +248,10 @@ defineOptions({
                                             {{ member.email }}
                                         </p>
                                     </div>
-                                    <Badge variant="secondary" class="shrink-0 text-xs">
+                                    <Badge
+                                        variant="secondary"
+                                        class="shrink-0 text-xs"
+                                    >
                                         {{ member.project_role_label }}
                                     </Badge>
                                 </li>
@@ -245,7 +270,10 @@ defineOptions({
                         <CardTitle>Stage History</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ul v-if="project.stage_history.length > 0" class="space-y-4">
+                        <ul
+                            v-if="project.stage_history.length > 0"
+                            class="space-y-4"
+                        >
                             <li
                                 v-for="entry in project.stage_history"
                                 :key="entry.id"
@@ -270,9 +298,13 @@ defineOptions({
                                             </span>
                                         </span>
                                     </p>
-                                    <p class="mt-0.5 text-xs text-muted-foreground">
+                                    <p
+                                        class="mt-0.5 text-xs text-muted-foreground"
+                                    >
                                         {{
-                                            new Date(entry.changed_at).toLocaleString()
+                                            new Date(
+                                                entry.changed_at,
+                                            ).toLocaleString()
                                         }}
                                     </p>
                                     <p

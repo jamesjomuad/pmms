@@ -3,7 +3,6 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     CheckCircle2,
-    Clock,
     FileText,
     MessageSquare,
     Paperclip,
@@ -74,24 +73,30 @@ const canReject = computed(
         props.submittal.status === 'in_review',
 );
 
-const canCreateRevision = computed(
-    () => props.submittal.status === 'rejected',
-);
+const canCreateRevision = computed(() => props.submittal.status === 'rejected');
 
 const submitForReview = () => {
-    router.post(`/projects/${props.project.id}/submittals/${props.submittal.id}/submit`);
+    router.post(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}/submit`,
+    );
 };
 
 const approve = () => {
-    router.post(`/projects/${props.project.id}/submittals/${props.submittal.id}/approve`);
+    router.post(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}/approve`,
+    );
 };
 
 const requestRevision = () => {
-    router.post(`/projects/${props.project.id}/submittals/${props.submittal.id}/request-revision`);
+    router.post(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}/request-revision`,
+    );
 };
 
 const newRevision = () => {
-    router.post(`/projects/${props.project.id}/submittals/${props.submittal.id}/new-revision`);
+    router.post(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}/new-revision`,
+    );
 };
 
 defineOptions({
@@ -185,9 +190,13 @@ defineOptions({
                 <CardContent>
                     <dl class="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Status</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Status
+                            </dt>
                             <dd class="mt-1">
-                                <Badge :variant="statusVariant(submittal.status)">
+                                <Badge
+                                    :variant="statusVariant(submittal.status)"
+                                >
                                     {{ statusLabel(submittal.status) }}
                                 </Badge>
                             </dd>
@@ -260,7 +269,10 @@ defineOptions({
                                 </p>
                             </div>
                         </li>
-                        <li v-if="submittal.submitted_at" class="flex items-start gap-3">
+                        <li
+                            v-if="submittal.submitted_at"
+                            class="flex items-start gap-3"
+                        >
                             <div
                                 class="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary"
                             />
@@ -275,7 +287,10 @@ defineOptions({
                                 </p>
                             </div>
                         </li>
-                        <li v-if="submittal.approved_at" class="flex items-start gap-3">
+                        <li
+                            v-if="submittal.approved_at"
+                            class="flex items-start gap-3"
+                        >
                             <div
                                 class="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500"
                             />
@@ -332,15 +347,11 @@ defineOptions({
                                 :key="comment.id"
                                 class="rounded-lg border p-4"
                             >
-                                <div
-                                    class="flex items-center justify-between"
-                                >
+                                <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium">
                                         {{ comment.user.name }}
                                     </p>
-                                    <p
-                                        class="text-xs text-muted-foreground"
-                                    >
+                                    <p class="text-xs text-muted-foreground">
                                         {{
                                             new Date(
                                                 comment.created_at,
@@ -348,9 +359,7 @@ defineOptions({
                                         }}
                                     </p>
                                 </div>
-                                <p
-                                    class="mt-2 text-sm whitespace-pre-wrap"
-                                >
+                                <p class="mt-2 text-sm whitespace-pre-wrap">
                                     {{ comment.body }}
                                 </p>
                             </div>
@@ -390,10 +399,7 @@ defineOptions({
                                     </div>
                                 </div>
                                 <Button variant="ghost" size="sm" as-child>
-                                    <a
-                                        :href="attachment.url"
-                                        target="_blank"
-                                    >
+                                    <a :href="attachment.url" target="_blank">
                                         Download
                                     </a>
                                 </Button>
@@ -418,17 +424,13 @@ defineOptions({
                                 :key="request.id"
                                 class="rounded-lg border p-4"
                             >
-                                <div
-                                    class="flex items-center justify-between"
-                                >
+                                <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium">
                                         Requested by
                                         {{ request.requested_by }}
                                     </p>
                                     <Badge
-                                        :variant="
-                                            statusVariant(request.status)
-                                        "
+                                        :variant="statusVariant(request.status)"
                                     >
                                         {{ statusLabel(request.status) }}
                                     </Badge>

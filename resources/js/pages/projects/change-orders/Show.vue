@@ -3,7 +3,6 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     CheckCircle2,
-    Clock,
     FileText,
     MessageSquare,
     Paperclip,
@@ -100,9 +99,7 @@ const statusLabel = (status: string) => {
     return labels[status] ?? status;
 };
 
-const canSubmit = computed(
-    () => props.changeOrder.status === 'draft',
-);
+const canSubmit = computed(() => props.changeOrder.status === 'draft');
 
 const canApprove = computed(
     () =>
@@ -117,15 +114,21 @@ const canReject = computed(
 );
 
 const submitForReview = () => {
-    router.post(`/projects/${props.project.id}/change-orders/${props.changeOrder.id}/submit`);
+    router.post(
+        `/projects/${props.project.id}/change-orders/${props.changeOrder.id}/submit`,
+    );
 };
 
 const approve = () => {
-    router.post(`/projects/${props.project.id}/change-orders/${props.changeOrder.id}/approve`);
+    router.post(
+        `/projects/${props.project.id}/change-orders/${props.changeOrder.id}/approve`,
+    );
 };
 
 const reject = () => {
-    router.post(`/projects/${props.project.id}/change-orders/${props.changeOrder.id}/reject`);
+    router.post(
+        `/projects/${props.project.id}/change-orders/${props.changeOrder.id}/reject`,
+    );
 };
 
 defineOptions({
@@ -210,9 +213,13 @@ defineOptions({
                 <CardContent>
                     <dl class="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Status</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Status
+                            </dt>
                             <dd class="mt-1">
-                                <Badge :variant="statusVariant(changeOrder.status)">
+                                <Badge
+                                    :variant="statusVariant(changeOrder.status)"
+                                >
                                     {{ statusLabel(changeOrder.status) }}
                                 </Badge>
                             </dd>
@@ -238,10 +245,17 @@ defineOptions({
                                 Requested By
                             </dt>
                             <dd class="mt-1 text-sm">
-                                {{ changeOrder.requester?.name ?? changeOrder.requested_by ?? '—' }}
+                                {{
+                                    changeOrder.requester?.name ??
+                                    changeOrder.requested_by ??
+                                    '—'
+                                }}
                             </dd>
                         </div>
-                        <div v-if="changeOrder.description" class="sm:col-span-2">
+                        <div
+                            v-if="changeOrder.description"
+                            class="sm:col-span-2"
+                        >
                             <dt class="text-sm text-muted-foreground">
                                 Description
                             </dt>
@@ -285,7 +299,10 @@ defineOptions({
                                 </p>
                             </div>
                         </li>
-                        <li v-if="changeOrder.requested_at" class="flex items-start gap-3">
+                        <li
+                            v-if="changeOrder.requested_at"
+                            class="flex items-start gap-3"
+                        >
                             <div
                                 class="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary"
                             />
@@ -300,7 +317,10 @@ defineOptions({
                                 </p>
                             </div>
                         </li>
-                        <li v-if="changeOrder.approved_at" class="flex items-start gap-3">
+                        <li
+                            v-if="changeOrder.approved_at"
+                            class="flex items-start gap-3"
+                        >
                             <div
                                 class="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500"
                             />
@@ -357,15 +377,11 @@ defineOptions({
                                 :key="comment.id"
                                 class="rounded-lg border p-4"
                             >
-                                <div
-                                    class="flex items-center justify-between"
-                                >
+                                <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium">
                                         {{ comment.user.name }}
                                     </p>
-                                    <p
-                                        class="text-xs text-muted-foreground"
-                                    >
+                                    <p class="text-xs text-muted-foreground">
                                         {{
                                             new Date(
                                                 comment.created_at,
@@ -373,9 +389,7 @@ defineOptions({
                                         }}
                                     </p>
                                 </div>
-                                <p
-                                    class="mt-2 text-sm whitespace-pre-wrap"
-                                >
+                                <p class="mt-2 text-sm whitespace-pre-wrap">
                                     {{ comment.body }}
                                 </p>
                             </div>
@@ -415,10 +429,7 @@ defineOptions({
                                     </div>
                                 </div>
                                 <Button variant="ghost" size="sm" as-child>
-                                    <a
-                                        :href="attachment.url"
-                                        target="_blank"
-                                    >
+                                    <a :href="attachment.url" target="_blank">
                                         Download
                                     </a>
                                 </Button>
@@ -443,17 +454,13 @@ defineOptions({
                                 :key="request.id"
                                 class="rounded-lg border p-4"
                             >
-                                <div
-                                    class="flex items-center justify-between"
-                                >
+                                <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium">
                                         Requested by
                                         {{ request.requested_by }}
                                     </p>
                                     <Badge
-                                        :variant="
-                                            statusVariant(request.status)
-                                        "
+                                        :variant="statusVariant(request.status)"
                                     >
                                         {{ statusLabel(request.status) }}
                                     </Badge>

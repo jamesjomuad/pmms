@@ -45,6 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fix `defineOptions` props hoisting compilation error on punch list index page
+- Fix type definitions and ESLint issues in approval workflow and show views
 - Removed broken `TeamController::switch` route that caused C3 404 errors
 - Sanitized user data in `HandleInertiaRequests` to only expose safe fields (id, name, email, verified_at, 2fa_confirmed_at, created_at)
 - Added `ProjectController::destroy` method for DELETE `/projects/{project}` endpoint

@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, Pencil } from '@lucide/vue';
-import type { User } from '@/types';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const props = defineProps<{
+defineProps<{
     project: { id: number; name: string };
     equipment: { id: number; title: string };
     inspection: {
@@ -63,11 +62,15 @@ defineOptions({
 
     <h1 class="sr-only">Equipment Inspection</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <Button variant="ghost" size="sm" as-child>
-                    <Link :href="`/projects/${project.id}/equipment/${equipment.id}/inspections`">
+                    <Link
+                        :href="`/projects/${project.id}/equipment/${equipment.id}/inspections`"
+                    >
                         <ArrowLeft class="mr-1 h-4 w-4" />
                         Back
                     </Link>
@@ -105,21 +108,33 @@ defineOptions({
                     </div>
                     <div>
                         <dt class="text-sm text-muted-foreground">Inspector</dt>
-                        <dd class="mt-1 text-sm">{{ inspection.inspector?.name ?? '—' }}</dd>
+                        <dd class="mt-1 text-sm">
+                            {{ inspection.inspector?.name ?? '—' }}
+                        </dd>
                     </div>
                     <div>
-                        <dt class="text-sm text-muted-foreground">Inspection Date</dt>
-                        <dd class="mt-1 text-sm">{{ inspection.inspected_date ?? '—' }}</dd>
+                        <dt class="text-sm text-muted-foreground">
+                            Inspection Date
+                        </dt>
+                        <dd class="mt-1 text-sm">
+                            {{ inspection.inspected_date ?? '—' }}
+                        </dd>
                     </div>
                     <div>
                         <dt class="text-sm text-muted-foreground">Created</dt>
                         <dd class="mt-1 text-sm">
-                            {{ new Date(inspection.created_at).toLocaleDateString() }}
+                            {{
+                                new Date(
+                                    inspection.created_at,
+                                ).toLocaleDateString()
+                            }}
                         </dd>
                     </div>
                     <div v-if="inspection.notes" class="sm:col-span-2">
                         <dt class="text-sm text-muted-foreground">Notes</dt>
-                        <dd class="mt-1 text-sm whitespace-pre-wrap">{{ inspection.notes }}</dd>
+                        <dd class="mt-1 text-sm whitespace-pre-wrap">
+                            {{ inspection.notes }}
+                        </dd>
                     </div>
                 </dl>
             </CardContent>

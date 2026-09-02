@@ -81,22 +81,24 @@ const clearFilters = () => {
 };
 
 defineOptions({
-    layout: () => ({
-        breadcrumbs: [
-            {
-                title: 'Projects',
-                href: '/projects',
-            },
-            {
-                title: props.project.name,
-                href: `/projects/${props.project.id}`,
-            },
-            {
-                title: 'Punch List',
-                href: `/projects/${props.project.id}/punch-list`,
-            },
-        ],
-    }),
+    layout: () => {
+        const pathMatch = window.location.pathname.match(/\/projects\/(\d+)/);
+        const projectId = pathMatch ? pathMatch[1] : '';
+
+        return {
+            breadcrumbs: [
+                { title: 'Projects', href: '/projects' },
+                {
+                    title: 'Project Details',
+                    href: `/projects/${projectId}`,
+                },
+                {
+                    title: 'Punch List',
+                    href: `/projects/${projectId}/punch-list`,
+                },
+            ],
+        };
+    },
 });
 </script>
 
@@ -141,7 +143,10 @@ defineOptions({
 
             <div class="flex items-center gap-2">
                 <Select v-model="statusFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by status">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by status"
+                    >
                         <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -152,7 +157,10 @@ defineOptions({
                 </Select>
 
                 <Select v-model="priorityFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by priority">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by priority"
+                    >
                         <SelectValue placeholder="All Priority" />
                     </SelectTrigger>
                     <SelectContent>
@@ -165,7 +173,11 @@ defineOptions({
                 </Select>
 
                 <Button
-                    v-if="searchQuery || statusFilter !== 'all' || priorityFilter !== 'all'"
+                    v-if="
+                        searchQuery ||
+                        statusFilter !== 'all' ||
+                        priorityFilter !== 'all'
+                    "
                     variant="ghost"
                     size="sm"
                     class="h-8 px-2 text-xs"
@@ -194,10 +206,7 @@ defineOptions({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow
-                        v-for="item in filteredItems"
-                        :key="item.id"
-                    >
+                    <TableRow v-for="item in filteredItems" :key="item.id">
                         <TableCell>
                             <Link
                                 :href="`/projects/${project.id}/punch-list/${item.id}`"
