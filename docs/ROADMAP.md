@@ -10,7 +10,7 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 
 ---
 
-## Phase 1 — Architecture Audit & Documentation Baseline
+## Phase 1 — Architecture Audit & Documentation Baseline ✅
 
 **Goal:** Establish the current state as documented, discover discrepancies, and produce the health baseline.
 
@@ -22,11 +22,11 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 | 1.4 | Update `PMMS-ARCHITECTURE.md` | Distinguish CURRENT (what exists), TARGET (where it's going), RULES (what agents/devs must follow), DECISIONS (why), and ROADMAP (when). Do not rewrite valid sections for style. |
 | 1.5 | Create ADR-001 through ADR-007 | One ADR per major architectural decision (Modular Monolith, Laravel+Inertia, PostgreSQL, Project-Level Auth, Generic Approval Engine, Workflow Architecture, AI Recommendation Architecture). Each: Context, Decision, Alternatives, Consequences, Status. |
 
-**Deliverables:** Updated `PMMS-ARCHITECTURE.md`, discrepancy report, health scores, ADRs.
+**Deliverables:** `docs/ARCHITECTURE-AUDIT.md`, `docs/adr/ADR-001` through `ADR-007`, updated `PMMS-ARCHITECTURE.md`.
 
 ---
 
-## Phase 2 — Architectural Boundaries & Layering
+## Phase 2 — Architectural Boundaries & Layering ✅
 
 **Goal:** Make the Presentation → Application → Domain → Infrastructure layering explicit in documentation and visible in code structure.
 
@@ -37,11 +37,11 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 | 2.3 | Establish directory conventions | Document where Application actions, Domain models, and Infrastructure adapters live in the Laravel project structure. |
 | 2.4 | Add boundary rules to `PMMS-ARCHITECTURE.md` | State the dependency direction, what each layer may import, and what it must not import. |
 
-**Deliverables:** Layer documentation, code-to-layer mapping, directory conventions.
+**Deliverables:** Covered in `PMMS-ARCHITECTURE.md §3.3` (Architectural Layering, Target State).
 
 ---
 
-## Phase 3 — Pattern Refinement (Existing)
+## Phase 3 — Pattern Refinement (Existing) ✅
 
 **Goal:** Document each existing architectural pattern with its full lifecycle. Do not replace unless there is a concrete problem.
 
@@ -54,11 +54,11 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 | 3.5 | Configurable Notifications (notification_rules table) | Document: event_key → role → channel mapping, how rules are added, how they're evaluated. |
 | 3.6 | Activity/Audit Logging | Document: what is logged, polymorphic wiring, what developers must wire for new modules. |
 
-**Deliverables:** Pattern documentation sections in `PMMS-ARCHITECTURE.md`, code verification per pattern.
+**Deliverables:** Covered in `PMMS-ARCHITECTURE.md §3.1` (Trackable Item, Approval Engine, Notifications, Activity/Audit) and `PMMS-WORKFLOW-ARCHITECTURE.md` (Workflow Model, Four Concerns, Data Model Mapping).
 
 ---
 
-## Phase 4 — Workflow Architecture
+## Phase 4 — Workflow Architecture ✅
 
 **Goal:** Clearly separate State, Transition, Permission, Business Rule, and Notification into distinct concerns.
 
@@ -69,7 +69,7 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 | 4.3 | Map transitions to the data model | Show how `project_stage_history` captures state transitions, how rules are evaluated, how notifications fire, how audit events are created. |
 | 4.4 | Document extension points | How to add a new stage, a new transition rule, a new notification trigger — all as data changes, not code deploys. |
 
-**Deliverables:** Workflow architecture documentation, transition-rule reference.
+**Deliverables:** `docs/PMMS-WORKFLOW-ARCHITECTURE.md` — workflow model, four concerns, data model mapping, extension points, current gaps, developer rules, target architecture.
 
 ---
 

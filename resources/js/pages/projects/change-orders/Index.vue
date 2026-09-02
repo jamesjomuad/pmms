@@ -74,22 +74,24 @@ const clearFilters = () => {
 };
 
 defineOptions({
-    layout: () => ({
-        breadcrumbs: [
-            {
-                title: 'Projects',
-                href: '/projects',
-            },
-            {
-                title: props.project.name,
-                href: `/projects/${props.project.id}`,
-            },
-            {
-                title: 'Change Orders',
-                href: `/projects/${props.project.id}/change-orders`,
-            },
-        ],
-    }),
+    layout: () => {
+        const pathMatch = window.location.pathname.match(/\/projects\/(\d+)/);
+        const projectId = pathMatch ? pathMatch[1] : '';
+
+        return {
+            breadcrumbs: [
+                { title: 'Projects', href: '/projects' },
+                {
+                    title: 'Project Details',
+                    href: `/projects/${projectId}`,
+                },
+                {
+                    title: 'Change Orders',
+                    href: `/projects/${projectId}/change-orders`,
+                },
+            ],
+        };
+    },
 });
 </script>
 
