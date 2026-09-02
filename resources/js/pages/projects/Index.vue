@@ -12,8 +12,16 @@ import {
 import { computed, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import ProjectCard from '@/components/ProjectCard.vue';
+import StatCard from '@/components/StatCard.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { create as projectCreate } from '@/routes/projects';
 import type { Project } from '@/types';
 
@@ -121,63 +129,30 @@ defineOptions({
             v-if="projects.length > 0"
             class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4"
         >
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted"
-                >
-                    <Briefcase class="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">
-                        {{ stats.total }}
-                    </p>
-                    <p class="text-xs text-muted-foreground">Total</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-emerald-50 dark:bg-emerald-950"
-                >
-                    <CheckCircle2
-                        class="h-4 w-4 text-emerald-600 dark:text-emerald-400"
-                    />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">
-                        {{ stats.active }}
-                    </p>
-                    <p class="text-xs text-muted-foreground">Active</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-amber-50 dark:bg-amber-950"
-                >
-                    <Clock class="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">
-                        {{ stats.onHold }}
-                    </p>
-                    <p class="text-xs text-muted-foreground">On Hold</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted"
-                >
-                    <Pause class="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">
-                        {{ stats.closed }}
-                    </p>
-                    <p class="text-xs text-muted-foreground">Closed</p>
-                </div>
-            </div>
+            <StatCard
+                :icon="Briefcase"
+                :value="stats.total"
+                label="Total"
+            />
+            <StatCard
+                :icon="CheckCircle2"
+                :value="stats.active"
+                label="Active"
+                icon-bg-class="bg-emerald-50 dark:bg-emerald-950"
+                icon-class="text-emerald-600 dark:text-emerald-400"
+            />
+            <StatCard
+                :icon="Clock"
+                :value="stats.onHold"
+                label="On Hold"
+                icon-bg-class="bg-amber-50 dark:bg-amber-950"
+                icon-class="text-amber-600 dark:text-amber-400"
+            />
+            <StatCard
+                :icon="Pause"
+                :value="stats.closed"
+                label="Closed"
+            />
         </div>
 
         <div
@@ -191,6 +166,7 @@ defineOptions({
                 <Input
                     v-model="searchQuery"
                     placeholder="Search projects..."
+                    aria-label="Search projects"
                     class="pl-9"
                 />
             </div>
@@ -214,19 +190,21 @@ defineOptions({
                     </button>
                 </div>
 
-                <select
-                    v-model="activeStageFilter"
-                    class="h-9 rounded-md border bg-transparent px-3 text-xs font-medium text-muted-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50"
-                >
-                    <option value="all">All Stages</option>
-                    <option
-                        v-for="stage in stages"
-                        :key="stage.key"
-                        :value="stage.key"
-                    >
-                        {{ stage.label }}
-                    </option>
-                </select>
+                <Select v-model="activeStageFilter">
+                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by stage">
+                        <SelectValue placeholder="All Stages" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Stages</SelectItem>
+                        <SelectItem
+                            v-for="stage in stages"
+                            :key="stage.key"
+                            :value="stage.key"
+                        >
+                            {{ stage.label }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <Button
                     v-if="hasActiveFilters"

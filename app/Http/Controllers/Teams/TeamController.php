@@ -38,6 +38,12 @@ class TeamController extends Controller
     {
         $team = $createTeam->handle($request->user(), $request->validated('name'));
 
+        activity()
+            ->performedOn($team)
+            ->causedBy($request->user())
+            ->event('created')
+            ->log('Team created');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team created.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);
@@ -100,6 +106,12 @@ class TeamController extends Controller
             return $team;
         });
 
+        activity()
+            ->performedOn($team)
+            ->causedBy($request->user())
+            ->event('updated')
+            ->log('Team updated');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team updated.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);
@@ -118,6 +130,12 @@ class TeamController extends Controller
             ->where('user_id', $user->id)
             ->delete();
 
+        activity()
+            ->performedOn($team)
+            ->causedBy($user)
+            ->event('member_left')
+            ->log('User left team');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('You left the team ":name"', ['name' => $team->name])]);
 
         return to_route('teams.index');
@@ -133,6 +151,12 @@ class TeamController extends Controller
             $team->memberships()->delete();
             $team->delete();
         });
+
+        activity()
+            ->performedOn($team)
+            ->causedBy($request->user())
+            ->event('deleted')
+            ->log('Team deleted');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team deleted.')]);
 

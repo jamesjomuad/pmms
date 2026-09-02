@@ -135,6 +135,13 @@ class UserController extends Controller
             ]);
         });
 
+        activity()
+            ->performedOn($currentTeam)
+            ->causedBy($request->user())
+            ->event('user_created')
+            ->withProperties(['email' => $request->validated('email'), 'role' => $request->validated('role')])
+            ->log('User created and added to team');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('User created successfully.')]);
 
         return to_route('users.index');
@@ -171,6 +178,13 @@ class UserController extends Controller
             }
         });
 
+        activity()
+            ->performedOn($currentTeam)
+            ->causedBy($request->user())
+            ->event('user_updated')
+            ->withProperties(['user_id' => $targetUser->id, 'email' => $targetUser->email])
+            ->log('User updated');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('User updated successfully.')]);
 
         return to_route('users.index');
@@ -196,6 +210,13 @@ class UserController extends Controller
                 ->where('user_id', $targetUser->id)
                 ->delete();
         });
+
+        activity()
+            ->performedOn($currentTeam)
+            ->causedBy($request->user())
+            ->event('user_removed')
+            ->withProperties(['user_id' => $targetUser->id, 'email' => $targetUser->email])
+            ->log('User removed from team');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('User removed from team.')]);
 

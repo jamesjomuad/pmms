@@ -61,6 +61,13 @@ trait HasAttachments
             $media->update(['name' => $name]);
         }
 
+        activity()
+            ->performedOn($this)
+            ->causedBy(auth()->user())
+            ->event('attachment_added')
+            ->withProperties(['file_name' => $media->file_name, 'name' => $name ?? $media->file_name])
+            ->log('Attachment uploaded');
+
         return $media;
     }
 
@@ -91,6 +98,13 @@ trait HasAttachments
             ->firstWhere('id', $mediaId);
 
         if ($media) {
+            activity()
+                ->performedOn($this)
+                ->causedBy(auth()->user())
+                ->event('attachment_removed')
+                ->withProperties(['file_name' => $media->file_name])
+                ->log('Attachment removed');
+
             return $media->delete();
         }
 

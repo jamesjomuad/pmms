@@ -34,6 +34,13 @@ class TeamInvitationController extends Controller
         Notification::route('mail', $invitation->email)
             ->notify(new TeamInvitationNotification($invitation));
 
+        activity()
+            ->performedOn($team)
+            ->causedBy($request->user())
+            ->event('invitation_sent')
+            ->withProperties(['email' => $request->validated('email'), 'role' => $request->validated('role')])
+            ->log('Team invitation sent');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation sent.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);
@@ -49,6 +56,13 @@ class TeamInvitationController extends Controller
         Gate::authorize('cancelInvitation', $team);
 
         $invitation->delete();
+
+        activity()
+            ->performedOn($team)
+            ->causedBy(auth()->user())
+            ->event('invitation_cancelled')
+            ->withProperties(['email' => $invitation->email])
+            ->log('Team invitation cancelled');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation cancelled.')]);
 
@@ -73,6 +87,13 @@ class TeamInvitationController extends Controller
             $invitation->update(['accepted_at' => now()]);
         });
 
+        activity()
+            ->performedOn($invitation->team)
+            ->causedBy($user)
+            ->event('invitation_accepted')
+            ->withProperties(['email' => $invitation->email])
+            ->log('Team invitation accepted');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation accepted.')]);
 
         return to_route('dashboard');
@@ -84,6 +105,13 @@ class TeamInvitationController extends Controller
     public function decline(RespondToTeamInvitationRequest $request, TeamInvitation $invitation): RedirectResponse
     {
         $invitation->delete();
+
+        activity()
+            ->performedOn($invitation->team)
+            ->causedBy($request->user())
+            ->event('invitation_declined')
+            ->withProperties(['email' => $invitation->email])
+            ->log('Team invitation declined');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation declined.')]);
 

@@ -144,6 +144,12 @@ class ProjectController extends Controller
             return $project;
         });
 
+        activity()
+            ->performedOn($project)
+            ->causedBy($request->user())
+            ->event('created')
+            ->log('Project created');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project created.')]);
 
         return to_route('projects.show', $project);
@@ -312,6 +318,12 @@ class ProjectController extends Controller
             }
         });
 
+        activity()
+            ->performedOn($project)
+            ->causedBy($request->user())
+            ->event('updated')
+            ->log('Project updated');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project updated.')]);
 
         return to_route('projects.show', $project);
@@ -325,6 +337,12 @@ class ProjectController extends Controller
         Gate::authorize('delete', $project);
 
         $project->delete();
+
+        activity()
+            ->performedOn($project)
+            ->causedBy(auth()->user())
+            ->event('deleted')
+            ->log('Project deleted');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Project deleted.')]);
 

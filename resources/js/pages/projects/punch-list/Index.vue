@@ -2,10 +2,18 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { CheckSquare, Plus, Search, X } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Table,
     TableBody,
@@ -14,6 +22,12 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    priorityLabel,
+    priorityVariant,
+    statusLabel,
+    statusVariant,
+} from '@/composables/statusHelpers';
 import { create as punchListCreate } from '@/routes/projects/punch-list';
 
 const props = defineProps<{
@@ -60,49 +74,6 @@ const filteredItems = computed(() => {
     return result;
 });
 
-const statusVariant = (status: string) => {
-    switch (status) {
-        case 'approved':
-            return 'default';
-        case 'pending':
-            return 'secondary';
-        case 'rejected':
-            return 'destructive';
-        case 'draft':
-            return 'outline';
-        default:
-            return 'secondary';
-    }
-};
-
-const statusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-        draft: 'Draft',
-        pending: 'Open',
-        in_review: 'In Review',
-        approved: 'Resolved',
-        rejected: 'Rejected',
-        cancelled: 'Cancelled',
-    };
-
-    return labels[status] ?? status;
-};
-
-const priorityVariant = (priority: string) => {
-    switch (priority) {
-        case 'critical':
-            return 'destructive';
-        case 'high':
-            return 'default';
-        case 'medium':
-            return 'secondary';
-        case 'low':
-            return 'outline';
-        default:
-            return 'secondary';
-    }
-};
-
 const clearFilters = () => {
     searchQuery.value = '';
     statusFilter.value = 'all';
@@ -115,6 +86,14 @@ defineOptions({
             {
                 title: 'Projects',
                 href: '/projects',
+            },
+            {
+                title: props.project.name,
+                href: `/projects/${props.project.id}`,
+            },
+            {
+                title: 'Punch List',
+                href: `/projects/${props.project.id}/punch-list`,
             },
         ],
     }),
@@ -155,30 +134,35 @@ defineOptions({
                 <Input
                     v-model="searchQuery"
                     placeholder="Search punch list..."
+                    aria-label="Search punch list"
                     class="pl-9"
                 />
             </div>
 
             <div class="flex items-center gap-2">
-                <select
-                    v-model="statusFilter"
-                    class="h-9 rounded-md border bg-transparent px-3 text-xs font-medium text-muted-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50"
-                >
-                    <option value="all">All Status</option>
-                    <option value="pending">Open</option>
-                    <option value="approved">Resolved</option>
-                </select>
+                <Select v-model="statusFilter">
+                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by status">
+                        <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="pending">Open</SelectItem>
+                        <SelectItem value="approved">Resolved</SelectItem>
+                    </SelectContent>
+                </Select>
 
-                <select
-                    v-model="priorityFilter"
-                    class="h-9 rounded-md border bg-transparent px-3 text-xs font-medium text-muted-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50"
-                >
-                    <option value="all">All Priority</option>
-                    <option value="critical">Critical</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
+                <Select v-model="priorityFilter">
+                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by priority">
+                        <SelectValue placeholder="All Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Priority</SelectItem>
+                        <SelectItem value="critical">Critical</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <Button
                     v-if="searchQuery || statusFilter !== 'all' || priorityFilter !== 'all'"
@@ -197,7 +181,7 @@ defineOptions({
             v-if="punchListItems.length > 0 && filteredItems.length > 0"
             class="rounded-lg border"
         >
-            <Table>
+            <Table aria-label="Punch List Items">
                 <TableHeader>
                     <TableRow>
                         <TableHead>Title</TableHead>
@@ -230,7 +214,7 @@ defineOptions({
                         </TableCell>
                         <TableCell>
                             <Badge :variant="priorityVariant(item.priority)">
-                                {{ item.priority }}
+                                {{ priorityLabel(item.priority) }}
                             </Badge>
                         </TableCell>
                         <TableCell>
@@ -249,44 +233,33 @@ defineOptions({
             </Table>
         </div>
 
-        <div
+        <EmptyState
             v-else-if="punchListItems.length > 0 && filteredItems.length === 0"
-            class="flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-16 text-center"
+            :icon="Search"
+            title="No punch list items found"
+            description="No items match your current filters."
         >
-            <div
-                class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted"
-            >
-                <Search class="h-6 w-6 text-muted-foreground/60" />
-            </div>
-            <h3 class="mb-1 text-sm font-medium">No punch list items found</h3>
-            <p class="mb-6 max-w-sm text-sm text-muted-foreground">
-                No items match your current filters.
-            </p>
-            <Button variant="outline" @click="clearFilters">
-                Clear filters
-            </Button>
-        </div>
+            <template #action>
+                <Button variant="outline" @click="clearFilters">
+                    Clear filters
+                </Button>
+            </template>
+        </EmptyState>
 
-        <div
+        <EmptyState
             v-else
-            class="flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-16 text-center"
+            :icon="CheckSquare"
+            title="No punch list items yet"
+            description="Add your first punch list item to start tracking issues and resolutions."
         >
-            <div
-                class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted"
-            >
-                <CheckSquare class="h-6 w-6 text-muted-foreground/60" />
-            </div>
-            <h3 class="mb-1 text-sm font-medium">No punch list items yet</h3>
-            <p class="mb-6 max-w-sm text-sm text-muted-foreground">
-                Add your first punch list item to start tracking issues and
-                resolutions.
-            </p>
-            <Button as-child>
-                <Link :href="createUrl">
-                    <Plus class="mr-1 h-4 w-4" />
-                    Add item
-                </Link>
-            </Button>
-        </div>
+            <template #action>
+                <Button as-child>
+                    <Link :href="createUrl">
+                        <Plus class="mr-1 h-4 w-4" />
+                        Add item
+                    </Link>
+                </Button>
+            </template>
+        </EmptyState>
     </div>
 </template>

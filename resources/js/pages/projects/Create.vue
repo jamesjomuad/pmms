@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import DatePicker from '@/components/ui/date-picker/DatePicker.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { create as projectCreate, index as projectsIndex } from '@/routes/projects';
+import { store as projectStore, index as projectsIndex } from '@/routes/projects';
 import type {
     ProjectRoleOption,
     StageOption,
@@ -22,7 +22,7 @@ const props = defineProps<{
     nextProjectNumber: string;
 }>();
 
-const storeUrl = projectCreate().url;
+const storeUrl = projectStore().url;
 const cancelUrl = projectsIndex().url;
 
 const form = useForm({

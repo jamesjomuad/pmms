@@ -233,6 +233,15 @@ class ShopDrawingController extends Controller
 
         $shopDrawing->markSubmitted();
 
+        $approverId = $shopDrawing->assigned_to ?? $project->teamMembers->first()?->id;
+        if ($approverId) {
+            $shopDrawing->requestApproval(
+                $request->user(),
+                [['approver_id' => $approverId]],
+                'Submitted for review',
+            );
+        }
+
         activity()
             ->performedOn($shopDrawing)
             ->causedBy($request->user())
@@ -251,7 +260,23 @@ class ShopDrawingController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $shopDrawing->markApproved();
+        $pendingRequest = $shopDrawing->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.shop-drawings.show', [$project, $shopDrawing]);
+        }
+
+        $step->approve();
+
+        if ($shopDrawing->fresh()->status === WorkflowStatus::Approved->value) {
+            $shopDrawing->update(['approved_at' => now()]);
+        }
 
         activity()
             ->performedOn($shopDrawing)
@@ -275,17 +300,31 @@ class ShopDrawingController extends Controller
             'rejection_reason' => ['required', 'string', 'max:2000'],
         ]);
 
+        $pendingRequest = $shopDrawing->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.shop-drawings.show', [$project, $shopDrawing]);
+        }
+
+        $step->reject($data['rejection_reason']);
+
         $shopDrawing->update([
-            'status' => WorkflowStatus::Rejected->value,
+            'status' => WorkflowStatus::Revision->value,
             'rejection_reason' => $data['rejection_reason'],
         ]);
 
         activity()
             ->performedOn($shopDrawing)
             ->causedBy($request->user())
-            ->event('rejected')
+            ->event('revision_requested')
             ->withProperties(['reason' => $data['rejection_reason']])
-            ->log('Shop drawing rejected');
+            ->log('Revision requested on shop drawing');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Revision requested.')]);
 
@@ -298,6 +337,10 @@ class ShopDrawingController extends Controller
     public function newRevision(Request $request, Project $project, ShopDrawing $shopDrawing): RedirectResponse
     {
         Gate::authorize('update', $project);
+
+        $shopDrawing->approvalRequests()
+            ->where('status', 'pending')
+            ->each(fn ($request) => $request->cancel());
 
         $shopDrawing->newRevision();
 

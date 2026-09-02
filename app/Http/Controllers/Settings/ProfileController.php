@@ -38,6 +38,12 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
+        activity()
+            ->performedOn($request->user())
+            ->causedBy($request->user())
+            ->event('profile_updated')
+            ->log('Profile updated');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
         return to_route('profile.edit');
@@ -51,6 +57,12 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
+
+        activity()
+            ->performedOn($user)
+            ->causedBy($user)
+            ->event('account_deleted')
+            ->log('User account deleted');
 
         $user->delete();
 

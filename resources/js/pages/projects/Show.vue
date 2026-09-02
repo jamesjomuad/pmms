@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Pencil } from '@lucide/vue';
+import { ClipboardList, DraftingCompass, FileText, Pencil, Receipt } from '@lucide/vue';
 import { computed } from 'vue';
 import ActivityLog from '@/components/ActivityLog.vue';
 import DeliverablesCard from '@/components/DeliverablesCard.vue';
@@ -11,6 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { edit as projectEdit } from '@/routes/projects';
+import { index as shopDrawingsIndex } from '@/routes/projects/shop-drawings';
+import { index as submittalsIndex } from '@/routes/projects/submittals';
+import { index as changeOrdersIndex } from '@/routes/projects/change-orders';
+import { index as punchListIndex } from '@/routes/projects/punch-list';
 import type { ProjectDetail, StageOption } from '@/types';
 
 const props = defineProps<{
@@ -87,6 +91,37 @@ defineOptions({
                     Edit
                 </Link>
             </Button>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Link
+                :href="shopDrawingsIndex(project.id).url"
+                class="flex items-center gap-3 rounded-lg border p-4 text-sm font-medium transition-colors hover:bg-muted"
+            >
+                <DraftingCompass class="h-5 w-5 text-muted-foreground" />
+                Shop Drawings
+            </Link>
+            <Link
+                :href="submittalsIndex(project.id).url"
+                class="flex items-center gap-3 rounded-lg border p-4 text-sm font-medium transition-colors hover:bg-muted"
+            >
+                <FileText class="h-5 w-5 text-muted-foreground" />
+                Submittals
+            </Link>
+            <Link
+                :href="changeOrdersIndex(project.id).url"
+                class="flex items-center gap-3 rounded-lg border p-4 text-sm font-medium transition-colors hover:bg-muted"
+            >
+                <Receipt class="h-5 w-5 text-muted-foreground" />
+                Change Orders
+            </Link>
+            <Link
+                :href="punchListIndex(project.id).url"
+                class="flex items-center gap-3 rounded-lg border p-4 text-sm font-medium transition-colors hover:bg-muted"
+            >
+                <ClipboardList class="h-5 w-5 text-muted-foreground" />
+                Punch List
+            </Link>
         </div>
 
         <Card>

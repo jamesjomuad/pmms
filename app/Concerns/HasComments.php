@@ -35,6 +35,13 @@ trait HasComments
             'user_id' => $user->id,
         ]);
 
+        activity()
+            ->performedOn($this)
+            ->causedBy($user)
+            ->event('comment_added')
+            ->withProperties(['comment_id' => $comment->id, 'body' => substr($body, 0, 100)])
+            ->log('Comment added');
+
         return $comment;
     }
 
@@ -54,6 +61,13 @@ trait HasComments
         $comment = $this->comments()->firstWhere('id', $commentId);
 
         if ($comment && $comment->user_id === $user->id) {
+            activity()
+                ->performedOn($this)
+                ->causedBy($user)
+                ->event('comment_removed')
+                ->withProperties(['comment_id' => $comment->id])
+                ->log('Comment removed');
+
             return $comment->delete();
         }
 

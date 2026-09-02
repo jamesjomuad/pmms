@@ -7,6 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
     Table,
     TableBody,
     TableCell,
@@ -90,14 +97,21 @@ const clearFilters = () => {
 };
 
 defineOptions({
-    layout: () => ({
-        breadcrumbs: [
-            {
-                title: 'Projects',
-                href: '/projects',
-            },
-        ],
-    }),
+    layout: () => {
+        const pathMatch = window.location.pathname.match(/\/projects\/(\d+)/);
+        const projectId = pathMatch ? pathMatch[1] : '';
+
+        return {
+            breadcrumbs: [
+                { title: 'Projects', href: '/projects' },
+                {
+                    title: 'Project Details',
+                    href: `/projects/${projectId}`,
+                },
+                { title: 'Shop Drawings', href: '#' },
+            ],
+        };
+    },
 });
 </script>
 
@@ -140,18 +154,20 @@ defineOptions({
             </div>
 
             <div class="flex items-center gap-2">
-                <select
-                    v-model="statusFilter"
-                    class="h-9 rounded-md border bg-transparent px-3 text-xs font-medium text-muted-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50"
-                >
-                    <option value="all">All Status</option>
-                    <option value="draft">Draft</option>
-                    <option value="pending">Pending</option>
-                    <option value="in_review">In Review</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="revision">Revision Required</option>
-                </select>
+                <Select v-model="statusFilter">
+                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by status">
+                        <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="in_review">In Review</SelectItem>
+                        <SelectItem value="approved">Approved</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
+                        <SelectItem value="revision">Revision Required</SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <Button
                     v-if="searchQuery || statusFilter !== 'all'"

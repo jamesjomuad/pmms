@@ -205,6 +205,12 @@ class SubmittalController extends Controller
                     'new_status' => $request->validated('status'),
                 ])
                 ->log('Submittal status changed');
+        } else {
+            activity()
+                ->performedOn($submittal)
+                ->causedBy($request->user())
+                ->event('updated')
+                ->log('Submittal updated');
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Submittal updated.')]);
@@ -241,6 +247,15 @@ class SubmittalController extends Controller
 
         $submittal->markSubmitted();
 
+        $approverId = $submittal->assigned_to ?? $project->teamMembers->first()?->id;
+        if ($approverId) {
+            $submittal->requestApproval(
+                $request->user(),
+                [['approver_id' => $approverId]],
+                'Submitted for review',
+            );
+        }
+
         activity()
             ->performedOn($submittal)
             ->causedBy($request->user())
@@ -259,7 +274,23 @@ class SubmittalController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $submittal->markApproved();
+        $pendingRequest = $submittal->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.submittals.show', [$project, $submittal]);
+        }
+
+        $step->approve();
+
+        if ($submittal->fresh()->status === WorkflowStatus::Approved->value) {
+            $submittal->update(['approved_at' => now()]);
+        }
 
         activity()
             ->performedOn($submittal)
@@ -283,8 +314,21 @@ class SubmittalController extends Controller
             'rejection_reason' => ['required', 'string', 'max:2000'],
         ]);
 
+        $pendingRequest = $submittal->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.submittals.show', [$project, $submittal]);
+        }
+
+        $step->reject($data['rejection_reason']);
+
         $submittal->update([
-            'status' => WorkflowStatus::Rejected->value,
             'rejection_reason' => $data['rejection_reason'],
         ]);
 
@@ -307,6 +351,20 @@ class SubmittalController extends Controller
     {
         Gate::authorize('update', $project);
 
+        $pendingRequest = $submittal->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.submittals.show', [$project, $submittal]);
+        }
+
+        $step->reject('Revision requested');
+
         $submittal->update([
             'status' => WorkflowStatus::Revision->value,
         ]);
@@ -328,6 +386,10 @@ class SubmittalController extends Controller
     public function newRevision(Request $request, Project $project, Submittal $submittal): RedirectResponse
     {
         Gate::authorize('update', $project);
+
+        $submittal->approvalRequests()
+            ->where('status', 'pending')
+            ->each(fn ($request) => $request->cancel());
 
         $submittal->newRevision();
 

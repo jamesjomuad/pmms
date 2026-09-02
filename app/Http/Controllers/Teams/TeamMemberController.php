@@ -27,6 +27,13 @@ class TeamMemberController extends Controller
             ->firstOrFail()
             ->update(['role' => $newRole]);
 
+        activity()
+            ->performedOn($team)
+            ->causedBy(auth()->user())
+            ->event('member_role_changed')
+            ->withProperties(['user_id' => $user->id, 'new_role' => $newRole->value])
+            ->log('Team member role updated');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Member role updated.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);
@@ -44,6 +51,13 @@ class TeamMemberController extends Controller
         $team->memberships()
             ->where('user_id', $user->id)
             ->delete();
+
+        activity()
+            ->performedOn($team)
+            ->causedBy(auth()->user())
+            ->event('member_removed')
+            ->withProperties(['user_id' => $user->id, 'email' => $user->email])
+            ->log('Team member removed');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Member removed.')]);
 

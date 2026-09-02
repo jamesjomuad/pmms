@@ -33,6 +33,13 @@ class DeliverableController extends Controller
             ])
             ->toMediaCollection('deliverables');
 
+        activity()
+            ->performedOn($project)
+            ->causedBy($request->user())
+            ->event('deliverable_added')
+            ->withProperties(['file_name' => $request->file('file')->getClientOriginalName()])
+            ->log('Deliverable uploaded');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Deliverable uploaded.']);
 
         return to_route('projects.show', $project);
@@ -54,6 +61,13 @@ class DeliverableController extends Controller
         }
 
         $media->delete();
+
+        activity()
+            ->performedOn($project)
+            ->causedBy(auth()->user())
+            ->event('deliverable_removed')
+            ->withProperties(['file_name' => $media->file_name])
+            ->log('Deliverable deleted');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Deliverable deleted.']);
 

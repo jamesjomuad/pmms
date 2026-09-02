@@ -66,6 +66,17 @@ trait HasApprovals
             ]);
         }
 
+        activity()
+            ->performedOn($this)
+            ->causedBy($requestedBy)
+            ->event('approval_requested')
+            ->withProperties([
+                'approval_request_id' => $request->id,
+                'steps_count' => count($steps),
+                'notes' => $notes,
+            ])
+            ->log('Approval requested');
+
         return $request;
     }
 }

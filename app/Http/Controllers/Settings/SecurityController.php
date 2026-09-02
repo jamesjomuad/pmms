@@ -59,6 +59,12 @@ class SecurityController extends Controller
             'password' => $request->password,
         ]);
 
+        activity()
+            ->performedOn($request->user())
+            ->causedBy($request->user())
+            ->event('password_changed')
+            ->log('Password updated');
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Password updated.')]);
 
         return back();

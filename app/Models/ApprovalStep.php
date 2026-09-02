@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\ApprovalStepFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
@@ -22,6 +26,20 @@ use Illuminate\Support\Carbon;
  */
 class ApprovalStep extends Model
 {
+    /** @use HasFactory<ApprovalStepFactory> */
+    use HasFactory, LogsActivity;
+
+    /**
+     * Get the activity log options for this model.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['status', 'comments'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
     protected $fillable = [
         'approval_request_id',
         'approver_id',

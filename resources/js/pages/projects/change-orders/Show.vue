@@ -12,6 +12,7 @@ import {
     XCircle,
 } from '@lucide/vue';
 import { computed } from 'vue';
+import ApprovalWorkflow from '@/components/ApprovalWorkflow.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -435,7 +436,7 @@ defineOptions({
                     <CardContent class="pt-6">
                         <div
                             v-if="changeOrder.approval_requests.length > 0"
-                            class="space-y-4"
+                            class="space-y-6"
                         >
                             <div
                                 v-for="request in changeOrder.approval_requests"
@@ -457,33 +458,8 @@ defineOptions({
                                         {{ statusLabel(request.status) }}
                                     </Badge>
                                 </div>
-                                <div class="mt-3 space-y-2">
-                                    <div
-                                        v-for="step in request.steps"
-                                        :key="step.id"
-                                        class="flex items-center gap-2 text-sm"
-                                    >
-                                        <CheckCircle2
-                                            v-if="
-                                                step.status === 'approved'
-                                            "
-                                            class="h-4 w-4 text-emerald-500"
-                                        />
-                                        <XCircle
-                                            v-else-if="
-                                                step.status === 'rejected'
-                                            "
-                                            class="h-4 w-4 text-destructive"
-                                        />
-                                        <Clock
-                                            v-else
-                                            class="h-4 w-4 text-muted-foreground"
-                                        />
-                                        <span class="text-muted-foreground">
-                                            {{ step.approver }}:
-                                            {{ step.status }}
-                                        </span>
-                                    </div>
+                                <div class="mt-4">
+                                    <ApprovalWorkflow :steps="request.steps" />
                                 </div>
                             </div>
                         </div>

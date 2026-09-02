@@ -16,6 +16,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
+import StatCard from '@/components/StatCard.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,21 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import CreateUserModal from '@/components/users/CreateUserModal.vue';
 import DeleteUserModal from '@/components/users/DeleteUserModal.vue';
 import EditUserModal from '@/components/users/EditUserModal.vue';
@@ -67,8 +83,8 @@ const filteredUsers = computed(() => {
             const matchesEmail = user.email.toLowerCase().includes(query);
 
             if (!matchesName && !matchesEmail) {
-return false;
-}
+                return false;
+            }
         }
 
         if (roleFilter.value !== 'all' && user.role !== roleFilter.value) {
@@ -173,45 +189,32 @@ defineOptions({
 
         <!-- Metrics / Stats Cards -->
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted">
-                    <Users class="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">{{ props.stats.total }}</p>
-                    <p class="text-xs text-muted-foreground">Total Users</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-emerald-50 dark:bg-emerald-950">
-                    <CheckCircle2 class="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">{{ props.stats.verified }}</p>
-                    <p class="text-xs text-muted-foreground">Verified Accounts</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-indigo-50 dark:bg-indigo-950">
-                    <ShieldCheck class="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">{{ props.stats.admins_owners }}</p>
-                    <p class="text-xs text-muted-foreground">Admins & Owners</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 rounded-lg border bg-card p-3">
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-amber-50 dark:bg-amber-950">
-                    <Lock class="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div>
-                    <p class="text-2xl font-semibold tracking-tight">{{ props.stats.two_factor_enabled }}</p>
-                    <p class="text-xs text-muted-foreground">2FA Enabled</p>
-                </div>
-            </div>
+            <StatCard
+                :icon="Users"
+                :value="props.stats.total"
+                label="Total Users"
+            />
+            <StatCard
+                :icon="CheckCircle2"
+                :value="props.stats.verified"
+                label="Verified Accounts"
+                icon-bg-class="bg-emerald-50 dark:bg-emerald-950"
+                icon-class="text-emerald-600 dark:text-emerald-400"
+            />
+            <StatCard
+                :icon="ShieldCheck"
+                :value="props.stats.admins_owners"
+                label="Admins & Owners"
+                icon-bg-class="bg-indigo-50 dark:bg-indigo-950"
+                icon-class="text-indigo-600 dark:text-indigo-400"
+            />
+            <StatCard
+                :icon="Lock"
+                :value="props.stats.two_factor_enabled"
+                label="2FA Enabled"
+                icon-bg-class="bg-amber-50 dark:bg-amber-950"
+                icon-class="text-amber-600 dark:text-amber-400"
+            />
         </div>
 
         <!-- Filter bar -->
@@ -221,38 +224,45 @@ defineOptions({
                 <Input
                     v-model="searchQuery"
                     placeholder="Search by name or email..."
+                    aria-label="Search users"
                     class="pl-9"
                 />
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-                <select
-                    v-model="roleFilter"
-                    class="h-9 rounded-md border bg-transparent px-3 text-xs font-medium text-muted-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50"
-                >
-                    <option value="all">All Roles</option>
-                    <option value="owner">Owners</option>
-                    <option value="admin">Admins</option>
-                    <option value="member">Members</option>
-                </select>
+                <Select v-model="roleFilter">
+                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by role">
+                        <SelectValue placeholder="All Roles" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Roles</SelectItem>
+                        <SelectItem value="owner">Owners</SelectItem>
+                        <SelectItem value="admin">Admins</SelectItem>
+                        <SelectItem value="member">Members</SelectItem>
+                    </SelectContent>
+                </Select>
 
-                <select
-                    v-model="verifiedFilter"
-                    class="h-9 rounded-md border bg-transparent px-3 text-xs font-medium text-muted-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50"
-                >
-                    <option value="all">All Verification</option>
-                    <option value="verified">Verified</option>
-                    <option value="unverified">Unverified</option>
-                </select>
+                <Select v-model="verifiedFilter">
+                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by verification status">
+                        <SelectValue placeholder="All Verification" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Verification</SelectItem>
+                        <SelectItem value="verified">Verified</SelectItem>
+                        <SelectItem value="unverified">Unverified</SelectItem>
+                    </SelectContent>
+                </Select>
 
-                <select
-                    v-model="twoFactorFilter"
-                    class="h-9 rounded-md border bg-transparent px-3 text-xs font-medium text-muted-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50"
-                >
-                    <option value="all">All 2FA</option>
-                    <option value="enabled">2FA Enabled</option>
-                    <option value="disabled">2FA Disabled</option>
-                </select>
+                <Select v-model="twoFactorFilter">
+                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by 2FA status">
+                        <SelectValue placeholder="All 2FA" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All 2FA</SelectItem>
+                        <SelectItem value="enabled">2FA Enabled</SelectItem>
+                        <SelectItem value="disabled">2FA Disabled</SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <Button
                     v-if="hasActiveFilters"
@@ -268,151 +278,148 @@ defineOptions({
         </div>
 
         <!-- Users Table -->
-        <div class="rounded-lg border bg-card overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="border-b bg-muted/40 text-xs font-semibold text-muted-foreground uppercase">
-                        <tr>
-                            <th class="px-4 py-3">User</th>
-                            <th class="px-4 py-3">Role</th>
-                            <th class="px-4 py-3">Projects</th>
-                            <th class="px-4 py-3">Security</th>
-                            <th class="px-4 py-3">Joined</th>
-                            <th class="px-4 py-3 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-border/60">
-                        <tr
-                            v-for="user in filteredUsers"
-                            :key="user.id"
-                            class="transition-colors hover:bg-muted/30"
-                        >
-                            <!-- User Info -->
-                            <td class="px-4 py-3.5">
-                                <div class="flex items-center gap-3">
-                                    <Avatar class="h-9 w-9">
-                                        <AvatarFallback class="bg-primary/10 text-primary font-medium text-xs">
-                                            {{ getInitials(user.name) }}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <button
-                                            type="button"
-                                            @click="openDetails(user)"
-                                            class="font-medium text-foreground hover:underline text-left"
-                                        >
-                                            {{ user.name }}
-                                        </button>
-                                        <p class="text-xs text-muted-foreground">{{ user.email }}</p>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <!-- Role Badge -->
-                            <td class="px-4 py-3.5 whitespace-nowrap">
-                                <Badge
-                                    :variant="user.role === 'owner' ? 'default' : user.role === 'admin' ? 'secondary' : 'outline'"
-                                    class="capitalize text-xs font-medium"
-                                >
-                                    {{ user.role_label }}
-                                </Badge>
-                            </td>
-
-                            <!-- Assigned Projects -->
-                            <td class="px-4 py-3.5 whitespace-nowrap">
-                                <button
-                                    type="button"
-                                    @click="openDetails(user)"
-                                    class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    <span>{{ user.projects_count }} {{ user.projects_count === 1 ? 'project' : 'projects' }}</span>
-                                </button>
-                            </td>
-
-                            <!-- Security Posture -->
-                            <td class="px-4 py-3.5 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-                                    <span
-                                        :title="user.two_factor_enabled ? '2FA is enabled' : '2FA is disabled'"
-                                        class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
-                                        :class="user.two_factor_enabled ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-muted text-muted-foreground'"
+        <div class="rounded-lg border">
+            <Table aria-label="Users">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Projects</TableHead>
+                        <TableHead>Security</TableHead>
+                        <TableHead>Joined</TableHead>
+                        <TableHead class="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow
+                        v-for="user in filteredUsers"
+                        :key="user.id"
+                    >
+                        <!-- User Info -->
+                        <TableCell>
+                            <div class="flex items-center gap-3">
+                                <Avatar class="h-9 w-9">
+                                    <AvatarFallback class="bg-primary/10 text-primary font-medium text-xs">
+                                        {{ getInitials(user.name) }}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <button
+                                        type="button"
+                                        @click="openDetails(user)"
+                                        class="font-medium text-foreground hover:underline text-left"
                                     >
-                                        <Lock class="h-3 w-3" />
-                                        {{ user.two_factor_enabled ? '2FA' : 'No 2FA' }}
-                                    </span>
-
-                                    <span
-                                        :title="user.email_verified_at ? 'Email verified' : 'Email unverified'"
-                                        class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
-                                        :class="user.email_verified_at ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300'"
-                                    >
-                                        <CheckCircle2 v-if="user.email_verified_at" class="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                                        <XCircle v-else class="h-3 w-3 text-amber-600 dark:text-amber-400" />
-                                        {{ user.email_verified_at ? 'Verified' : 'Pending' }}
-                                    </span>
+                                        {{ user.name }}
+                                    </button>
+                                    <p class="text-xs text-muted-foreground">{{ user.email }}</p>
                                 </div>
-                            </td>
+                            </div>
+                        </TableCell>
 
-                            <!-- Joined Date -->
-                            <td class="px-4 py-3.5 whitespace-nowrap text-xs text-muted-foreground">
-                                {{ formatDate(user.created_at) }}
-                            </td>
+                        <!-- Role Badge -->
+                        <TableCell class="whitespace-nowrap">
+                            <Badge
+                                :variant="user.role === 'owner' ? 'default' : user.role === 'admin' ? 'secondary' : 'outline'"
+                                class="capitalize text-xs font-medium"
+                            >
+                                {{ user.role_label }}
+                            </Badge>
+                        </TableCell>
 
-                            <!-- Actions Menu -->
-                            <td class="px-4 py-3.5 text-right whitespace-nowrap">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger as-child>
-                                        <Button variant="ghost" size="icon" class="h-8 w-8">
-                                            <MoreHorizontal class="h-4 w-4" />
-                                            <span class="sr-only">Open actions menu</span>
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" class="w-44">
-                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                        <DropdownMenuItem @click="openDetails(user)">
-                                            <Eye class="mr-2 h-4 w-4" />
-                                            View Details
-                                        </DropdownMenuItem>
+                        <!-- Assigned Projects -->
+                        <TableCell class="whitespace-nowrap">
+                            <button
+                                type="button"
+                                @click="openDetails(user)"
+                                class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                <span>{{ user.projects_count }} {{ user.projects_count === 1 ? 'project' : 'projects' }}</span>
+                            </button>
+                        </TableCell>
+
+                        <!-- Security Posture -->
+                        <TableCell class="whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    :title="user.two_factor_enabled ? '2FA is enabled' : '2FA is disabled'"
+                                    class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
+                                    :class="user.two_factor_enabled ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-muted text-muted-foreground'"
+                                >
+                                    <Lock class="h-3 w-3" />
+                                    {{ user.two_factor_enabled ? '2FA' : 'No 2FA' }}
+                                </span>
+
+                                <span
+                                    :title="user.email_verified_at ? 'Email verified' : 'Email unverified'"
+                                    class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
+                                    :class="user.email_verified_at ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300'"
+                                >
+                                    <CheckCircle2 v-if="user.email_verified_at" class="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+                                    <XCircle v-else class="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                                    {{ user.email_verified_at ? 'Verified' : 'Pending' }}
+                                </span>
+                            </div>
+                        </TableCell>
+
+                        <!-- Joined Date -->
+                        <TableCell class="whitespace-nowrap text-xs text-muted-foreground">
+                            {{ formatDate(user.created_at) }}
+                        </TableCell>
+
+                        <!-- Actions Menu -->
+                        <TableCell class="text-right whitespace-nowrap">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger as-child>
+                                    <Button variant="ghost" size="icon" class="h-8 w-8">
+                                        <MoreHorizontal class="h-4 w-4" />
+                                        <span class="sr-only">Open actions menu</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" class="w-44">
+                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                    <DropdownMenuItem @click="openDetails(user)">
+                                        <Eye class="mr-2 h-4 w-4" />
+                                        View Details
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        v-if="user.can.update"
+                                        @click="openEdit(user)"
+                                    >
+                                        <Edit class="mr-2 h-4 w-4" />
+                                        Edit User
+                                    </DropdownMenuItem>
+                                    <template v-if="user.can.delete">
+                                        <DropdownMenuSeparator />
                                         <DropdownMenuItem
-                                            v-if="user.can.update"
-                                            @click="openEdit(user)"
+                                            @click="openDelete(user)"
+                                            class="text-destructive focus:text-destructive"
                                         >
-                                            <Edit class="mr-2 h-4 w-4" />
-                                            Edit User
+                                            <Trash2 class="mr-2 h-4 w-4" />
+                                            Remove User
                                         </DropdownMenuItem>
-                                        <template v-if="user.can.delete">
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                @click="openDelete(user)"
-                                                class="text-destructive focus:text-destructive"
-                                            >
-                                                <Trash2 class="mr-2 h-4 w-4" />
-                                                Remove User
-                                            </DropdownMenuItem>
-                                        </template>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </td>
-                        </tr>
+                                    </template>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                    </TableRow>
 
-                        <!-- Empty State -->
-                        <tr v-if="filteredUsers.length === 0">
-                            <td colspan="6" class="p-12 text-center">
-                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
-                                    <Search class="h-6 w-6 text-muted-foreground/60" />
-                                </div>
-                                <h3 class="text-sm font-medium">No users found</h3>
-                                <p class="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
-                                    No users matched your current search or filter criteria. Try adjusting your filters.
-                                </p>
-                                <Button v-if="hasActiveFilters" variant="outline" size="sm" @click="clearFilters">
-                                    Clear Filters
-                                </Button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                    <!-- Empty State -->
+                    <TableRow v-if="filteredUsers.length === 0">
+                        <TableCell colspan="6" class="p-12 text-center">
+                            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
+                                <Search class="h-6 w-6 text-muted-foreground/60" />
+                            </div>
+                            <h3 class="text-sm font-medium">No users found</h3>
+                            <p class="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
+                                No users matched your current search or filter criteria. Try adjusting your filters.
+                            </p>
+                            <Button v-if="hasActiveFilters" variant="outline" size="sm" @click="clearFilters">
+                                Clear Filters
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
         </div>
 
         <!-- Modals and Drawer -->

@@ -232,6 +232,15 @@ class ChangeOrderController extends Controller
             'status' => WorkflowStatus::Pending->value,
         ]);
 
+        $approverId = $project->teamMembers->first()?->id;
+        if ($approverId) {
+            $changeOrder->requestApproval(
+                $request->user(),
+                [['approver_id' => $approverId]],
+                'Submitted for approval',
+            );
+        }
+
         activity()
             ->performedOn($changeOrder)
             ->causedBy($request->user())
@@ -250,7 +259,26 @@ class ChangeOrderController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $changeOrder->markApproved($request->user()->id);
+        $pendingRequest = $changeOrder->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.change-orders.show', [$project, $changeOrder]);
+        }
+
+        $step->approve();
+
+        if ($changeOrder->fresh()->status === WorkflowStatus::Approved->value) {
+            $changeOrder->update([
+                'approved_by' => $request->user()->id,
+                'approved_at' => now(),
+            ]);
+        }
 
         activity()
             ->performedOn($changeOrder)
@@ -274,7 +302,25 @@ class ChangeOrderController extends Controller
             'rejection_reason' => ['required', 'string', 'max:2000'],
         ]);
 
-        $changeOrder->markRejected($data['rejection_reason']);
+        $pendingRequest = $changeOrder->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.change-orders.show', [$project, $changeOrder]);
+        }
+
+        $step->reject($data['rejection_reason']);
+
+        $changeOrder->update([
+            'status' => WorkflowStatus::Rejected->value,
+            'rejected_at' => now(),
+            'rejection_reason' => $data['rejection_reason'],
+        ]);
 
         activity()
             ->performedOn($changeOrder)
