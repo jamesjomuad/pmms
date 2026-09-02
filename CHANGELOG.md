@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ActivityLogEntry` TypeScript type definition
 - Tabs and Table shadcn-vue UI components
 - Activity Log link in sidebar navigation
+- Changelog page at `/changelog` with release timeline, live search, category filtering, and markdown parsing
 
 - Submittal workflow (create, revise, approve/reject, request revision) with project-scoped pages at `/projects/{project}/submittals`
 - RFI (Request for Information) workflow (create, submit, respond) at `/projects/{project}/rfis`

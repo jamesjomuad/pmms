@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ChangelogController;
 use App\Http\Controllers\ChangeOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliverableController;
@@ -130,6 +131,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
+    Route::get('changelog', [ChangelogController::class, 'index'])->name('changelog.index');
 });
 
 Route::middleware(['auth'])->group(function () {
