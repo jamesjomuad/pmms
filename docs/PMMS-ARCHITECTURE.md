@@ -11,7 +11,7 @@
 |---|---|---|
 | Backend | Laravel 13, PHP 8.5 | |
 | Frontend | Vue 3 + Inertia.js v3 | Avoids maintaining a separate REST API + SPA auth layer for an internal tool. Revisit if a native mobile app becomes a hard requirement in Phase 6. |
-| Auth | Laravel Sanctum + Fortify | SPA session auth; passkeys, 2FA; token auth available later for mobile/API consumers |
+| Auth | Laravel Fortify | SPA session auth; passkeys, 2FA; Sanctum not yet installed — add when API/mobile consumers are needed |
 | Database | PostgreSQL | Explicit RFP requirement; better fit than MySQL for complex relational data + JSON columns |
 | Permissions | Team roles (TeamRole/TeamPermission enums) + project-level `project_user` pivot | Team-based org structure with role-on-project scoping (see §4) |
 | Media/Files | spatie/laravel-medialibrary | Shop drawings, submittal PDFs, punch list photos |
@@ -32,7 +32,7 @@
 
 | Area | Status | Details |
 |---|---|---|
-| **Users & Auth** | ✅ Done | Sanctum SPA auth, Fortify scaffolding, passkeys (WebAuthn), 2FA, email verification |
+| **Users & Auth** | ✅ Done | Fortify auth, passkeys (WebAuthn), 2FA, email verification |
 | **Teams** | ✅ Done | Jetstream-style teams: `teams`, `team_members`, `team_invitations` tables; `TeamRole` (Owner/Admin/Member), `TeamPermission` (7 granular flags); `TeamPolicy` |
 | **Projects** | ✅ Done | `projects` table with `current_stage_id` FK; `stages` reference table; `project_stage_history` for transitions; `project_user` pivot with `project_role` |
 | **Media/Deliverables** | ✅ Done | Spatie Media Library wired to Projects (`deliverables` collection); upload/download/delete via `DeliverableController` |

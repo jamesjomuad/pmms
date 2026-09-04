@@ -73,7 +73,7 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 
 ---
 
-## Phase 5 — Approval Engine Documentation
+## Phase 5 — Approval Engine Documentation ✅
 
 **Goal:** Treat the Approval Engine as a fully documented reusable subsystem.
 
@@ -85,7 +85,7 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 | 5.4 | Document audit trail | What is logged per approval step, how history is surfaced. |
 | 5.5 | Verify no module-specific approval logic | Ensure Submittals, Shop Drawings, Change Orders all use the shared engine. |
 
-**Deliverables:** Approval Engine documentation section, module-compliance verification.
+**Deliverables:** `docs/APPROVAL-ENGINE.md` — full lifecycle, all flows, authorization model, audit trail, module compliance verification, current gaps, and developer rules.
 
 ---
 
@@ -105,7 +105,7 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 
 ---
 
-## Phase 7 — Data Processing & Queue Architecture
+## Phase 7 — Data Processing & Queue Architecture ✅
 
 **Goal:** Document async processing and queue patterns.
 
@@ -116,11 +116,11 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 | 7.3 | Document queue patterns | Retry strategy, timeout, failure handling, idempotency, job status, monitoring. |
 | 7.4 | Map jobs to the queue architecture | Ensure all long-running work uses queued jobs, not synchronous execution. |
 
-**Deliverables:** Data processing pipeline docs, queue architecture docs.
+**Deliverables:** `docs/QUEUE-ARCHITECTURE.md` — current state audit, data processing pipeline, queue configuration, async operations inventory, job design conventions, current gaps, and developer rules.
 
 ---
 
-## Phase 8 — Security Architecture
+## Phase 8 — Security Architecture ✅
 
 **Goal:** Document the full security posture.
 
