@@ -24,8 +24,10 @@ Use **Laravel 13** with **Inertia.js v3** and **Vue 3**. Server-side routing wit
 ## Consequences
 
 - Single codebase — PHP routes, Vue pages, no API layer to maintain
-- Sanctum SPA auth handles session state automatically
+- Fortify session auth handles SPA session state for Inertia
 - Wayfinder generates typed route helpers for Vue
 - Risk: Inertia is a smaller ecosystem than Next.js/Nuxt
 - Mitigation: Inertia v3 is stable and well-documented; can always extract to API later if mobile app requirement emerges
 - No separate frontend/backend teams needed
+
+> **Note (finalized):** Authentication is Fortify session auth (passkeys, 2FA, email verification). Sanctum is **not installed**; if a separate API/mobile consumer is ever required, Sanctum token/SPA mode would be added then (see `SECURITY-ARCHITECTURE.md` §1.1).

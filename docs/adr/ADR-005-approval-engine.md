@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (not yet implemented)
+Accepted — **Implemented**
 
 ## Context
 
@@ -38,3 +38,13 @@ Any model that needs approval implements `HasApprovals` trait and uses the share
 - Polymorphic relation means no schema changes needed for new approvable types
 - Risk: Engine must be generic enough to handle different approval flows (sequential, parallel)
 - Mitigation: Start with sequential; extend to parallel when a concrete need arises
+
+## Implementation (current state)
+
+- **Tables**: `approval_requests`, `approval_steps` (migration `2026_08_28_000002`)
+- **Trait**: `app/Concerns/HasApprovals.php` — `requestApproval()`, `pendingApproval()`, `latestApproval()`; logs via `activity()`
+- **Models**: `ApprovalRequest` (`approve()`, `reject()`, `cancel()`), `ApprovalStep` (`approve()`, `reject()`)
+- **Controllers**: `SubmittalController` (submit/approve/reject/requestRevision/newRevision), `ShopDrawingController` (submit/approve/requestRevision/newRevision), `ChangeOrderController` (submit/approve/reject)
+- **Consumers**: Submittal, ShopDrawing, ChangeOrder, and Project implement `HasApprovals`
+- **Tests**: `SubmittalApprovalTest`, `ShopDrawingApprovalTest`, `ChangeOrderApprovalTest` cover submit/approve/reject/request-revision/new-revision and the no-pending-step guard
+- **Current scope**: sequential workflow only. Parallel approval, delegation, and escalation remain future work.

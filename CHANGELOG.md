@@ -24,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tabs and Table shadcn-vue UI components
 - Activity Log link in sidebar navigation
 - Changelog page at `/changelog` with release timeline, live search, category filtering, and markdown parsing
-
 - Submittal workflow (create, revise, approve/reject, request revision) with project-scoped pages at `/projects/{project}/submittals`
 - RFI (Request for Information) workflow (create, submit, respond) at `/projects/{project}/rfis`
 - Shop drawing workflow (create, revise, approve/reject, request revision) at `/projects/{project}/shop-drawings`
@@ -37,12 +36,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change order workflow (create, submit, approve/reject) at `/projects/{project}/change-orders`
 - Shared `WorkflowStatus` enum, `HasWorkflowStatus` state machine, `HasAttachments` and `HasComments` concerns backing the project modules
 - `Textarea` shadcn-vue UI component
+- `docs/QUEUE-ARCHITECTURE.md` (Phase 7) — async processing patterns, data processing pipeline, queue configuration, job design conventions, current gaps
+- `docs/SECURITY-ARCHITECTURE.md` (Phase 8) — full security posture: authentication, authorization, file access, API security, sensitive data handling, audit logs, AI data handling, per-module authorization boundaries
+- `docs/TESTING-ARCHITECTURE.md` (Phase 9) — testing tiers, per-module expectations, conventions (Pest/factories/CI), and a verified coverage gap report (106 passing tests, 9 zero-coverage controllers)
+- Phase 10 finalization — authoritative Agent Rules section in `PMMS-ARCHITECTURE.md` §4, all 7 ADRs finalized with implementation status, refreshed CURRENT/ROADMAP/DECISIONS sections
 
 ### Changed
 
 - Updated `PMMS-ARCHITECTURE.md` with CURRENT/TARGET/RULES/DECISIONS/ROADMAP sections
 - Refactored `DeliverableController` to use `StoreDeliverableRequest` for validation
 - Project detail page now uses tabbed layout (Details, Stage History, Deliverables, Activity)
+- Corrected `PMMS-ARCHITECTURE.md` to reflect the actual implementation state: Approval Engine, Trackable Item traits, Activity/Audit logging, and Workflow are now marked implemented; `workflow_rules` and `notification_rules` flagged as table-only shells
+- Updated `PMMS-ARCHITECTURE.md` tech-stack and test counts (82 → 106) to match the codebase
+- Updated ADR-002, ADR-004, ADR-005, ADR-006 with implementation notes and corrected statuses (ADR-005 implemented, ADR-006 partially implemented); corrected ADR-002 Sanctum reference to Fortify-only auth
 
 ### Fixed
 

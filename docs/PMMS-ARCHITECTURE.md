@@ -10,16 +10,16 @@
 | Layer | Choice | Notes |
 |---|---|---|
 | Backend | Laravel 13, PHP 8.5 | |
-| Frontend | Vue 3 + Inertia.js v3 | Avoids maintaining a separate REST API + SPA auth layer for an internal tool. Revisit if a native mobile app becomes a hard requirement in Phase 6. |
+| Frontend | Vue 3 + Inertia.js v3 | Avoids maintaining a separate REST API + SPA auth layer for an internal tool. Revisit only if a native mobile app becomes a hard requirement. |
 | Auth | Laravel Fortify | SPA session auth; passkeys, 2FA; Sanctum not yet installed — add when API/mobile consumers are needed |
 | Database | PostgreSQL | Explicit RFP requirement; better fit than MySQL for complex relational data + JSON columns |
-| Permissions | Team roles (TeamRole/TeamPermission enums) + project-level `project_user` pivot | Team-based org structure with role-on-project scoping (see §4) |
+| Permissions | Team roles (TeamRole/TeamPermission enums) + project-level `project_user` pivot | Team-based org structure with role-on-project scoping (see ADR-004) |
 | Media/Files | spatie/laravel-medialibrary | Shop drawings, submittal PDFs, punch list photos |
-| Activity/Audit | spatie/laravel-activitylog | **TARGET** — not yet installed; every stage transition, approval decision, and record change must be logged |
+| Activity/Audit | spatie/laravel-activitylog | ✅ Installed — `activity_log` table, 12 models wire `LogsActivity`, `/activity-log` page (see §2.1, `SECURITY-ARCHITECTURE.md` §1.6) |
 | Realtime | Laravel Reverb or Soketi + Echo | **TARGET** — live status updates, in-app notifications |
 | Queue | Laravel Queues (Redis or database driver) | **TARGET** — notifications, PDF generation, sync jobs |
-| Storage | S3-compatible bucket | **TARGET** — drawings, documents, photos |
-| Testing | Pest v5 | Feature tests (82 cases), unit tests needed for business rules |
+| Storage | S3-compatible bucket | **TARGET** — drawings, documents, photos (currently `public` disk; see `SECURITY-ARCHITECTURE.md` §3.3) |
+| Testing | Pest v5 | Feature tests (106 cases), unit tests needed for business rules (see `TESTING-ARCHITECTURE.md`) |
 | Code Quality | PHPStan (Larastan), Pint, ESLint, Prettier, vue-tsc | Enforced via `composer ci:check` |
 
 **Explicitly not needed:** multi-tenancy (single company, internal tool only).
@@ -38,31 +38,33 @@
 | **Media/Deliverables** | ✅ Done | Spatie Media Library wired to Projects (`deliverables` collection); upload/download/delete via `DeliverableController` |
 | **Policies** | ✅ Done | `ProjectPolicy` (view/update/delete), `UserPolicy` (viewAny/view/create/update/delete with team scoping), `TeamPolicy` (11 abilities) |
 | **Form Requests** | ✅ Done | 13 request classes across Projects, Users, Settings, Teams namespaces |
-| **Feature Tests** | ✅ Done | 82 Pest tests: auth (26), teams (32), settings (10), users (9), projects (5) |
+| **Approval Engine** | ✅ Done | `ApprovalRequest`/`ApprovalStep` models + tables; `HasApprovals` trait; submit/approve/reject/request-revision/new-revision wired in Submittals, Shop Drawings, Change Orders — see `APPROVAL-ENGINE.md` and ADR-005 |
+| **Trackable Item traits** | ✅ Done | `HasWorkflowStatus` (7-state), `HasApprovals`, `HasAttachments`, `HasComments` in `app/Concerns/` — used by Project modules (Submittal, ShopDrawing, ChangeOrder, EquipmentItem, Rfi, PunchListItem) |
+| **Workflow / Stages** | ✅ Done | `WorkflowStatus` enum, `stages` + `project_stage_history` tables; project stage transitions tracked. `workflow_rules` table exists but is unconsumed (transition *validation* not yet enforced) |
+| **Activity/Audit Logging** | ✅ Done | `spatie/laravel-activitylog` installed; `activity_log` table; `ActivityLogController` + `/activity-log` page; 12 models wire `LogsActivity` — see `SECURITY-ARCHITECTURE.md` §1.6 |
+| **Feature Tests** | ✅ Done | 106 Pest tests (392 assertions): auth (26), teams (35), users (8), settings (10), dashboard (6), changelog (2), approval-engine workflows (13), prune command (1), unit placeholder (1) — see `TESTING-ARCHITECTURE.md` |
 
 ### 2.2 Not Implemented (Documented in §3 but missing from code)
 
 | Area | Status | Impact |
 |---|---|---|
-| **Activity/Audit Logging** | ❌ Not installed | Violates principle #6 ("Everything is audited") |
-| **Approval Engine** | ❌ Not implemented | 4-5 modules depend on it; highest-leverage missing piece |
-| **Trackable Item Pattern** | ❌ Not implemented | No shared traits for workflow/approvals/attachments/comments |
-| **Workflow Rules Engine** | ❌ Not implemented | Stage transitions have no validation or rules |
-| **Notification Rules** | ❌ Not implemented | Only 1 hardcoded notification exists (`TeamInvitation`) |
+| **Workflow Rules Enforcement** | ⚠️ Table only | `workflow_rules` migration exists but no model/seeder/consumer; stage transitions are tracked but not validated against rules |
+| **Notification Rules** | ❌ Not implemented | `notification_rules` table exists but no dispatcher reads it; only 1 hardcoded notification exists (`TeamInvitation`) |
 | **Queue/Async Jobs** | ❌ Not implemented | Zero job classes; all work synchronous |
 | **Events/Listeners** | ❌ Not implemented | Zero domain events; no decoupled logic |
-| **Application/Domain Layers** | ❌ Not implemented | Business logic lives in controllers |
-| **Reporting Layer** | ❌ Not implemented | Planned for Phase 5 |
+| **Application/Domain Layers** | ❌ Not implemented | Business logic lives in controllers; `app/Actions` has Fortify/Teams boilerplate only |
+| **Reporting Layer** | ❌ Not implemented | Planned for later phase |
+| **Sanctum / API token auth** | ❌ Not implemented | Fortify session auth only; add Sanctum if API/mobile consumers are needed |
 
-### 2.3 Code Issues Found
+### 2.3 Code Issues Found (Phase 1 audit — status at finalization)
 
-| # | Issue | Location | Severity |
-|---|---|---|---|
-| 1 | Route to non-existent `TeamController::switch` method | `routes/settings.php:39` | Critical |
-| 2 | Full `User` model shared to frontend via Inertia | `HandleInertiaRequests.php` | High |
-| 3 | `ProjectController::destroy` missing (policy grants delete, no route) | `ProjectController.php` | High |
-| 4 | `DeliverableController` uses inline `$request->validate()` instead of Form Request | `DeliverableController.php` | Medium |
-| 5 | `UserPolicy` uses non-standard `?Team` parameter signature | `UserPolicy.php` | Medium |
+| # | Issue | Location | Severity | Status |
+|---|---|---|---|---|
+| 1 | Route to non-existent `TeamController::switch` method | `routes/settings.php:39` | Critical | ✅ Resolved (route removed) |
+| 2 | Full `User` model shared to frontend via Inertia | `HandleInertiaRequests.php` | High | ✅ Resolved (selective props: id/name/email/verified/2FA) |
+| 3 | `ProjectController::destroy` missing | `ProjectController.php` | High | ✅ Resolved (`destroy` + DELETE `projects.destroy` added) |
+| 4 | `DeliverableController` uses inline `$request->validate()` | `DeliverableController.php` | Medium | ✅ Resolved (`StoreDeliverableRequest` form request added) |
+| 5 | `UserPolicy` uses non-standard `?Team` parameter signature | `UserPolicy.php` | Medium | ⚠️ Still present — intentional: team scoping passed as route param |
 
 ---
 
@@ -213,10 +215,17 @@ PMMS Data → Data Processing → Business Rules → AI Analysis → Recommendat
 
 ## 4. RULES — What Developers and AI Agents Must Follow
 
-### Mandatory
+> This is the **authoritative Agent Rules** section (Phase 10 finalized). Every coding agent and developer working on PMMS MUST read this before making changes. See also `docs/SECURITY-ARCHITECTURE.md` §5 and `docs/TESTING-ARCHITECTURE.md` §7 for the full security and testing rule sets.
+
+### 4.1 Start of Session
 
 - **Read this document** at the start of any session working on PMMS
-- **Reuse existing patterns** — Trackable Item (§3.1), Approval Engine (§3.1), workflow infrastructure
+- When reading this document, treat §2 (CURRENT), §3 (TARGET), §4 (RULES), §5 (DECISIONS), §6 (ROADMAP) as distinct — never rewrite a valid section for style
+- The companion docs are the source of truth for their domains: `SECURITY-ARCHITECTURE.md`, `TESTING-ARCHITECTURE.md`, `QUEUE-ARCHITECTURE.md`, `APPROVAL-ENGINE.md`, `PMMS-WORKFLOW-ARCHITECTURE.md`, `PMMS-DATA-MODEL.md`, and the ADRs in `docs/adr/`
+
+### 4.2 Mandatory — MUST
+
+- **Reuse existing patterns** — Trackable Item traits (`HasWorkflowStatus`, `HasApprovals`, `HasAttachments`, `HasComments`), Approval Engine, workflow infrastructure
 - **Keep controllers thin** — use Form Requests for validation, Actions for business logic
 - **Use Policies for authorization** — every module needs a `project_user`-aware policy
 - **Use Jobs for long-running work** — never block HTTP requests with heavy processing
@@ -225,9 +234,14 @@ PMMS Data → Data Processing → Business Rules → AI Analysis → Recommendat
 - **Reuse the Approval Engine** — never build module-specific approval logic
 - **Reuse workflow infrastructure** — never build module-specific status engines
 - **Document architectural changes** — update this file and create ADRs for significant decisions
-- **Run verification in order**: lint → typecheck → test before committing
+- **Run verification in order before committing**: **lint → typecheck → test** (`composer lint:check` → `composer types:check` → `vue-tsc --noEmit` → `eslint resources/` → `composer test`)
+- **Add a factory** for every new model, with state methods per workflow status
+- **Write tests for every new module** — Feature tests (CRUD, authorization, validation, workflow) + Unit tests for domain rules (see `TESTING-ARCHITECTURE.md` §4)
+- **Server-side enforcement** — authorization is enforced in code (Policies/Gate), never only by hiding UI in the frontend
+- **Verify project-resource ownership** — assert `$resource->project_id === $project->id`; never trust route parameters (see `SECURITY-ARCHITECTURE.md` §5)
+- **Sensitive data** — use `encrypted` casts for secrets and `#[Hidden]` for fields that must not serialize (see `SECURITY-ARCHITECTURE.md` §5)
 
-### Prohibited
+### 4.3 Prohibited — MUST NOT
 
 - **Do NOT** create duplicate workflow systems
 - **Do NOT** create module-specific approval engines
@@ -239,6 +253,12 @@ PMMS Data → Data Processing → Business Rules → AI Analysis → Recommendat
 - **Do NOT** modify architecture silently — update docs first
 - **Do NOT** assume a library is available — check `composer.json` / `package.json` first
 - **Do NOT** hard-code notification dispatching — use `notification_rules`
+- **Do NOT** serve files via permanent public URLs when authorization is required — use signed/temporary URLs (see `SECURITY-ARCHITECTURE.md`)
+- **Do NOT** expose the global activity log without authorization checks (see `SECURITY-ARCHITECTURE.md` §2)
+- **Do NOT** store 2FA secrets, API keys, or tokens in plaintext
+- **Do NOT** merge a module with zero tests — it must meet per-module expectations in `TESTING-ARCHITECTURE.md` §4
+- **Do NOT** bypass rate limiting on authentication endpoints
+- **Do NOT** allow `assigned_to` to reference users outside the project/team
 
 ---
 
@@ -258,52 +278,51 @@ PMMS Data → Data Processing → Business Rules → AI Analysis → Recommendat
 
 ## 6. ROADMAP — When Future Architectural Changes Should Happen
 
-| Phase | Scope | Key Work |
+> The canonical roadmap is **`docs/ROADMAP.md`** (Phases 1–10). This section summarizes the completed architecture-documentation phases and points to the source of truth for forward work.
+
+| Phase | Scope | Status |
 |---|---|---|
-| **1 — Technical Audit** ✅ | Review codebase, architecture, security | Audit report produced; architecture doc updated; ADRs created |
-| **2 — Core Platform** | Complete foundation before feature modules | Install activitylog, implement Approval Engine, Trackable Item traits, workflow rules, notification rules, extract Application layer, fix code issues (C1-C3, H1-H6) |
-| **3 — Project Management** | Submittals, RFIs, Shop Drawings, Procurement, Equipment, Milestones, Tasks, Closeout | Built on Trackable Item pattern + Approval Engine |
-| **4 — Operations & Field** | Field-accessible info, mobile workflows, task completion, field reporting | Mobile-responsive Vue views; offline-tolerant data entry (local queue → sync when online) |
-| **5 — Additional Departments** | Service ops, financial/cost reporting, executive dashboards, estimating data | Dedicated reporting schema/materialized views for performance |
-| **6 — Integrations & Automation** | Accounting, service-management, email, document-storage integrations | Laravel HTTP client + queued jobs |
-| **7 — AI Recommendations** | AI-powered recommendations, data processing pipeline | Provider abstraction, recommendation engine, safety rules |
+| 1 — Architecture Audit | Audit, health scores, ADRs, doc baseline | ✅ |
+| 2 — Boundaries & Layering | Presentation → Application → Domain → Infrastructure | ✅ |
+| 3 — Pattern Refinement | Trackable Item, Approval Engine, Workflow, Permissions, Notifications, Audit | ✅ |
+| 4 — Workflow Architecture | State / Transition / Permission / Business Rule concerns | ✅ |
+| 5 — Approval Engine Docs | Full lifecycle, flows, authorization, audit | ✅ |
+| 6 — AI Recommendation Architecture | Provider abstraction + safety rules (design only) | 🚧 Forward-looking — not yet built |
+| 7 — Queue & Data Processing | Async patterns, pipeline, job conventions | ✅ |
+| 8 — Security Architecture | Auth, authz, files, API, sensitive data, audit, AI, module boundaries | ✅ |
+| 9 — Testing Architecture | Tiers, conventions, coverage gap report | ✅ |
+| 10 — Agent Rules & ADR Finalization | This phase | ✅ |
 
-### Phase 2 Detailed Breakdown (Next Implementation Phase)
-
-| # | Task | Priority | Depends On |
-|---|---|---|---|
-| 2.1 | Fix C3: Remove broken `TeamController::switch` route | Critical | — |
-| 2.2 | Fix H4: Sanitize User model shared to frontend | High | — |
-| 2.3 | Fix H5: Add `ProjectController::destroy` + route | High | — |
-| 2.4 | Install `spatie/laravel-activitylog`, wire to Project, User | Critical | — |
-| 2.5 | Create `approval_requests` + `approval_steps` tables/migration | Critical | — |
-| 2.6 | Implement Approval Engine service (request, step, decide, history) | Critical | 2.5 |
-| 2.7 | Create Trackable Item traits (`HasWorkflowStatus`, `HasApprovals`, `HasAttachments`, `HasComments`) | High | 2.6 |
-| 2.8 | Create `notification_rules` table + dispatch infrastructure | High | — |
-| 2.9 | Create workflow transition rules (data-driven, not hard-coded) | High | — |
-| 2.10 | Extract Application layer (Actions) from controllers | Medium | — |
-| 2.11 | Fix M1: Extract `StoreDeliverableRequest` Form Request | Medium | — |
-| 2.12 | Add domain events for stage transitions, approvals | Medium | 2.6 |
+**Remaining architecture work** (see `ROADMAP.md` and the phase docs):
+- Workflow rules enforcement — `workflow_rules` table is unused; add model + transition validation
+- Notification dispatcher — `notification_rules` table is unused; add dispatch service (see `QUEUE-ARCHITECTURE.md`)
+- Application/Domain layer extraction — business logic currently in controllers
+- Events/Listeners — zero domain events today
+- Queue/async jobs — zero job classes; add as file processing / notifications warrant
+- AI layer — design-only; build per Phase 6 when requirements land
 
 ---
 
 ## 7. Open Questions / Decisions To Confirm
 
 - [x] ~~Existing codebase state~~ — resolved via Phase 1 audit (see `docs/ARCHITECTURE-AUDIT.md`)
-- [ ] Inertia SPA vs. decoupled API — confirm no near-term requirement for a native mobile app
+- [x] ~~`spatie/laravel-permission`~~ — **resolved**: custom `TeamRole`/`TeamPermission` enums + `project_user` pivot are sufficient; package not needed (see ADR-004)
+- [x] ~~Sanctum auth~~ — **resolved**: Fortify session auth only; add Sanctum if an API/mobile consumer is needed (ADR-002, `SECURITY-ARCHITECTURE.md` §1.1)
 - [ ] Hosting/production environment target (must be company-owned, not developer-owned — per RFP ownership requirements)
 - [ ] Realtime requirements — which features actually need live sync vs. simple polling/refresh
 - [ ] Offline requirements for field module — full offline-first vs. "tolerate a dropped connection"
-- [ ] `spatie/laravel-permission` — currently using custom `TeamRole`/`TeamPermission` enums; decide if we need the package for granular permission definitions or if enums suffice
 
 ---
 
-## 8. Notes for Claude Code Sessions
+## 8. Notes for Coding Agents
 
-- Reference this file at the start of any session working on PMMS.
-- When generating a new module (e.g., Punch List), reuse the Trackable Item pattern (§3.1) and Approval Engine (§3.1) rather than building bespoke status/approval logic.
+> The **authoritative** agent rules live in §4 (RULES) above. This section is a quick-reference pointer.
+
+- Reference this file and §4 (RULES) at the start of any session working on PMMS.
+- When generating a new module, reuse the Trackable Item traits (`HasWorkflowStatus`, `HasApprovals`, `HasAttachments`, `HasComments`) and the Approval Engine rather than building bespoke status/approval logic.
 - Keep controllers thin — use Form Requests for validation and Actions for business logic.
-- Every new module needs: soft deletes, activity log wiring, and a `project_user`-aware policy for access control.
-- Run verification in order: `composer lint:check` → `composer types:check` → `node node_modules/.bin/vue-tsc --noEmit` → `composer test`.
+- Every new module needs: soft deletes, activity log wiring, a `project_user`-aware policy, a factory, and Feature tests (see `TESTING-ARCHITECTURE.md` §4).
+- Run verification in order: `composer lint:check` → `composer types:check` → `vue-tsc --noEmit` → `eslint resources/` → `composer test`.
 - Icon imports: always `from '@lucide/vue'` — NOT `lucide-vue-next`.
 - Tailwind v4: no `tailwind.config.js`. Theme tokens in `resources/css/app.css` via `@theme inline`.
+- See `AGENTS.md` for the canonical per-command verification order and conventions.

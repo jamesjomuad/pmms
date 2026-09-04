@@ -126,20 +126,20 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 
 | # | Task | Details |
 |---|---|---|
-| 8.1 | Document authentication | Sanctum SPA session auth, token auth for future API/mobile. |
-| 8.2 | Document authorization | spatie roles, project-level scoping via `project_user`, policies per module. |
-| 8.3 | Document file access | How uploads are stored, who can access, S3 bucket policies. |
-| 8.4 | Document API security | Rate limiting, CSRF, input validation, SQL injection prevention. |
-| 8.5 | Document sensitive data handling | What is sensitive, how it's encrypted at rest/in transit. |
-| 8.6 | Document audit logs | What is logged, retention, tamper-evidence. |
-| 8.7 | Document AI data handling | What data AI providers can see, data residency, consent. |
-| 8.8 | Ensure every module defines its authorization boundary | Each feature module must declare who can view/edit/advance its records. |
+| 8.1 | Document authentication | Fortify SPA session auth, passkeys, 2FA, email verification; token auth noted as future (Sanctum not yet installed). |
+| 8.2 | Document authorization | Custom two-tier RBAC (TeamRole/TeamPermission) + project-level scoping via `project_user`, `ProjectPolicy`/`UserPolicy`/`TeamPolicy`. Note: spatie roles not used. |
+| 8.3 | Document file access | Spatie MediaLibrary on `public` disk; unsigned permanent URLs (gap); S3 available but unused. |
+| 8.4 | Document API security | No API surface; rate limiting limited to auth endpoints; CSRF/Form Request validation/SQL-injection protections active. |
+| 8.5 | Document sensitive data handling | Passwords hashed; 2FA/financial/session data in plaintext (gaps); AES-256-CBC app key. |
+| 8.6 | Document audit logs | spatie/activitylog; event inventory per model/controller; 365-day retention; no tamper-evidence. |
+| 8.7 | Document AI data handling | No AI integration exists; target safety rules referenced from Phase 6. |
+| 8.8 | Ensure every module defines its authorization boundary | Per-module boundary matrix in `SECURITY-ARCHITECTURE.md §4`. |
 
-**Deliverables:** Security architecture section, per-module authorization boundaries.
+**Deliverables:** `docs/SECURITY-ARCHITECTURE.md` — current state, gaps, target architecture, per-module authorization boundaries, developer rules.
 
 ---
 
-## Phase 9 — Testing Architecture
+## Phase 9 — Testing Architecture ✅
 
 **Goal:** Define testing expectations for the project.
 
@@ -147,14 +147,14 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 |---|---|---|
 | 9.1 | Document testing tiers | Unit (business rules, domain behavior), Feature (application workflows), Integration (external services, DB), Browser (important user workflows). |
 | 9.2 | Define per-module test expectations | Every new module must include appropriate tests at each tier. |
-| 9.3 | Document testing conventions | Framework (Pest), test directory structure, factories, fixtures, CI integration. |
+| 9.3 | Document testing conventions | Framework (Pest 5), test directory structure, factories, fixtures, CI integration. |
 | 9.4 | Audit existing test coverage | Identify modules with missing or incomplete tests. |
 
-**Deliverables:** Testing architecture documentation, coverage gap report.
+**Deliverables:** `docs/TESTING-ARCHITECTURE.md` — tiers, conventions (Pest/factories/CI), per-module expectations, coverage gap report (verified baseline: 106 passing tests).
 
 ---
 
-## Phase 10 — Agent Rules & ADR Finalization
+## Phase 10 — Agent Rules & ADR Finalization ✅
 
 **Goal:** Lock down rules for AI coding agents and finalize ADRs.
 
@@ -164,17 +164,19 @@ PMMS is an internal ERP for a commercial HVAC contractor. The architecture follo
 | 10.2 | Finalize all ADRs | ADR-001 (Modular Monolith), ADR-002 (Laravel+Inertia), ADR-003 (PostgreSQL), ADR-004 (Project-Level Auth), ADR-005 (Generic Approval Engine), ADR-006 (Workflow Architecture), ADR-007 (AI Recommendation Architecture). Ensure each has: Context, Decision, Alternatives, Consequences, Status. |
 | 10.3 | Final `PMMS-ARCHITECTURE.md` review | Verify the document distinguishes CURRENT, TARGET, RULES, DECISIONS, ROADMAP. No valid sections rewritten for style. |
 
-**Deliverables:** Agent rules, finalized ADRs, reviewed architecture document.
+**Deliverables:** Finalized Agent Rules section, finalized ADRs, reviewed architecture document.
 
 ---
 
 ## Execution Notes
 
 - **This roadmap is documentation-only.** No application code is written as part of these phases unless explicitly instructed.
-- **Phases 1–5 are foundational** — they should complete before Phase 6 (AI) and Phase 8 (Security) are finalized.
+- **Phases 1–5 are foundational** — they complete before Phase 6 (AI) and Phase 8 (Security) are finalized.
 - **Phase 6 (AI) is forward-looking.** The provider abstraction and recommendation schema are design-time decisions; actual AI integration happens in application phases.
-- **Phases 7–9 can run in parallel** once Phases 1–5 are stable.
-- **Phase 10 is the lock-down** — it should be the last phase before any application development begins.
+- **Phases 7–9 run in parallel** once Phases 1–5 are stable.
+- **Phase 10 is the lock-down** — it is the last architecture-documentation phase before application development begins.
+
+> **Status: all 10 documentation phases are complete (✅).** The architecture documentation baseline is locked down. Forward work is application development, plus the remaining architecture-gap items tracked in `PMMS-ARCHITECTURE.md` §6 (workflow rules enforcement, notification dispatcher, layer extraction, events, async jobs, AI layer).
 
 ---
 

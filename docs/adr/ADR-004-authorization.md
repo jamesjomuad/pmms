@@ -31,3 +31,12 @@ Two-tier authorization:
 - `ProjectPolicy` checks `project_user.project_role` for project access
 - Risk: Two role systems can confuse developers
 - Mitigation: Document the pattern clearly; agents must check both team and project permissions as needed
+
+## Implementation (current state)
+
+- **Enums**: `TeamRole` (Owner/Admin/Member), `TeamPermission` (7 flags), `ProjectRole` (pm/admin/field_tech/estimator/exec)
+- **Policies**: `TeamPolicy` (11 abilities), `ProjectPolicy` (view/update/delete), `UserPolicy` (team-scoped CRUD)
+- **Middleware**: `EnsureTeamMembership` verifies team membership from route parameters
+- **Storage**: team roles on `team_members.role`; project roles on `project_user.project_role`
+- **Enforcement**: `Gate::authorize()` in controllers + `TeamPolicy` checks (see `SECURITY-ARCHITECTURE.md` §1.2)
+- **Gap**: project child modules (Submittals, RFIs, etc.) currently authorize via the parent `ProjectPolicy` only — dedicated per-module policies are recommended for granular control (see `SECURITY-ARCHITECTURE.md` §2)
