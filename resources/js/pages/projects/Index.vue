@@ -4,6 +4,8 @@ import {
     Briefcase,
     CheckCircle2,
     Clock,
+    LayoutGrid,
+    List,
     Pause,
     Plus,
     Search,
@@ -22,7 +24,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { create as projectCreate } from '@/routes/projects';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import {
+    create as projectCreate,
+    show as projectShow,
+} from '@/routes/projects';
 import type { Project } from '@/types';
 
 const props = defineProps<{
@@ -33,8 +46,50 @@ const props = defineProps<{
 const searchQuery = ref('');
 const activeStatusFilter = ref<string>('all');
 const activeStageFilter = ref<string>('all');
+const viewMode = ref<'grid' | 'table'>('grid');
 
 const createUrl = projectCreate().url;
+
+const statusConfig = (status: Project['status']) => {
+    switch (status) {
+        case 'active':
+            return {
+                label: 'Active',
+                dot: 'bg-emerald-500',
+                badge: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800',
+            };
+        case 'on_hold':
+            return {
+                label: 'On Hold',
+                dot: 'bg-amber-500',
+                badge: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800',
+            };
+        case 'closed':
+            return {
+                label: 'Closed',
+                dot: 'bg-muted-foreground/40',
+                badge: 'bg-muted text-muted-foreground border-border',
+            };
+        default:
+            return {
+                label: status,
+                dot: 'bg-muted-foreground/40',
+                badge: 'bg-muted text-muted-foreground border-border',
+            };
+    }
+};
+
+const stageProgressOf = (project: Project) => {
+    if (!props.stages.length) {
+        return 0;
+    }
+
+    const stageIndex = project.current_stage.id - 1;
+
+    return Math.round(((stageIndex + 1) / props.stages.length) * 100);
+};
+
+const projectUrlOf = (project: Project) => projectShow(project.id).url;
 
 const stats = computed(() => {
     const active = props.projects.filter((p) => p.status === 'active').length;
@@ -129,11 +184,7 @@ defineOptions({
             v-if="projects.length > 0"
             class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4"
         >
-            <StatCard
-                :icon="Briefcase"
-                :value="stats.total"
-                label="Total"
-            />
+            <StatCard :icon="Briefcase" :value="stats.total" label="Total" />
             <StatCard
                 :icon="CheckCircle2"
                 :value="stats.active"
@@ -148,11 +199,7 @@ defineOptions({
                 icon-bg-class="bg-amber-50 dark:bg-amber-950"
                 icon-class="text-amber-600 dark:text-amber-400"
             />
-            <StatCard
-                :icon="Pause"
-                :value="stats.closed"
-                label="Closed"
-            />
+            <StatCard :icon="Pause" :value="stats.closed" label="Closed" />
         </div>
 
         <div
@@ -191,7 +238,10 @@ defineOptions({
                 </div>
 
                 <Select v-model="activeStageFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by stage">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by stage"
+                    >
                         <SelectValue placeholder="All Stages" />
                     </SelectTrigger>
                     <SelectContent>
@@ -205,6 +255,43 @@ defineOptions({
                         </SelectItem>
                     </SelectContent>
                 </Select>
+
+                <div
+                    class="flex items-center gap-1 rounded-lg border bg-card p-1"
+                    role="group"
+                    aria-label="View mode"
+                >
+                    <button
+                        type="button"
+                        class="flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+                        :class="
+                            viewMode === 'grid'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'text-muted-foreground hover:text-foreground'
+                        "
+                        :aria-pressed="viewMode === 'grid'"
+                        aria-label="Grid view"
+                        title="Grid view"
+                        @click="viewMode = 'grid'"
+                    >
+                        <LayoutGrid class="h-4 w-4" />
+                    </button>
+                    <button
+                        type="button"
+                        class="flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+                        :class="
+                            viewMode === 'table'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'text-muted-foreground hover:text-foreground'
+                        "
+                        :aria-pressed="viewMode === 'table'"
+                        aria-label="Table view"
+                        title="Table view"
+                        @click="viewMode = 'table'"
+                    >
+                        <List class="h-4 w-4" />
+                    </button>
+                </div>
 
                 <Button
                     v-if="hasActiveFilters"
@@ -220,7 +307,11 @@ defineOptions({
         </div>
 
         <div
-            v-if="projects.length > 0 && filteredProjects.length > 0"
+            v-if="
+                projects.length > 0 &&
+                filteredProjects.length > 0 &&
+                viewMode === 'grid'
+            "
             class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
             <ProjectCard
@@ -229,6 +320,101 @@ defineOptions({
                 :project="project"
                 :total-stages="stages.length"
             />
+        </div>
+
+        <div
+            v-else-if="
+                projects.length > 0 &&
+                filteredProjects.length > 0 &&
+                viewMode === 'table'
+            "
+            class="rounded-lg border"
+        >
+            <Table aria-label="Projects">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Project</TableHead>
+                        <TableHead>Client</TableHead>
+                        <TableHead>Number</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Stage</TableHead>
+                        <TableHead>Progress</TableHead>
+                        <TableHead>Team</TableHead>
+                        <TableHead>Completion</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow
+                        v-for="project in filteredProjects"
+                        :key="project.id"
+                    >
+                        <TableCell>
+                            <Link
+                                :href="projectUrlOf(project)"
+                                class="font-medium text-foreground hover:underline"
+                            >
+                                {{ project.name }}
+                            </Link>
+                        </TableCell>
+                        <TableCell class="text-muted-foreground">
+                            {{ project.client_name }}
+                        </TableCell>
+                        <TableCell>
+                            <span
+                                class="inline-flex items-center rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground"
+                            >
+                                {{ project.project_number }}
+                            </span>
+                        </TableCell>
+                        <TableCell>
+                            <span
+                                v-if="statusConfig(project.status)"
+                                class="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium"
+                                :class="statusConfig(project.status).badge"
+                            >
+                                <span
+                                    class="h-1.5 w-1.5 rounded-full"
+                                    :class="statusConfig(project.status).dot"
+                                />
+                                {{ statusConfig(project.status).label }}
+                            </span>
+                        </TableCell>
+                        <TableCell class="text-muted-foreground">
+                            {{ project.current_stage.label }}
+                        </TableCell>
+                        <TableCell>
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="h-1.5 w-16 overflow-hidden rounded-full bg-muted"
+                                >
+                                    <div
+                                        class="h-full rounded-full"
+                                        :class="
+                                            project.status === 'active'
+                                                ? 'bg-emerald-500'
+                                                : project.status === 'on_hold'
+                                                  ? 'bg-amber-500'
+                                                  : 'bg-muted-foreground/30'
+                                        "
+                                        :style="{
+                                            width: `${stageProgressOf(project)}%`,
+                                        }"
+                                    />
+                                </div>
+                                <span class="text-xs text-muted-foreground">
+                                    {{ stageProgressOf(project) }}%
+                                </span>
+                            </div>
+                        </TableCell>
+                        <TableCell class="text-muted-foreground">
+                            {{ project.team_count ?? 0 }}
+                        </TableCell>
+                        <TableCell class="text-muted-foreground">
+                            {{ project.estimated_completion_date ?? '—' }}
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
         </div>
 
         <div

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Table view toggle on projects index page — switch between card grid and table view via icon button group
 - Architecture audit report with health scores across 7 dimensions (`docs/ARCHITECTURE-AUDIT.md`)
 - 10-phase architecture roadmap (`docs/ROADMAP.md`)
 - Architecture Decision Records ADR-001 through ADR-007 covering modular monolith, Laravel+Inertia, PostgreSQL, authorization, approval engine, workflow architecture, and AI recommendations
