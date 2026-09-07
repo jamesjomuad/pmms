@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Project `README.md` covering tech stack, features, setup, development commands, and architecture docs
 - Table view toggle on projects index page — switch between card grid and table view via icon button group
 - Architecture audit report with health scores across 7 dimensions (`docs/ARCHITECTURE-AUDIT.md`)
 - 10-phase architecture roadmap (`docs/ROADMAP.md`)
