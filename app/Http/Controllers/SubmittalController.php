@@ -16,6 +16,50 @@ use Inertia\Response;
 class SubmittalController extends Controller
 {
     /**
+     * Display a listing of all submittals across accessible projects.
+     */
+    public function all(Request $request): Response
+    {
+        $user = $request->user();
+
+        $submittals = Submittal::query()
+            ->whereHas('project.teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->with(['project', 'assignee'])
+            ->latest()
+            ->get()
+            ->map(fn (Submittal $submittal) => [
+                'id' => $submittal->id,
+                'title' => $submittal->title,
+                'spec_section' => $submittal->spec_section,
+                'revision_number' => $submittal->revision_number,
+                'status' => $submittal->status,
+                'due_date' => $submittal->due_date?->toDateString(),
+                'assigned_to' => $submittal->assignee?->name,
+                'created_at' => $submittal->created_at->toISOString(),
+                'project' => [
+                    'id' => $submittal->project->id,
+                    'name' => $submittal->project->name,
+                    'project_number' => $submittal->project->project_number,
+                ],
+            ]);
+
+        $projects = Project::query()
+            ->whereHas('teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Project $project) => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'project_number' => $project->project_number,
+            ]);
+
+        return Inertia::render('submittals/Index', [
+            'submittals' => $submittals,
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
      * Display a listing of submittals for a project.
      */
     public function index(Request $request, Project $project): Response

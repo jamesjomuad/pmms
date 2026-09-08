@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('projects/{project}/deliverables', [DeliverableController::class, 'store'])->name('projects.deliverables.store');
     Route::delete('projects/{project}/deliverables/{mediaId}', [DeliverableController::class, 'destroy'])->name('projects.deliverables.destroy');
 
+    Route::get('submittals', [SubmittalController::class, 'all'])->name('submittals.index');
     Route::get('projects/{project}/submittals', [SubmittalController::class, 'index'])->name('projects.submittals.index');
     Route::get('projects/{project}/submittals/create', [SubmittalController::class, 'create'])->name('projects.submittals.create');
     Route::post('projects/{project}/submittals', [SubmittalController::class, 'store'])->name('projects.submittals.store');

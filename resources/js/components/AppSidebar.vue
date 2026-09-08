@@ -5,6 +5,7 @@ import {
     Briefcase,
     Clock,
     DraftingCompass,
+    FileText,
     LayoutGrid,
     SquareText,
     Users,
@@ -42,6 +43,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Shop Drawings',
         href: '/shop-drawings',
         icon: DraftingCompass,
+    },
+    {
+        title: 'Submittals',
+        href: '/submittals',
+        icon: FileText,
     },
 ]);
 
