@@ -4,6 +4,7 @@ import {
     ClipboardList,
     DraftingCompass,
     FileText,
+    MapPin,
     Pencil,
     Receipt,
 } from '@lucide/vue';
@@ -29,6 +30,12 @@ const props = defineProps<{
 }>();
 
 const editUrl = computed(() => projectEdit(props.project.id).url);
+
+const coordinates = computed(() =>
+    props.project.latitude !== null && props.project.longitude !== null
+        ? `${props.project.latitude.toFixed(7)}, ${props.project.longitude.toFixed(7)}`
+        : null,
+);
 
 const statusVariant = (status: string) => {
     switch (status) {
@@ -262,6 +269,55 @@ defineOptions({
                         </CardContent>
                     </Card>
                 </div>
+
+                <Card class="mt-6">
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <MapPin class="h-4 w-4 text-muted-foreground" />
+                            Site Address & Location
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <dl class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <dt class="text-sm text-muted-foreground">
+                                    Site Address
+                                </dt>
+                                <dd class="mt-1 text-sm">
+                                    {{ project.full_address || '—' }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm text-muted-foreground">
+                                    Coordinates
+                                </dt>
+                                <dd class="mt-1 text-sm">
+                                    {{ coordinates ?? '—' }}
+                                </dd>
+                            </div>
+                        </dl>
+                        <div v-if="project.maps_url" class="mt-4">
+                            <Button variant="outline" as-child>
+                                <a
+                                    :href="project.maps_url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Open in Google Maps
+                                </a>
+                            </Button>
+                        </div>
+                        <p v-else class="mt-4 text-sm text-muted-foreground">
+                            No site address provided.
+                            <Link
+                                :href="editUrl"
+                                class="font-medium text-primary hover:underline"
+                            >
+                                Add one
+                            </Link>
+                        </p>
+                    </CardContent>
+                </Card>
             </TabsContent>
 
             <TabsContent value="history">

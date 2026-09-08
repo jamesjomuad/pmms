@@ -29,7 +29,15 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Projects',
         href: projectsIndex().url,
         icon: Briefcase,
-    },
+    }
+]);
+
+const footerNavItems: NavItem[] = [
+    // {
+    //     title: 'Repository',
+    //     href: 'https://github.com/laravel/vue-starter-kit',
+    //     icon: FolderGit2,
+    // },
     {
         title: 'Users',
         href: '/users',
@@ -40,14 +48,6 @@ const mainNavItems = computed<NavItem[]>(() => [
         href: '/activity-log',
         icon: Clock,
     },
-]);
-
-const footerNavItems: NavItem[] = [
-    // {
-    //     title: 'Repository',
-    //     href: 'https://github.com/laravel/vue-starter-kit',
-    //     icon: FolderGit2,
-    // },
     {
         title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#vue',

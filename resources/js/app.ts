@@ -32,3 +32,11 @@ initializeTheme();
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();
+
+if (import.meta.env.DEV && typeof document !== 'undefined') {
+    const script = document.createElement('script');
+
+    script.type = 'module';
+    script.src = `${import.meta.env.BASE_URL}__devtools/embedded.js`;
+    document.body.appendChild(script);
+}

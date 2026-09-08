@@ -78,7 +78,8 @@ Projects move through a lifecycle. Model stages as a **reference table**, not ha
 
 ```
 projects
-  id, name, client_name, project_number, awarded_date, current_stage_id (FK), status, ...
+  id, name, client_name, project_number, awarded_date, current_stage_id (FK), status,
+  address, city, state, postal_code, latitude, longitude, ...
 
 stages
   id, key, label, sort_order, description

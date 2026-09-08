@@ -46,6 +46,12 @@ The central entity every module hangs off.
 | current_stage_id | FK → stages.id | Drives dashboards/filters |
 | estimated_completion_date | date, nullable | |
 | status | enum | `active`, `on_hold`, `closed` — separate from stage; a project can be on hold *within* any stage |
+| address | string, nullable | Site street address |
+| city | string, nullable | |
+| state | string, nullable | |
+| postal_code | string, nullable | |
+| latitude | decimal(10,7), nullable | GPS latitude — powers the Google Maps link |
+| longitude | decimal(10,7), nullable | GPS longitude — powers the Google Maps link |
 | created_at / updated_at / deleted_at | timestamps | Soft deletes — nothing disappears in an ERP |
 
 ### `project_stage_history`

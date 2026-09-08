@@ -1,6 +1,7 @@
 import inertia from '@inertiajs/vite';
 import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
+import { DevTools } from '@vitejs/devtools';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
@@ -19,6 +20,10 @@ export default defineConfig({
         }),
         inertia(),
         tailwindcss(),
+        DevTools({
+            apply: 'serve',
+            embeddedVisibility: 'normal',
+        }),
         vue({
             template: {
                 transformAssetUrls: {
@@ -33,7 +38,7 @@ export default defineConfig({
     ],
     server: {
         hmr: {
-            overlay: true
+            overlay: true,
         },
         watch: {
             ignored: [

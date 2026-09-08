@@ -25,6 +25,14 @@ export type Project = {
     estimated_completion_date: string | null;
     status: ProjectStatus;
     notes: string | null;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    postal_code: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    full_address: string | null;
+    maps_url: string | null;
     current_stage: ProjectStage;
     team_count?: number;
     created_at?: string;

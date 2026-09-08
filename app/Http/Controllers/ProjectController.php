@@ -43,6 +43,14 @@ class ProjectController extends Controller
                     'awarded_date' => $project->awarded_date->toDateString(),
                     'estimated_completion_date' => $project->estimated_completion_date?->toDateString(),
                     'status' => $project->status,
+                    'address' => $project->address,
+                    'city' => $project->city,
+                    'state' => $project->state,
+                    'postal_code' => $project->postal_code,
+                    'latitude' => $project->latitude !== null ? (float) $project->latitude : null,
+                    'longitude' => $project->longitude !== null ? (float) $project->longitude : null,
+                    'full_address' => $project->full_address,
+                    'maps_url' => $project->maps_url,
                     'current_stage' => [
                         'id' => $project->currentStage->id,
                         'key' => $project->currentStage->key,
@@ -122,6 +130,12 @@ class ProjectController extends Controller
                 'awarded_date' => $request->validated('awarded_date'),
                 'estimated_completion_date' => $request->validated('estimated_completion_date'),
                 'notes' => $request->validated('notes'),
+                'address' => $request->validated('address'),
+                'city' => $request->validated('city'),
+                'state' => $request->validated('state'),
+                'postal_code' => $request->validated('postal_code'),
+                'latitude' => $request->validated('latitude'),
+                'longitude' => $request->validated('longitude'),
             ]);
 
             if ($team = $request->validated('team')) {
@@ -199,6 +213,14 @@ class ProjectController extends Controller
                 'estimated_completion_date' => $project->estimated_completion_date?->toDateString(),
                 'status' => $project->status,
                 'notes' => $project->notes,
+                'address' => $project->address,
+                'city' => $project->city,
+                'state' => $project->state,
+                'postal_code' => $project->postal_code,
+                'latitude' => $project->latitude !== null ? (float) $project->latitude : null,
+                'longitude' => $project->longitude !== null ? (float) $project->longitude : null,
+                'full_address' => $project->full_address,
+                'maps_url' => $project->maps_url,
                 'created_at' => $project->created_at->toISOString(),
                 'current_stage' => [
                     'id' => $project->currentStage->id,
@@ -264,6 +286,14 @@ class ProjectController extends Controller
                 'estimated_completion_date' => $project->estimated_completion_date?->toDateString(),
                 'status' => $project->status,
                 'notes' => $project->notes,
+                'address' => $project->address,
+                'city' => $project->city,
+                'state' => $project->state,
+                'postal_code' => $project->postal_code,
+                'latitude' => $project->latitude !== null ? (float) $project->latitude : null,
+                'longitude' => $project->longitude !== null ? (float) $project->longitude : null,
+                'full_address' => $project->full_address,
+                'maps_url' => $project->maps_url,
                 'team' => $project->teamMembers->map(function (User $member) {
                     $projectRole = $member->pivot->project_role; // @phpstan-ignore property.notFound
 
@@ -305,6 +335,12 @@ class ProjectController extends Controller
                 'estimated_completion_date',
                 'status',
                 'notes',
+                'address',
+                'city',
+                'state',
+                'postal_code',
+                'latitude',
+                'longitude',
             ]));
 
             if ($request->has('team')) {

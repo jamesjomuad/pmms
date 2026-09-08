@@ -15,7 +15,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { show as projectShow, update as projectUpdate } from '@/routes/projects';
+import {
+    show as projectShow,
+    update as projectUpdate,
+} from '@/routes/projects';
 import type {
     ProjectDetail,
     ProjectRoleOption,
@@ -42,6 +45,12 @@ const form = useForm({
     estimated_completion_date: props.project.estimated_completion_date ?? '',
     status: props.project.status,
     notes: props.project.notes ?? '',
+    address: props.project.address ?? '',
+    city: props.project.city ?? '',
+    state: props.project.state ?? '',
+    postal_code: props.project.postal_code ?? '',
+    latitude: props.project.latitude?.toString() ?? '',
+    longitude: props.project.longitude?.toString() ?? '',
     team: props.project.team.map((m) => ({
         user_id: m.id,
         project_role: m.project_role,
@@ -223,6 +232,109 @@ defineOptions({
                         >
                             {{ form.errors.notes }}
                         </p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Site Address &amp; Location</CardTitle>
+                </CardHeader>
+                <CardContent class="space-y-4">
+                    <div class="space-y-2">
+                        <Label for="address">Street Address</Label>
+                        <Input
+                            id="address"
+                            v-model="form.address"
+                            placeholder="e.g. 1200 Market Street"
+                        />
+                        <p
+                            v-if="form.errors.address"
+                            class="text-sm text-destructive"
+                        >
+                            {{ form.errors.address }}
+                        </p>
+                    </div>
+
+                    <div class="grid gap-4 sm:grid-cols-3">
+                        <div class="space-y-2">
+                            <Label for="city">City</Label>
+                            <Input
+                                id="city"
+                                v-model="form.city"
+                                placeholder="e.g. San Francisco"
+                            />
+                            <p
+                                v-if="form.errors.city"
+                                class="text-sm text-destructive"
+                            >
+                                {{ form.errors.city }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <Label for="state">State</Label>
+                            <Input
+                                id="state"
+                                v-model="form.state"
+                                placeholder="e.g. CA"
+                            />
+                            <p
+                                v-if="form.errors.state"
+                                class="text-sm text-destructive"
+                            >
+                                {{ form.errors.state }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <Label for="postal_code">Postal Code</Label>
+                            <Input
+                                id="postal_code"
+                                v-model="form.postal_code"
+                                placeholder="e.g. 94103"
+                            />
+                            <p
+                                v-if="form.errors.postal_code"
+                                class="text-sm text-destructive"
+                            >
+                                {{ form.errors.postal_code }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="space-y-2">
+                            <Label for="latitude">Latitude</Label>
+                            <Input
+                                id="latitude"
+                                v-model="form.latitude"
+                                inputmode="decimal"
+                                placeholder="e.g. 37.7863"
+                            />
+                            <p
+                                v-if="form.errors.latitude"
+                                class="text-sm text-destructive"
+                            >
+                                {{ form.errors.latitude }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <Label for="longitude">Longitude</Label>
+                            <Input
+                                id="longitude"
+                                v-model="form.longitude"
+                                inputmode="decimal"
+                                placeholder="e.g. -122.4039"
+                            />
+                            <p
+                                v-if="form.errors.longitude"
+                                class="text-sm text-destructive"
+                            >
+                                {{ form.errors.longitude }}
+                            </p>
+                        </div>
                     </div>
                 </CardContent>
             </Card>

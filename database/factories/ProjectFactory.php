@@ -24,6 +24,12 @@ class ProjectFactory extends Factory
             'estimated_completion_date' => fake()->optional()->date(),
             'status' => 'active',
             'notes' => fake()->optional()->sentence(),
+            'address' => fake()->streetAddress(),
+            'city' => fake()->city(),
+            'state' => fake()->randomElement(['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'FL', 'GA', 'IL', 'IN', 'MA', 'NC', 'NJ', 'NY', 'OH', 'OR', 'PA', 'TX', 'UT', 'VA', 'WA']),
+            'postal_code' => fake()->postcode(),
+            'latitude' => fake()->latitude(),
+            'longitude' => fake()->longitude(),
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Concerns\HasApprovals;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,14 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon|null $estimated_completion_date
  * @property string $status
  * @property string|null $notes
+ * @property string|null $address
+ * @property string|null $city
+ * @property string|null $state
+ * @property string|null $postal_code
+ * @property string|null $latitude
+ * @property string|null $longitude
+ * @property-read string $full_address
+ * @property-read string|null $maps_url
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -45,6 +54,12 @@ use Spatie\MediaLibrary\InteractsWithMedia;
     'estimated_completion_date',
     'status',
     'notes',
+    'address',
+    'city',
+    'state',
+    'postal_code',
+    'latitude',
+    'longitude',
 ])]
 class Project extends Model implements HasMedia
 {
@@ -52,12 +67,32 @@ class Project extends Model implements HasMedia
     use HasApprovals, HasFactory, InteractsWithMedia, LogsActivity, SoftDeletes;
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = ['full_address', 'maps_url'];
+
+    /**
      * Get the activity log options for this model.
      */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'client_name', 'project_number', 'status', 'current_stage_id', 'notes'])
+            ->logOnly([
+                'name',
+                'client_name',
+                'project_number',
+                'status',
+                'current_stage_id',
+                'notes',
+                'address',
+                'city',
+                'state',
+                'postal_code',
+                'latitude',
+                'longitude',
+            ])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
@@ -89,6 +124,47 @@ class Project extends Model implements HasMedia
             'awarded_date' => 'date',
             'estimated_completion_date' => 'date',
         ];
+    }
+
+    /**
+     * Get the full, comma-separated site address for this project.
+     *
+     * @return Attribute<string, never>
+     */
+    protected function fullAddress(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => implode(', ', array_filter([
+                $this->address,
+                $this->city,
+                $this->state,
+                $this->postal_code,
+            ])),
+        );
+    }
+
+    /**
+     * Get the Google Maps link for this project's site location.
+     *
+     * @return Attribute<?string, never>
+     */
+    protected function mapsUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?string {
+                if ($this->latitude !== null && $this->longitude !== null) {
+                    return 'https://www.google.com/maps/search/?api=1&query='
+                        .$this->latitude.','
+                        .$this->longitude;
+                }
+
+                $address = $this->full_address;
+
+                return $address !== ''
+                    ? 'https://www.google.com/maps/search/?api=1&query='.urlencode($address)
+                    : null;
+            },
+        );
     }
 
     /**
