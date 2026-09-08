@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Briefcase, Clock, LayoutGrid, SquareText, Users } from '@lucide/vue';
+import {
+    BookOpen,
+    Briefcase,
+    Clock,
+    DraftingCompass,
+    LayoutGrid,
+    SquareText,
+    Users,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -29,7 +37,12 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Projects',
         href: projectsIndex().url,
         icon: Briefcase,
-    }
+    },
+    {
+        title: 'Shop Drawings',
+        href: '/shop-drawings',
+        icon: DraftingCompass,
+    },
 ]);
 
 const footerNavItems: NavItem[] = [

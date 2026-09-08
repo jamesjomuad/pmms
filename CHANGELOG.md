@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Global Shop Drawings page at `/shop-drawings` with cross-project drawing list, status and project filtering, search, KPI stat cards, and sidebar navigation link
+
 - Site address (street, city, state, postal code) and geo-location (latitude, longitude) fields on projects, with create/edit inputs and a Google Maps link on the project detail page
 - Project `README.md` covering tech stack, features, setup, development commands, and architecture docs
 - Table view toggle on projects index page — switch between card grid and table view via icon button group

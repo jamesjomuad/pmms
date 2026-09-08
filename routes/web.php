@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('projects/{project}/rfis/{rfi}/submit', [RfiController::class, 'submit'])->name('projects.rfis.submit');
     Route::post('projects/{project}/rfis/{rfi}/respond', [RfiController::class, 'respond'])->name('projects.rfis.respond');
 
+    Route::get('shop-drawings', [ShopDrawingController::class, 'all'])->name('shop-drawings.index');
     Route::get('projects/{project}/shop-drawings', [ShopDrawingController::class, 'index'])->name('projects.shop-drawings.index');
     Route::get('projects/{project}/shop-drawings/create', [ShopDrawingController::class, 'create'])->name('projects.shop-drawings.create');
     Route::post('projects/{project}/shop-drawings', [ShopDrawingController::class, 'store'])->name('projects.shop-drawings.store');

@@ -16,6 +16,50 @@ use Inertia\Response;
 class ShopDrawingController extends Controller
 {
     /**
+     * Display a listing of all shop drawings across accessible projects.
+     */
+    public function all(Request $request): Response
+    {
+        $user = $request->user();
+
+        $shopDrawings = ShopDrawing::query()
+            ->whereHas('project.teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->with(['project', 'assignee'])
+            ->latest()
+            ->get()
+            ->map(fn (ShopDrawing $drawing) => [
+                'id' => $drawing->id,
+                'title' => $drawing->title,
+                'drawing_number' => $drawing->drawing_number,
+                'revision_number' => $drawing->revision_number,
+                'status' => $drawing->status,
+                'due_date' => $drawing->due_date?->toDateString(),
+                'assigned_to' => $drawing->assignee?->name,
+                'created_at' => $drawing->created_at->toISOString(),
+                'project' => [
+                    'id' => $drawing->project->id,
+                    'name' => $drawing->project->name,
+                    'project_number' => $drawing->project->project_number,
+                ],
+            ]);
+
+        $projects = Project::query()
+            ->whereHas('teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Project $project) => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'project_number' => $project->project_number,
+            ]);
+
+        return Inertia::render('shop-drawings/Index', [
+            'shopDrawings' => $shopDrawings,
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
      * Display a listing of shop drawings for a project.
      */
     public function index(Request $request, Project $project): Response
