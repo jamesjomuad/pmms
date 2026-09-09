@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ChangelogController;
 use App\Http\Controllers\ChangeOrderController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliverableController;
 use App\Http\Controllers\EquipmentController;
@@ -128,6 +129,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('projects/{project}/change-orders/{changeOrder}/submit', [ChangeOrderController::class, 'submit'])->name('projects.change-orders.submit');
     Route::post('projects/{project}/change-orders/{changeOrder}/approve', [ChangeOrderController::class, 'approve'])->name('projects.change-orders.approve');
     Route::post('projects/{project}/change-orders/{changeOrder}/reject', [ChangeOrderController::class, 'reject'])->name('projects.change-orders.reject');
+
+    Route::post('projects/{project}/comments', [CommentController::class, 'store'])->name('projects.comments.store');
+    Route::delete('projects/{project}/comments/{comment}', [CommentController::class, 'destroy'])->name('projects.comments.destroy');
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('users', [UserController::class, 'store'])->name('users.store');

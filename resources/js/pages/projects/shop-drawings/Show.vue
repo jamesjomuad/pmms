@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     CheckCircle2,
@@ -13,6 +13,7 @@ import {
 } from '@lucide/vue';
 import { computed } from 'vue';
 import ApprovalWorkflow from '@/components/ApprovalWorkflow.vue';
+import CommentThread from '@/components/CommentThread.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -61,6 +62,8 @@ const props = defineProps<{
         }[];
     };
 }>();
+
+const auth = usePage().props.auth;
 
 const statusVariant = (status: string) => {
     switch (status) {
@@ -376,39 +379,13 @@ defineOptions({
             </TabsList>
 
             <TabsContent value="comments">
-                <Card>
-                    <CardContent class="pt-6">
-                        <div
-                            v-if="shopDrawing.comments.length > 0"
-                            class="space-y-4"
-                        >
-                            <div
-                                v-for="comment in shopDrawing.comments"
-                                :key="comment.id"
-                                class="rounded-lg border p-4"
-                            >
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium">
-                                        {{ comment.user.name }}
-                                    </p>
-                                    <p class="text-xs text-muted-foreground">
-                                        {{
-                                            new Date(
-                                                comment.created_at,
-                                            ).toLocaleString()
-                                        }}
-                                    </p>
-                                </div>
-                                <p class="mt-2 text-sm whitespace-pre-wrap">
-                                    {{ comment.body }}
-                                </p>
-                            </div>
-                        </div>
-                        <p v-else class="text-sm text-muted-foreground">
-                            No comments yet.
-                        </p>
-                    </CardContent>
-                </Card>
+                <CommentThread
+                    :project-id="project.id"
+                    commentable-type="shop-drawing"
+                    :commentable-id="shopDrawing.id"
+                    :comments="shopDrawing.comments"
+                    :auth-user-id="auth.user.id"
+                />
             </TabsContent>
 
             <TabsContent value="attachments">
