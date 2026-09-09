@@ -62,4 +62,3 @@ test('submittals from projects the user is not a member of are not shown', funct
             ->where('projects.0.name', 'My HVAC Project')
         );
 });
-

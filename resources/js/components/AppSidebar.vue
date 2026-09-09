@@ -4,6 +4,7 @@ import {
     BookOpen,
     Briefcase,
     Clock,
+    DollarSign,
     DraftingCompass,
     FileText,
     LayoutGrid,
@@ -48,6 +49,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Submittals',
         href: '/submittals',
         icon: FileText,
+    },
+    {
+        title: 'Change Orders',
+        href: '/change-orders',
+        icon: DollarSign,
     },
 ]);
 

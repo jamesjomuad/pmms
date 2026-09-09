@@ -16,6 +16,51 @@ use Inertia\Response;
 class ChangeOrderController extends Controller
 {
     /**
+     * Display a listing of all change orders across accessible projects.
+     */
+    public function all(Request $request): Response
+    {
+        $user = $request->user();
+
+        $changeOrders = ChangeOrder::query()
+            ->whereHas('project.teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->with(['project', 'requester', 'approver'])
+            ->latest()
+            ->get()
+            ->map(fn (ChangeOrder $co) => [
+                'id' => $co->id,
+                'title' => $co->title,
+                'cost_impact' => $co->cost_impact,
+                'schedule_impact_days' => $co->schedule_impact_days,
+                'status' => $co->status,
+                'requested_by' => $co->requester->name,
+                'approved_by' => $co->approver?->name,
+                'requested_at' => $co->requested_at?->toDateString(),
+                'created_at' => $co->created_at->toISOString(),
+                'project' => [
+                    'id' => $co->project->id,
+                    'name' => $co->project->name,
+                    'project_number' => $co->project->project_number,
+                ],
+            ]);
+
+        $projects = Project::query()
+            ->whereHas('teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Project $project) => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'project_number' => $project->project_number,
+            ]);
+
+        return Inertia::render('change-orders/Index', [
+            'changeOrders' => $changeOrders,
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
      * Display a listing of change orders for a project.
      */
     public function index(Request $request, Project $project): Response

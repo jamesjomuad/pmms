@@ -116,6 +116,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('projects/{project}/punch-list/{punchListItem}', [PunchListItemController::class, 'destroy'])->name('projects.punch-list.destroy');
     Route::post('projects/{project}/punch-list/{punchListItem}/resolve', [PunchListItemController::class, 'resolve'])->name('projects.punch-list.resolve');
 
+    Route::get('change-orders', [ChangeOrderController::class, 'all'])->name('change-orders.index');
     Route::get('projects/{project}/change-orders', [ChangeOrderController::class, 'index'])->name('projects.change-orders.index');
     Route::get('projects/{project}/change-orders/create', [ChangeOrderController::class, 'create'])->name('projects.change-orders.create');
     Route::post('projects/{project}/change-orders', [ChangeOrderController::class, 'store'])->name('projects.change-orders.store');
