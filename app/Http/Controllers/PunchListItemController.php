@@ -15,6 +15,51 @@ use Inertia\Response;
 class PunchListItemController extends Controller
 {
     /**
+     * Display a listing of all punch list items across accessible projects.
+     */
+    public function all(Request $request): Response
+    {
+        $user = $request->user();
+
+        $punchListItems = PunchListItem::query()
+            ->whereHas('project.teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->with(['project', 'assignee'])
+            ->latest()
+            ->get()
+            ->map(fn (PunchListItem $item) => [
+                'id' => $item->id,
+                'title' => $item->title,
+                'location' => $item->location,
+                'trade' => $item->trade,
+                'priority' => $item->priority,
+                'status' => $item->status,
+                'due_date' => $item->due_date?->toDateString(),
+                'assigned_to' => $item->assignee?->name,
+                'created_at' => $item->created_at->toISOString(),
+                'project' => [
+                    'id' => $item->project->id,
+                    'name' => $item->project->name,
+                    'project_number' => $item->project->project_number,
+                ],
+            ]);
+
+        $projects = Project::query()
+            ->whereHas('teamMembers', fn ($q) => $q->where('users.id', $user->id))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Project $project) => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'project_number' => $project->project_number,
+            ]);
+
+        return Inertia::render('punch-list/Index', [
+            'punchListItems' => $punchListItems,
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
      * Display a listing of punch list items for a project.
      */
     public function index(Request $request, Project $project): Response

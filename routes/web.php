@@ -107,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('projects/{project}/equipment/{equipment}/inspections/{inspection}', [EquipmentInspectionController::class, 'update'])->name('projects.equipment.inspections.update');
     Route::delete('projects/{project}/equipment/{equipment}/inspections/{inspection}', [EquipmentInspectionController::class, 'destroy'])->name('projects.equipment.inspections.destroy');
 
+    Route::get('punch-list', [PunchListItemController::class, 'all'])->name('punch-list.index');
     Route::get('projects/{project}/punch-list', [PunchListItemController::class, 'index'])->name('projects.punch-list.index');
     Route::get('projects/{project}/punch-list/create', [PunchListItemController::class, 'create'])->name('projects.punch-list.create');
     Route::post('projects/{project}/punch-list', [PunchListItemController::class, 'store'])->name('projects.punch-list.store');

@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import {
     BookOpen,
     Briefcase,
+    CheckSquare,
     Clock,
     DollarSign,
     DraftingCompass,
@@ -54,6 +55,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Change Orders',
         href: '/change-orders',
         icon: DollarSign,
+    },
+    {
+        title: 'Punch List',
+        href: '/punch-list',
+        icon: CheckSquare,
     },
 ]);
 
