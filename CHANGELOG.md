@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global Change Orders page at `/change-orders` with cross-project change order list, status and project filtering, search, KPI stat cards, and sidebar navigation link
 - Global Punch List page at `/punch-list` with cross-project punch list item list, status and priority filtering, search, KPI stat cards, and sidebar navigation link
 - Commenting on shop drawings with add/delete, backed by a shared `CommentController` and the reusable `CommentThread` Vue component
+- Commenting on submittals with add/delete, reusing the same `CommentThread` Vue component on the submittal detail page
 
 - Site address (street, city, state, postal code) and geo-location (latitude, longitude) fields on projects, with create/edit inputs and a Google Maps link on the project detail page
 - Project `README.md` covering tech stack, features, setup, development commands, and architecture docs
