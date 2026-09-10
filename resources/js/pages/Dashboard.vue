@@ -37,7 +37,12 @@ type ActivityEntry = {
 
 defineProps<{
     pendingInvitations?: DashboardInvitation[];
-    projectStats: { total: number; active: number; on_hold: number; closed: number };
+    projectStats: {
+        total: number;
+        active: number;
+        on_hold: number;
+        closed: number;
+    };
     recentProjects: ProjectSummary[];
     recentActivity: ActivityEntry[];
 }>();
@@ -122,7 +127,9 @@ defineOptions({
         <div class="grid gap-6 lg:grid-cols-2">
             <!-- Recent Projects -->
             <div class="rounded-lg border">
-                <div class="flex items-center justify-between border-b px-4 py-3">
+                <div
+                    class="flex items-center justify-between border-b px-4 py-3"
+                >
                     <h2 class="text-sm font-medium">Recent Projects</h2>
                     <Link
                         href="/projects"
@@ -136,25 +143,31 @@ defineOptions({
                         v-for="project in recentProjects"
                         :key="project.id"
                         :href="`/projects/${project.id}`"
-                        class="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
+                        class="flex items-center justify-between px-4 py-3 transition-colors hover:bg-muted/50"
                     >
                         <div class="min-w-0 flex-1">
                             <p class="truncate text-sm font-medium">
                                 {{ project.name }}
                             </p>
                             <p class="truncate text-xs text-muted-foreground">
-                                {{ project.client_name }} &middot; {{ project.project_number }}
+                                {{ project.client_name }} &middot;
+                                {{ project.project_number }}
                             </p>
                         </div>
                         <div class="ml-4 flex items-center gap-2">
-                            <Badge :variant="statusVariant(project.status)" class="text-xs">
+                            <Badge
+                                :variant="statusVariant(project.status)"
+                                class="text-xs"
+                            >
                                 {{ statusLabel(project.status) }}
                             </Badge>
                         </div>
                     </Link>
                 </div>
                 <div v-else class="px-4 py-12 text-center">
-                    <Briefcase class="mx-auto mb-3 h-8 w-8 text-muted-foreground/40" />
+                    <Briefcase
+                        class="mx-auto mb-3 h-8 w-8 text-muted-foreground/40"
+                    />
                     <p class="text-sm text-muted-foreground">No projects yet</p>
                     <Button as-child variant="outline" size="sm" class="mt-3">
                         <Link :href="createUrl">
@@ -167,7 +180,9 @@ defineOptions({
 
             <!-- Recent Activity -->
             <div class="rounded-lg border">
-                <div class="flex items-center justify-between border-b px-4 py-3">
+                <div
+                    class="flex items-center justify-between border-b px-4 py-3"
+                >
                     <h2 class="text-sm font-medium">Recent Activity</h2>
                     <Link
                         href="/activity-log"
@@ -183,10 +198,16 @@ defineOptions({
                         class="px-4 py-3"
                     >
                         <p class="text-sm">
-                            <span class="font-medium">{{ entry.causer_name }}</span>
-                            <span class="text-muted-foreground"> {{ entry.description }}</span>
+                            <span class="font-medium">{{
+                                entry.causer_name
+                            }}</span>
+                            <span class="text-muted-foreground">
+                                {{ entry.description }}</span
+                            >
                         </p>
-                        <div class="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                        <div
+                            class="mt-1 flex items-center gap-2 text-xs text-muted-foreground"
+                        >
                             <span>{{ formatDate(entry.created_at) }}</span>
                             <template v-if="entry.project_name">
                                 <span>&middot;</span>
@@ -201,8 +222,12 @@ defineOptions({
                     </div>
                 </div>
                 <div v-else class="px-4 py-12 text-center">
-                    <Activity class="mx-auto mb-3 h-8 w-8 text-muted-foreground/40" />
-                    <p class="text-sm text-muted-foreground">No recent activity</p>
+                    <Activity
+                        class="mx-auto mb-3 h-8 w-8 text-muted-foreground/40"
+                    />
+                    <p class="text-sm text-muted-foreground">
+                        No recent activity
+                    </p>
                 </div>
             </div>
         </div>

@@ -87,7 +87,9 @@ const priorityVariant = (priority: string) => {
 };
 
 const resolveItem = () => {
-    router.post(`/projects/${props.project.id}/punch-list/${props.punchListItem.id}/resolve`);
+    router.post(
+        `/projects/${props.project.id}/punch-list/${props.punchListItem.id}/resolve`,
+    );
 };
 
 defineOptions({
@@ -136,7 +138,9 @@ defineOptions({
                     Mark as Resolved
                 </Button>
                 <Button variant="outline" size="sm" as-child>
-                    <Link :href="`/projects/${project.id}/punch-list/${punchListItem.id}/edit`">
+                    <Link
+                        :href="`/projects/${project.id}/punch-list/${punchListItem.id}/edit`"
+                    >
                         <Pencil class="mr-1 h-4 w-4" />
                         Edit
                     </Link>
@@ -152,44 +156,84 @@ defineOptions({
                 <CardContent>
                     <dl class="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Status</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Status
+                            </dt>
                             <dd class="mt-1">
-                                <Badge :variant="statusVariant(punchListItem.status)">
+                                <Badge
+                                    :variant="
+                                        statusVariant(punchListItem.status)
+                                    "
+                                >
                                     {{ statusLabel(punchListItem.status) }}
                                 </Badge>
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Priority</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Priority
+                            </dt>
                             <dd class="mt-1">
-                                <Badge :variant="priorityVariant(punchListItem.priority)">
+                                <Badge
+                                    :variant="
+                                        priorityVariant(punchListItem.priority)
+                                    "
+                                >
                                     {{ punchListItem.priority }}
                                 </Badge>
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Location</dt>
-                            <dd class="mt-1 text-sm">{{ punchListItem.location ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Location
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ punchListItem.location ?? '—' }}
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-sm text-muted-foreground">Trade</dt>
-                            <dd class="mt-1 text-sm">{{ punchListItem.trade ?? '—' }}</dd>
+                            <dd class="mt-1 text-sm">
+                                {{ punchListItem.trade ?? '—' }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Due Date</dt>
-                            <dd class="mt-1 text-sm">{{ punchListItem.due_date ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Due Date
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ punchListItem.due_date ?? '—' }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Assigned To</dt>
-                            <dd class="mt-1 text-sm">{{ punchListItem.assignee?.name ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Assigned To
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ punchListItem.assignee?.name ?? '—' }}
+                            </dd>
                         </div>
-                        <div v-if="punchListItem.description" class="sm:col-span-2">
-                            <dt class="text-sm text-muted-foreground">Description</dt>
-                            <dd class="mt-1 text-sm whitespace-pre-wrap">{{ punchListItem.description }}</dd>
+                        <div
+                            v-if="punchListItem.description"
+                            class="sm:col-span-2"
+                        >
+                            <dt class="text-sm text-muted-foreground">
+                                Description
+                            </dt>
+                            <dd class="mt-1 text-sm whitespace-pre-wrap">
+                                {{ punchListItem.description }}
+                            </dd>
                         </div>
-                        <div v-if="punchListItem.resolution_notes" class="sm:col-span-2">
-                            <dt class="text-sm text-muted-foreground">Resolution Notes</dt>
-                            <dd class="mt-1 text-sm whitespace-pre-wrap">{{ punchListItem.resolution_notes }}</dd>
+                        <div
+                            v-if="punchListItem.resolution_notes"
+                            class="sm:col-span-2"
+                        >
+                            <dt class="text-sm text-muted-foreground">
+                                Resolution Notes
+                            </dt>
+                            <dd class="mt-1 text-sm whitespace-pre-wrap">
+                                {{ punchListItem.resolution_notes }}
+                            </dd>
                         </div>
                     </dl>
                 </CardContent>
@@ -202,12 +246,28 @@ defineOptions({
                 <CardContent>
                     <dl class="space-y-3">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Created</dt>
-                            <dd class="mt-1 text-sm">{{ new Date(punchListItem.created_at).toLocaleDateString() }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Created
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{
+                                    new Date(
+                                        punchListItem.created_at,
+                                    ).toLocaleDateString()
+                                }}
+                            </dd>
                         </div>
                         <div v-if="punchListItem.resolved_at">
-                            <dt class="text-sm text-muted-foreground">Resolved</dt>
-                            <dd class="mt-1 text-sm">{{ new Date(punchListItem.resolved_at).toLocaleDateString() }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Resolved
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{
+                                    new Date(
+                                        punchListItem.resolved_at,
+                                    ).toLocaleDateString()
+                                }}
+                            </dd>
                         </div>
                     </dl>
                 </CardContent>
@@ -235,22 +295,35 @@ defineOptions({
             <TabsContent value="comments">
                 <Card>
                     <CardContent class="pt-6">
-                        <div v-if="punchListItem.comments.length > 0" class="space-y-4">
+                        <div
+                            v-if="punchListItem.comments.length > 0"
+                            class="space-y-4"
+                        >
                             <div
                                 v-for="comment in punchListItem.comments"
                                 :key="comment.id"
                                 class="rounded-lg border p-4"
                             >
                                 <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium">{{ comment.user.name }}</p>
+                                    <p class="text-sm font-medium">
+                                        {{ comment.user.name }}
+                                    </p>
                                     <p class="text-xs text-muted-foreground">
-                                        {{ new Date(comment.created_at).toLocaleString() }}
+                                        {{
+                                            new Date(
+                                                comment.created_at,
+                                            ).toLocaleString()
+                                        }}
                                     </p>
                                 </div>
-                                <p class="mt-2 text-sm whitespace-pre-wrap">{{ comment.body }}</p>
+                                <p class="mt-2 text-sm whitespace-pre-wrap">
+                                    {{ comment.body }}
+                                </p>
                             </div>
                         </div>
-                        <p v-else class="text-sm text-muted-foreground">No comments yet.</p>
+                        <p v-else class="text-sm text-muted-foreground">
+                            No comments yet.
+                        </p>
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -258,25 +331,40 @@ defineOptions({
             <TabsContent value="attachments">
                 <Card>
                     <CardContent class="pt-6">
-                        <div v-if="punchListItem.attachments.length > 0" class="space-y-2">
+                        <div
+                            v-if="punchListItem.attachments.length > 0"
+                            class="space-y-2"
+                        >
                             <div
                                 v-for="attachment in punchListItem.attachments"
                                 :key="attachment.id"
                                 class="flex items-center justify-between rounded-lg border p-3"
                             >
                                 <div class="flex items-center gap-3">
-                                    <CheckSquare class="h-4 w-4 text-muted-foreground" />
+                                    <CheckSquare
+                                        class="h-4 w-4 text-muted-foreground"
+                                    />
                                     <div>
-                                        <p class="text-sm font-medium">{{ attachment.name }}</p>
-                                        <p class="text-xs text-muted-foreground">{{ attachment.human_size }}</p>
+                                        <p class="text-sm font-medium">
+                                            {{ attachment.name }}
+                                        </p>
+                                        <p
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            {{ attachment.human_size }}
+                                        </p>
                                     </div>
                                 </div>
                                 <Button variant="ghost" size="sm" as-child>
-                                    <a :href="attachment.url" target="_blank">Download</a>
+                                    <a :href="attachment.url" target="_blank"
+                                        >Download</a
+                                    >
                                 </Button>
                             </div>
                         </div>
-                        <p v-else class="text-sm text-muted-foreground">No attachments.</p>
+                        <p v-else class="text-sm text-muted-foreground">
+                            No attachments.
+                        </p>
                     </CardContent>
                 </Card>
             </TabsContent>

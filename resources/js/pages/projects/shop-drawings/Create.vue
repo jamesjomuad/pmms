@@ -50,7 +50,9 @@ defineOptions({
 
     <h1 class="sr-only">Create Shop Drawing</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center gap-4">
             <Button variant="ghost" size="sm" as-child>
                 <Link :href="`/projects/${project.id}/shop-drawings`">
@@ -79,7 +81,10 @@ defineOptions({
                             placeholder="Shop drawing title"
                             :class="{ 'border-destructive': form.errors.title }"
                         />
-                        <p v-if="form.errors.title" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.title"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.title }}
                         </p>
                     </div>
@@ -90,9 +95,14 @@ defineOptions({
                             id="description"
                             v-model="form.description"
                             placeholder="Describe the shop drawing..."
-                            :class="{ 'border-destructive': form.errors.description }"
+                            :class="{
+                                'border-destructive': form.errors.description,
+                            }"
                         />
-                        <p v-if="form.errors.description" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.description"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.description }}
                         </p>
                     </div>
@@ -104,9 +114,15 @@ defineOptions({
                                 id="drawing_number"
                                 v-model="form.drawing_number"
                                 placeholder="e.g. SD-001"
-                                :class="{ 'border-destructive': form.errors.drawing_number }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.drawing_number,
+                                }"
                             />
-                            <p v-if="form.errors.drawing_number" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.drawing_number"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.drawing_number }}
                             </p>
                         </div>
@@ -117,9 +133,14 @@ defineOptions({
                                 id="due_date"
                                 v-model="form.due_date"
                                 type="date"
-                                :class="{ 'border-destructive': form.errors.due_date }"
+                                :class="{
+                                    'border-destructive': form.errors.due_date,
+                                }"
                             />
-                            <p v-if="form.errors.due_date" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.due_date"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.due_date }}
                             </p>
                         </div>
@@ -132,19 +153,28 @@ defineOptions({
                                 <SelectValue placeholder="Select team member" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="user in users" :key="user.id" :value="user.id">
+                                <SelectItem
+                                    v-for="user in users"
+                                    :key="user.id"
+                                    :value="user.id"
+                                >
                                     {{ user.name }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <p v-if="form.errors.assigned_to" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.assigned_to"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.assigned_to }}
                         </p>
                     </div>
 
                     <div class="flex justify-end gap-2">
                         <Button variant="outline" type="button" as-child>
-                            <Link :href="`/projects/${project.id}/shop-drawings`">
+                            <Link
+                                :href="`/projects/${project.id}/shop-drawings`"
+                            >
                                 Cancel
                             </Link>
                         </Button>

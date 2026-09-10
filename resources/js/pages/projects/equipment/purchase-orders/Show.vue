@@ -17,7 +17,11 @@ const props = defineProps<{
         expected_delivery_date: string | null;
         actual_delivery_date: string | null;
         status: string;
-        supplier_quotation: { id: number; supplier_name: string; quoted_cost: number } | null;
+        supplier_quotation: {
+            id: number;
+            supplier_name: string;
+            quoted_cost: number;
+        } | null;
     };
 }>();
 
@@ -79,11 +83,15 @@ defineOptions({
 
     <h1 class="sr-only">{{ purchaseOrder.po_number }}</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <Button variant="ghost" size="sm" as-child>
-                    <Link :href="`/projects/${project.id}/equipment/${equipment.id}/purchase-orders`">
+                    <Link
+                        :href="`/projects/${project.id}/equipment/${equipment.id}/purchase-orders`"
+                    >
                         <ArrowLeft class="mr-1 h-4 w-4" />
                         Back
                     </Link>
@@ -124,9 +132,15 @@ defineOptions({
                 <CardContent>
                     <dl class="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Status</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Status
+                            </dt>
                             <dd class="mt-1">
-                                <Badge :variant="statusVariant(purchaseOrder.status)">
+                                <Badge
+                                    :variant="
+                                        statusVariant(purchaseOrder.status)
+                                    "
+                                >
                                     {{ statusLabel(purchaseOrder.status) }}
                                 </Badge>
                             </dd>
@@ -138,16 +152,30 @@ defineOptions({
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Issued Date</dt>
-                            <dd class="mt-1 text-sm">{{ purchaseOrder.issued_date ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Issued Date
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ purchaseOrder.issued_date ?? '—' }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Expected Delivery</dt>
-                            <dd class="mt-1 text-sm">{{ purchaseOrder.expected_delivery_date ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Expected Delivery
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{
+                                    purchaseOrder.expected_delivery_date ?? '—'
+                                }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Actual Delivery</dt>
-                            <dd class="mt-1 text-sm">{{ purchaseOrder.actual_delivery_date ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Actual Delivery
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ purchaseOrder.actual_delivery_date ?? '—' }}
+                            </dd>
                         </div>
                     </dl>
                 </CardContent>
@@ -164,10 +192,18 @@ defineOptions({
                         </p>
                         <p class="mt-1 text-sm text-muted-foreground">
                             Quoted
-                            {{ formatCurrency(purchaseOrder.supplier_quotation.quoted_cost) }}
+                            {{
+                                formatCurrency(
+                                    purchaseOrder.supplier_quotation
+                                        .quoted_cost,
+                                )
+                            }}
                         </p>
                     </template>
-                    <p v-else class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <p
+                        v-else
+                        class="flex items-center gap-2 text-sm text-muted-foreground"
+                    >
                         <Truck class="h-4 w-4" />
                         No linked quotation
                     </p>

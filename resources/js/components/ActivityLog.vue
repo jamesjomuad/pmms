@@ -6,7 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { index as activityLogIndex } from '@/routes/activity-log';
 import type { ActivityLogEntry } from '@/types/projects';
 
@@ -32,10 +39,13 @@ const selectedEvent = ref(props.filters?.event ?? '');
 
 const eventLabel = (event: string | null) => {
     if (!event) {
-return '—';
-}
+        return '—';
+    }
 
-    return event.split('.').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return event
+        .split('.')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 };
 
 const formatProperties = (properties: Record<string, unknown>) => {
@@ -43,8 +53,8 @@ const formatProperties = (properties: Record<string, unknown>) => {
     const old = properties.old as Record<string, unknown> | undefined;
 
     if (!attrs && !old) {
-return null;
-}
+        return null;
+    }
 
     const changes: string[] = [];
 
@@ -91,7 +101,10 @@ const clearFilters = () => {
             </CardTitle>
         </CardHeader>
         <CardContent>
-            <div v-if="showSearch !== false" class="mb-4 flex flex-col gap-3 sm:flex-row">
+            <div
+                v-if="showSearch !== false"
+                class="mb-4 flex flex-col gap-3 sm:flex-row"
+            >
                 <Input
                     v-model="search"
                     placeholder="Search activities..."
@@ -130,7 +143,10 @@ const clearFilters = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="activity in activities.data" :key="activity.id">
+                        <TableRow
+                            v-for="activity in activities.data"
+                            :key="activity.id"
+                        >
                             <TableCell>
                                 <Badge variant="outline" class="text-xs">
                                     {{ eventLabel(activity.event) }}
@@ -140,20 +156,44 @@ const clearFilters = () => {
                                 {{ activity.description }}
                             </TableCell>
                             <TableCell>
-                                <div v-if="activity.causer" class="flex items-center gap-1.5">
-                                    <User class="size-3.5 text-muted-foreground" />
-                                    <span class="text-sm">{{ activity.causer.name }}</span>
+                                <div
+                                    v-if="activity.causer"
+                                    class="flex items-center gap-1.5"
+                                >
+                                    <User
+                                        class="size-3.5 text-muted-foreground"
+                                    />
+                                    <span class="text-sm">{{
+                                        activity.causer.name
+                                    }}</span>
                                 </div>
-                                <span v-else class="text-sm text-muted-foreground">System</span>
+                                <span
+                                    v-else
+                                    class="text-sm text-muted-foreground"
+                                    >System</span
+                                >
                             </TableCell>
                             <TableCell class="max-w-xs">
-                                <span v-if="formatProperties(activity.properties)" class="text-xs text-muted-foreground">
+                                <span
+                                    v-if="formatProperties(activity.properties)"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     {{ formatProperties(activity.properties) }}
                                 </span>
-                                <span v-else class="text-xs text-muted-foreground">—</span>
+                                <span
+                                    v-else
+                                    class="text-xs text-muted-foreground"
+                                    >—</span
+                                >
                             </TableCell>
-                            <TableCell class="text-right text-xs text-muted-foreground">
-                                {{ new Date(activity.created_at).toLocaleString() }}
+                            <TableCell
+                                class="text-right text-xs text-muted-foreground"
+                            >
+                                {{
+                                    new Date(
+                                        activity.created_at,
+                                    ).toLocaleString()
+                                }}
                             </TableCell>
                         </TableRow>
                     </TableBody>

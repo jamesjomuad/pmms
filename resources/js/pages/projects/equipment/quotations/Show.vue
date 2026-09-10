@@ -78,11 +78,15 @@ defineOptions({
 
     <h1 class="sr-only">{{ quotation.supplier_name }}</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <Button variant="ghost" size="sm" as-child>
-                    <Link :href="`/projects/${project.id}/equipment/${equipment.id}/quotations`">
+                    <Link
+                        :href="`/projects/${project.id}/equipment/${equipment.id}/quotations`"
+                    >
                         <ArrowLeft class="mr-1 h-4 w-4" />
                         Back
                     </Link>
@@ -139,7 +143,9 @@ defineOptions({
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-sm text-muted-foreground">Quoted Cost</dt>
+                        <dt class="text-sm text-muted-foreground">
+                            Quoted Cost
+                        </dt>
                         <dd class="mt-1 text-sm font-medium">
                             {{ formatCurrency(quotation.quoted_cost) }}
                         </dd>
@@ -147,17 +153,29 @@ defineOptions({
                     <div>
                         <dt class="text-sm text-muted-foreground">Lead Time</dt>
                         <dd class="mt-1 text-sm">
-                            {{ quotation.quoted_lead_time_days ? `${quotation.quoted_lead_time_days} days` : '—' }}
+                            {{
+                                quotation.quoted_lead_time_days
+                                    ? `${quotation.quoted_lead_time_days} days`
+                                    : '—'
+                            }}
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-sm text-muted-foreground">Quote Date</dt>
-                        <dd class="mt-1 text-sm">{{ quotation.quote_date ?? '—' }}</dd>
+                        <dt class="text-sm text-muted-foreground">
+                            Quote Date
+                        </dt>
+                        <dd class="mt-1 text-sm">
+                            {{ quotation.quote_date ?? '—' }}
+                        </dd>
                     </div>
                     <div>
                         <dt class="text-sm text-muted-foreground">Created</dt>
                         <dd class="mt-1 text-sm">
-                            {{ new Date(quotation.created_at).toLocaleDateString() }}
+                            {{
+                                new Date(
+                                    quotation.created_at,
+                                ).toLocaleDateString()
+                            }}
                         </dd>
                     </div>
                 </dl>

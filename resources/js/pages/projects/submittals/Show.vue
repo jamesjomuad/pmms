@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     CheckCircle2,
@@ -9,6 +9,7 @@ import {
     Pencil,
     RefreshCw,
     Send,
+    Stamp,
     XCircle,
 } from '@lucide/vue';
 import { computed } from 'vue';
@@ -19,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import type { SubmittalDetail } from '@/types';
 
 const props = defineProps<{
@@ -99,6 +101,99 @@ const requestRevision = () => {
 const newRevision = () => {
     router.post(
         `/projects/${props.project.id}/submittals/${props.submittal.id}/new-revision`,
+    );
+};
+
+const activeApprovalRequest = computed(
+    () =>
+        [...props.submittal.approval_requests]
+            .reverse()
+            .find((request) => request.status === 'pending') ?? null,
+);
+
+const nextPendingStep = computed(
+    () =>
+        activeApprovalRequest.value?.steps.find(
+            (step) => step.status === 'pending',
+        ) ?? null,
+);
+
+const isCurrentApprover = computed(
+    () =>
+        nextPendingStep.value !== null &&
+        nextPendingStep.value.approver_id === auth.user.id,
+);
+
+const latestDecisionComment = computed(() => {
+    const decidedSteps =
+        activeApprovalRequest.value?.steps.filter((step) => step.decided_at) ??
+        [];
+
+    const last = decidedSteps[decidedSteps.length - 1];
+
+    return last && last.comments ? last : null;
+});
+
+const finalDecisionNoted = computed(() => {
+    const request =
+        [...props.submittal.approval_requests]
+            .reverse()
+            .find((item) => item.status === 'approved') ?? null;
+
+    if (!request) {
+        return false;
+    }
+
+    const approvedSteps = request.steps.filter(
+        (step) => step.status === 'approved',
+    );
+
+    const last = approvedSteps[approvedSteps.length - 1];
+
+    return last?.approved_as_noted ?? false;
+});
+
+const submittalStatusLabel = computed(() =>
+    props.submittal.status === 'approved' && finalDecisionNoted.value
+        ? 'Approved as Noted'
+        : statusLabel(props.submittal.status),
+);
+
+const submittalStatusVariant = computed(() =>
+    props.submittal.status === 'approved' && finalDecisionNoted.value
+        ? 'outline'
+        : statusVariant(props.submittal.status),
+);
+
+const decision = useForm({ comments: '' });
+
+const approveWithNote = () => {
+    decision.post(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}/approve`,
+        {
+            preserveScroll: true,
+            onSuccess: () => decision.reset('comments'),
+        },
+    );
+};
+
+const approveAsNoted = () => {
+    decision.post(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}/approve-as-noted`,
+        {
+            preserveScroll: true,
+            onSuccess: () => decision.reset('comments'),
+        },
+    );
+};
+
+const requestRevisionWithNote = () => {
+    decision.post(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}/request-revision`,
+        {
+            preserveScroll: true,
+            onSuccess: () => decision.reset('comments'),
+        },
     );
 };
 
@@ -185,6 +280,102 @@ defineOptions({
             </div>
         </div>
 
+        <Card v-if="activeApprovalRequest">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    Review Progress
+                    <Badge variant="default">
+                        {{ statusLabel(activeApprovalRequest.status) }}
+                    </Badge>
+                </CardTitle>
+            </CardHeader>
+            <CardContent class="space-y-6">
+                <ApprovalWorkflow
+                    :steps="activeApprovalRequest.steps"
+                    :current-approver-id="nextPendingStep?.approver_id ?? null"
+                />
+
+                <div class="space-y-3">
+                    <p class="text-sm">
+                        {{
+                            nextPendingStep
+                                ? `Currently with ${nextPendingStep.approver}.`
+                                : 'All review steps are complete.'
+                        }}
+                    </p>
+
+                    <div
+                        v-if="latestDecisionComment"
+                        class="rounded-lg border border-primary/30 bg-muted/40 p-3 text-sm"
+                    >
+                        <p class="font-medium">
+                            Review note from
+                            {{ latestDecisionComment.approver }}:
+                        </p>
+                        <p
+                            class="mt-1 whitespace-pre-wrap text-muted-foreground"
+                        >
+                            {{ latestDecisionComment.comments }}
+                        </p>
+                    </div>
+                </div>
+
+                <div v-if="isCurrentApprover" class="rounded-lg border p-4">
+                    <div class="mb-3">
+                        <p class="text-sm font-medium">Your review decision</p>
+                        <p class="mt-1 text-xs text-muted-foreground">
+                            Approve as Noted means approval with corrections the
+                            submitter must incorporate.
+                        </p>
+                    </div>
+                    <form class="space-y-3" @submit.prevent="approveWithNote">
+                        <Textarea
+                            v-model="decision.comments"
+                            placeholder="Add a note for the submitter... (required for Approve as Noted)"
+                            class="min-h-20"
+                            :disabled="decision.processing"
+                        />
+                        <p
+                            v-if="decision.errors.comments"
+                            class="text-sm text-destructive"
+                        >
+                            {{ decision.errors.comments }}
+                        </p>
+                        <div class="flex flex-wrap justify-end gap-2">
+                            <Button
+                                type="submit"
+                                size="sm"
+                                :disabled="decision.processing"
+                            >
+                                <CheckCircle2 class="mr-1 h-4 w-4" />
+                                Approve
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                :disabled="decision.processing"
+                                @click="approveAsNoted"
+                            >
+                                <Stamp class="mr-1 h-4 w-4" />
+                                Approve as Noted
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                :disabled="decision.processing"
+                                @click="requestRevisionWithNote"
+                            >
+                                <RefreshCw class="mr-1 h-4 w-4" />
+                                Request Revision
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </CardContent>
+        </Card>
+
         <div class="grid gap-6 lg:grid-cols-3">
             <Card class="lg:col-span-2">
                 <CardHeader>
@@ -197,10 +388,8 @@ defineOptions({
                                 Status
                             </dt>
                             <dd class="mt-1">
-                                <Badge
-                                    :variant="statusVariant(submittal.status)"
-                                >
-                                    {{ statusLabel(submittal.status) }}
+                                <Badge :variant="submittalStatusVariant">
+                                    {{ submittalStatusLabel }}
                                 </Badge>
                             </dd>
                         </div>

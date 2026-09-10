@@ -80,7 +80,10 @@ defineOptions({
                             placeholder="RFI title"
                             :class="{ 'border-destructive': form.errors.title }"
                         />
-                        <p v-if="form.errors.title" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.title"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.title }}
                         </p>
                     </div>
@@ -92,9 +95,14 @@ defineOptions({
                             v-model="form.question"
                             placeholder="Describe your question..."
                             rows="5"
-                            :class="{ 'border-destructive': form.errors.question }"
+                            :class="{
+                                'border-destructive': form.errors.question,
+                            }"
                         />
-                        <p v-if="form.errors.question" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.question"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.question }}
                         </p>
                     </div>
@@ -104,7 +112,9 @@ defineOptions({
                             <Label>Assigned To</Label>
                             <Select v-model="form.assigned_to">
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select team member" />
+                                    <SelectValue
+                                        placeholder="Select team member"
+                                    />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem
@@ -116,7 +126,10 @@ defineOptions({
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
-                            <p v-if="form.errors.assigned_to" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.assigned_to"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.assigned_to }}
                             </p>
                         </div>
@@ -127,9 +140,14 @@ defineOptions({
                                 id="due_date"
                                 v-model="form.due_date"
                                 type="date"
-                                :class="{ 'border-destructive': form.errors.due_date }"
+                                :class="{
+                                    'border-destructive': form.errors.due_date,
+                                }"
                             />
-                            <p v-if="form.errors.due_date" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.due_date"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.due_date }}
                             </p>
                         </div>

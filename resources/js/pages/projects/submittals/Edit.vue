@@ -40,7 +40,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.patch(`/projects/${props.project.id}/submittals/${props.submittal.id}`);
+    form.patch(
+        `/projects/${props.project.id}/submittals/${props.submittal.id}`,
+    );
 };
 
 defineOptions({
@@ -65,7 +67,9 @@ defineOptions({
     >
         <div class="flex items-center gap-4">
             <Button variant="ghost" size="sm" as-child>
-                <Link :href="`/projects/${project.id}/submittals/${submittal.id}`">
+                <Link
+                    :href="`/projects/${project.id}/submittals/${submittal.id}`"
+                >
                     <ArrowLeft class="mr-1 h-4 w-4" />
                     Back
                 </Link>
@@ -91,7 +95,10 @@ defineOptions({
                             placeholder="Submittal title"
                             :class="{ 'border-destructive': form.errors.title }"
                         />
-                        <p v-if="form.errors.title" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.title"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.title }}
                         </p>
                     </div>
@@ -102,9 +109,14 @@ defineOptions({
                             id="description"
                             v-model="form.description"
                             placeholder="Describe the submittal..."
-                            :class="{ 'border-destructive': form.errors.description }"
+                            :class="{
+                                'border-destructive': form.errors.description,
+                            }"
                         />
-                        <p v-if="form.errors.description" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.description"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.description }}
                         </p>
                     </div>
@@ -116,9 +128,15 @@ defineOptions({
                                 id="spec_section"
                                 v-model="form.spec_section"
                                 placeholder="e.g. 23.45"
-                                :class="{ 'border-destructive': form.errors.spec_section }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.spec_section,
+                                }"
                             />
-                            <p v-if="form.errors.spec_section" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.spec_section"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.spec_section }}
                             </p>
                         </div>
@@ -129,9 +147,14 @@ defineOptions({
                                 id="due_date"
                                 v-model="form.due_date"
                                 type="date"
-                                :class="{ 'border-destructive': form.errors.due_date }"
+                                :class="{
+                                    'border-destructive': form.errors.due_date,
+                                }"
                             />
-                            <p v-if="form.errors.due_date" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.due_date"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.due_date }}
                             </p>
                         </div>
@@ -153,14 +176,19 @@ defineOptions({
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <p v-if="form.errors.assigned_to" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.assigned_to"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.assigned_to }}
                         </p>
                     </div>
 
                     <div class="flex justify-end gap-2">
                         <Button variant="outline" type="button" as-child>
-                            <Link :href="`/projects/${project.id}/submittals/${submittal.id}`">
+                            <Link
+                                :href="`/projects/${project.id}/submittals/${submittal.id}`"
+                            >
                                 Cancel
                             </Link>
                         </Button>

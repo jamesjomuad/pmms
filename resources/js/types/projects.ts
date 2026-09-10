@@ -171,7 +171,9 @@ export type ApprovalRequest = {
 export type ApprovalStep = {
     id: number;
     approver: string;
+    approver_id: number | null;
     status: string;
     decided_at: string | null;
     comments: string | null;
+    approved_as_noted: boolean;
 };

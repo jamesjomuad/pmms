@@ -96,8 +96,8 @@ const poStatusLabel = (status: string) => {
 
 const formatCurrency = (value: number | null) => {
     if (value === null) {
-return '—';
-}
+        return '—';
+    }
 
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -106,7 +106,9 @@ return '—';
 };
 
 const receiveItem = () => {
-    router.post(`/projects/${props.project.id}/equipment/${props.equipment.id}/receive`);
+    router.post(
+        `/projects/${props.project.id}/equipment/${props.equipment.id}/receive`,
+    );
 };
 
 defineOptions({
@@ -155,7 +157,9 @@ defineOptions({
                     Mark as Received
                 </Button>
                 <Button variant="outline" size="sm" as-child>
-                    <Link :href="`/projects/${project.id}/equipment/${equipment.id}/edit`">
+                    <Link
+                        :href="`/projects/${project.id}/equipment/${equipment.id}/edit`"
+                    >
                         <Pencil class="mr-1 h-4 w-4" />
                         Edit
                     </Link>
@@ -171,44 +175,80 @@ defineOptions({
                 <CardContent>
                     <dl class="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Status</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Status
+                            </dt>
                             <dd class="mt-1">
-                                <Badge :variant="statusVariant(equipment.status)">
+                                <Badge
+                                    :variant="statusVariant(equipment.status)"
+                                >
                                     {{ statusLabel(equipment.status) }}
                                 </Badge>
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">PO Status</dt>
-                            <dd class="mt-1 text-sm">{{ poStatusLabel(equipment.po_status) }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                PO Status
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ poStatusLabel(equipment.po_status) }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Model Number</dt>
-                            <dd class="mt-1 text-sm">{{ equipment.model_number ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Model Number
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ equipment.model_number ?? '—' }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Serial Number</dt>
-                            <dd class="mt-1 text-sm">{{ equipment.serial_number ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Serial Number
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ equipment.serial_number ?? '—' }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Unit Cost</dt>
-                            <dd class="mt-1 text-sm">{{ formatCurrency(equipment.cost) }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Unit Cost
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ formatCurrency(equipment.cost) }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Quantity</dt>
-                            <dd class="mt-1 text-sm">{{ equipment.quantity }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Quantity
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ equipment.quantity }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Total Cost</dt>
-                            <dd class="mt-1 text-sm font-medium">{{ formatCurrency(equipment.total_cost) }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Total Cost
+                            </dt>
+                            <dd class="mt-1 text-sm font-medium">
+                                {{ formatCurrency(equipment.total_cost) }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Assigned To</dt>
-                            <dd class="mt-1 text-sm">{{ equipment.assignee?.name ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Assigned To
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ equipment.assignee?.name ?? '—' }}
+                            </dd>
                         </div>
                         <div v-if="equipment.description" class="sm:col-span-2">
-                            <dt class="text-sm text-muted-foreground">Description</dt>
-                            <dd class="mt-1 text-sm whitespace-pre-wrap">{{ equipment.description }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Description
+                            </dt>
+                            <dd class="mt-1 text-sm whitespace-pre-wrap">
+                                {{ equipment.description }}
+                            </dd>
                         </div>
                     </dl>
                 </CardContent>
@@ -221,20 +261,44 @@ defineOptions({
                 <CardContent>
                     <dl class="space-y-3">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Lead Time</dt>
-                            <dd class="mt-1 text-sm">{{ equipment.lead_time ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Lead Time
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ equipment.lead_time ?? '—' }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Expected Delivery</dt>
-                            <dd class="mt-1 text-sm">{{ equipment.expected_delivery ?? '—' }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Expected Delivery
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{ equipment.expected_delivery ?? '—' }}
+                            </dd>
                         </div>
                         <div v-if="equipment.received_at">
-                            <dt class="text-sm text-muted-foreground">Received</dt>
-                            <dd class="mt-1 text-sm">{{ new Date(equipment.received_at).toLocaleDateString() }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Received
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{
+                                    new Date(
+                                        equipment.received_at,
+                                    ).toLocaleDateString()
+                                }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Created</dt>
-                            <dd class="mt-1 text-sm">{{ new Date(equipment.created_at).toLocaleDateString() }}</dd>
+                            <dt class="text-sm text-muted-foreground">
+                                Created
+                            </dt>
+                            <dd class="mt-1 text-sm">
+                                {{
+                                    new Date(
+                                        equipment.created_at,
+                                    ).toLocaleDateString()
+                                }}
+                            </dd>
                         </div>
                     </dl>
                 </CardContent>
@@ -272,22 +336,35 @@ defineOptions({
             <TabsContent value="comments">
                 <Card>
                     <CardContent class="pt-6">
-                        <div v-if="equipment.comments.length > 0" class="space-y-4">
+                        <div
+                            v-if="equipment.comments.length > 0"
+                            class="space-y-4"
+                        >
                             <div
                                 v-for="comment in equipment.comments"
                                 :key="comment.id"
                                 class="rounded-lg border p-4"
                             >
                                 <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium">{{ comment.user.name }}</p>
+                                    <p class="text-sm font-medium">
+                                        {{ comment.user.name }}
+                                    </p>
                                     <p class="text-xs text-muted-foreground">
-                                        {{ new Date(comment.created_at).toLocaleString() }}
+                                        {{
+                                            new Date(
+                                                comment.created_at,
+                                            ).toLocaleString()
+                                        }}
                                     </p>
                                 </div>
-                                <p class="mt-2 text-sm whitespace-pre-wrap">{{ comment.body }}</p>
+                                <p class="mt-2 text-sm whitespace-pre-wrap">
+                                    {{ comment.body }}
+                                </p>
                             </div>
                         </div>
-                        <p v-else class="text-sm text-muted-foreground">No comments yet.</p>
+                        <p v-else class="text-sm text-muted-foreground">
+                            No comments yet.
+                        </p>
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -295,25 +372,40 @@ defineOptions({
             <TabsContent value="attachments">
                 <Card>
                     <CardContent class="pt-6">
-                        <div v-if="equipment.attachments.length > 0" class="space-y-2">
+                        <div
+                            v-if="equipment.attachments.length > 0"
+                            class="space-y-2"
+                        >
                             <div
                                 v-for="attachment in equipment.attachments"
                                 :key="attachment.id"
                                 class="flex items-center justify-between rounded-lg border p-3"
                             >
                                 <div class="flex items-center gap-3">
-                                    <Package class="h-4 w-4 text-muted-foreground" />
+                                    <Package
+                                        class="h-4 w-4 text-muted-foreground"
+                                    />
                                     <div>
-                                        <p class="text-sm font-medium">{{ attachment.name }}</p>
-                                        <p class="text-xs text-muted-foreground">{{ attachment.human_size }}</p>
+                                        <p class="text-sm font-medium">
+                                            {{ attachment.name }}
+                                        </p>
+                                        <p
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            {{ attachment.human_size }}
+                                        </p>
                                     </div>
                                 </div>
                                 <Button variant="ghost" size="sm" as-child>
-                                    <a :href="attachment.url" target="_blank">Download</a>
+                                    <a :href="attachment.url" target="_blank"
+                                        >Download</a
+                                    >
                                 </Button>
                             </div>
                         </div>
-                        <p v-else class="text-sm text-muted-foreground">No attachments.</p>
+                        <p v-else class="text-sm text-muted-foreground">
+                            No attachments.
+                        </p>
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -326,7 +418,8 @@ defineOptions({
                         </CardHeader>
                         <CardContent>
                             <p class="mb-4 text-sm text-muted-foreground">
-                                {{ equipment.procurement.quotation_count }} quotation(s) received.
+                                {{ equipment.procurement.quotation_count }}
+                                quotation(s) received.
                             </p>
                             <Button variant="outline" size="sm" as-child>
                                 <Link
@@ -343,7 +436,8 @@ defineOptions({
                         </CardHeader>
                         <CardContent>
                             <p class="mb-4 text-sm text-muted-foreground">
-                                {{ equipment.procurement.purchase_order_count }} PO(s) issued.
+                                {{ equipment.procurement.purchase_order_count }}
+                                PO(s) issued.
                             </p>
                             <Button variant="outline" size="sm" as-child>
                                 <Link
@@ -360,7 +454,8 @@ defineOptions({
                         </CardHeader>
                         <CardContent>
                             <p class="mb-4 text-sm text-muted-foreground">
-                                {{ equipment.procurement.inspection_count }} inspection(s) recorded.
+                                {{ equipment.procurement.inspection_count }}
+                                inspection(s) recorded.
                             </p>
                             <Button variant="outline" size="sm" as-child>
                                 <Link

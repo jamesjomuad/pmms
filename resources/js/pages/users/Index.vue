@@ -168,9 +168,13 @@ defineOptions({
 
     <h1 class="sr-only">Users Management</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <!-- Top header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <Heading
                 variant="small"
                 title="Users Management"
@@ -218,9 +222,13 @@ defineOptions({
         </div>
 
         <!-- Filter bar -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <div class="relative flex-1 sm:max-w-xs">
-                <Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Search
+                    class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                />
                 <Input
                     v-model="searchQuery"
                     placeholder="Search by name or email..."
@@ -231,7 +239,10 @@ defineOptions({
 
             <div class="flex flex-wrap items-center gap-2">
                 <Select v-model="roleFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by role">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by role"
+                    >
                         <SelectValue placeholder="All Roles" />
                     </SelectTrigger>
                     <SelectContent>
@@ -243,7 +254,10 @@ defineOptions({
                 </Select>
 
                 <Select v-model="verifiedFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by verification status">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by verification status"
+                    >
                         <SelectValue placeholder="All Verification" />
                     </SelectTrigger>
                     <SelectContent>
@@ -254,7 +268,10 @@ defineOptions({
                 </Select>
 
                 <Select v-model="twoFactorFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by 2FA status">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by 2FA status"
+                    >
                         <SelectValue placeholder="All 2FA" />
                     </SelectTrigger>
                     <SelectContent>
@@ -291,15 +308,14 @@ defineOptions({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow
-                        v-for="user in filteredUsers"
-                        :key="user.id"
-                    >
+                    <TableRow v-for="user in filteredUsers" :key="user.id">
                         <!-- User Info -->
                         <TableCell>
                             <div class="flex items-center gap-3">
                                 <Avatar class="h-9 w-9">
-                                    <AvatarFallback class="bg-primary/10 text-primary font-medium text-xs">
+                                    <AvatarFallback
+                                        class="bg-primary/10 text-xs font-medium text-primary"
+                                    >
                                         {{ getInitials(user.name) }}
                                     </AvatarFallback>
                                 </Avatar>
@@ -307,11 +323,13 @@ defineOptions({
                                     <button
                                         type="button"
                                         @click="openDetails(user)"
-                                        class="font-medium text-foreground hover:underline text-left"
+                                        class="text-left font-medium text-foreground hover:underline"
                                     >
                                         {{ user.name }}
                                     </button>
-                                    <p class="text-xs text-muted-foreground">{{ user.email }}</p>
+                                    <p class="text-xs text-muted-foreground">
+                                        {{ user.email }}
+                                    </p>
                                 </div>
                             </div>
                         </TableCell>
@@ -319,8 +337,14 @@ defineOptions({
                         <!-- Role Badge -->
                         <TableCell class="whitespace-nowrap">
                             <Badge
-                                :variant="user.role === 'owner' ? 'default' : user.role === 'admin' ? 'secondary' : 'outline'"
-                                class="capitalize text-xs font-medium"
+                                :variant="
+                                    user.role === 'owner'
+                                        ? 'default'
+                                        : user.role === 'admin'
+                                          ? 'secondary'
+                                          : 'outline'
+                                "
+                                class="text-xs font-medium capitalize"
                             >
                                 {{ user.role_label }}
                             </Badge>
@@ -331,9 +355,16 @@ defineOptions({
                             <button
                                 type="button"
                                 @click="openDetails(user)"
-                                class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
+                                class="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
                             >
-                                <span>{{ user.projects_count }} {{ user.projects_count === 1 ? 'project' : 'projects' }}</span>
+                                <span
+                                    >{{ user.projects_count }}
+                                    {{
+                                        user.projects_count === 1
+                                            ? 'project'
+                                            : 'projects'
+                                    }}</span
+                                >
                             </button>
                         </TableCell>
 
@@ -341,28 +372,60 @@ defineOptions({
                         <TableCell class="whitespace-nowrap">
                             <div class="flex items-center gap-2">
                                 <span
-                                    :title="user.two_factor_enabled ? '2FA is enabled' : '2FA is disabled'"
-                                    class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
-                                    :class="user.two_factor_enabled ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-muted text-muted-foreground'"
+                                    :title="
+                                        user.two_factor_enabled
+                                            ? '2FA is enabled'
+                                            : '2FA is disabled'
+                                    "
+                                    class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs"
+                                    :class="
+                                        user.two_factor_enabled
+                                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
+                                            : 'bg-muted text-muted-foreground'
+                                    "
                                 >
                                     <Lock class="h-3 w-3" />
-                                    {{ user.two_factor_enabled ? '2FA' : 'No 2FA' }}
+                                    {{
+                                        user.two_factor_enabled
+                                            ? '2FA'
+                                            : 'No 2FA'
+                                    }}
                                 </span>
 
                                 <span
-                                    :title="user.email_verified_at ? 'Email verified' : 'Email unverified'"
-                                    class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
-                                    :class="user.email_verified_at ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300'"
+                                    :title="
+                                        user.email_verified_at
+                                            ? 'Email verified'
+                                            : 'Email unverified'
+                                    "
+                                    class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs"
+                                    :class="
+                                        user.email_verified_at
+                                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
+                                            : 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300'
+                                    "
                                 >
-                                    <CheckCircle2 v-if="user.email_verified_at" class="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                                    <XCircle v-else class="h-3 w-3 text-amber-600 dark:text-amber-400" />
-                                    {{ user.email_verified_at ? 'Verified' : 'Pending' }}
+                                    <CheckCircle2
+                                        v-if="user.email_verified_at"
+                                        class="h-3 w-3 text-emerald-600 dark:text-emerald-400"
+                                    />
+                                    <XCircle
+                                        v-else
+                                        class="h-3 w-3 text-amber-600 dark:text-amber-400"
+                                    />
+                                    {{
+                                        user.email_verified_at
+                                            ? 'Verified'
+                                            : 'Pending'
+                                    }}
                                 </span>
                             </div>
                         </TableCell>
 
                         <!-- Joined Date -->
-                        <TableCell class="whitespace-nowrap text-xs text-muted-foreground">
+                        <TableCell
+                            class="text-xs whitespace-nowrap text-muted-foreground"
+                        >
                             {{ formatDate(user.created_at) }}
                         </TableCell>
 
@@ -370,14 +433,24 @@ defineOptions({
                         <TableCell class="text-right whitespace-nowrap">
                             <DropdownMenu>
                                 <DropdownMenuTrigger as-child>
-                                    <Button variant="ghost" size="icon" class="h-8 w-8">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        class="h-8 w-8"
+                                    >
                                         <MoreHorizontal class="h-4 w-4" />
-                                        <span class="sr-only">Open actions menu</span>
+                                        <span class="sr-only"
+                                            >Open actions menu</span
+                                        >
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" class="w-44">
-                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem @click="openDetails(user)">
+                                    <DropdownMenuLabel
+                                        >Actions</DropdownMenuLabel
+                                    >
+                                    <DropdownMenuItem
+                                        @click="openDetails(user)"
+                                    >
                                         <Eye class="mr-2 h-4 w-4" />
                                         View Details
                                     </DropdownMenuItem>
@@ -406,14 +479,26 @@ defineOptions({
                     <!-- Empty State -->
                     <TableRow v-if="filteredUsers.length === 0">
                         <TableCell colspan="6" class="p-12 text-center">
-                            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
-                                <Search class="h-6 w-6 text-muted-foreground/60" />
+                            <div
+                                class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted"
+                            >
+                                <Search
+                                    class="h-6 w-6 text-muted-foreground/60"
+                                />
                             </div>
                             <h3 class="text-sm font-medium">No users found</h3>
-                            <p class="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
-                                No users matched your current search or filter criteria. Try adjusting your filters.
+                            <p
+                                class="mx-auto mt-1 mb-4 max-w-sm text-xs text-muted-foreground"
+                            >
+                                No users matched your current search or filter
+                                criteria. Try adjusting your filters.
                             </p>
-                            <Button v-if="hasActiveFilters" variant="outline" size="sm" @click="clearFilters">
+                            <Button
+                                v-if="hasActiveFilters"
+                                variant="outline"
+                                size="sm"
+                                @click="clearFilters"
+                            >
                                 Clear Filters
                             </Button>
                         </TableCell>
@@ -434,10 +519,7 @@ defineOptions({
             :available-roles="props.availableRoles"
         />
 
-        <DeleteUserModal
-            v-model:open="deleteUserOpen"
-            :user="userToDelete"
-        />
+        <DeleteUserModal v-model:open="deleteUserOpen" :user="userToDelete" />
 
         <UserDetailsSheet
             v-model:open="detailsSheetOpen"

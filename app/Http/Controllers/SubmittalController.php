@@ -190,9 +190,11 @@ class SubmittalController extends Controller
                     'steps' => $request->steps->map(fn ($step) => [
                         'id' => $step->id,
                         'approver' => $step->approver?->name ?? $step->approver_role, // @phpstan-ignore nullsafe.neverNull
+                        'approver_id' => $step->approver?->id,
                         'status' => $step->status,
                         'decided_at' => $step->decided_at?->toISOString(),
                         'comments' => $step->comments,
+                        'approved_as_noted' => (bool) $step->approved_as_noted,
                     ]),
                 ]),
             ],
@@ -318,6 +320,10 @@ class SubmittalController extends Controller
     {
         Gate::authorize('update', $project);
 
+        $data = $request->validate([
+            'comments' => ['nullable', 'string', 'max:2000'],
+        ]);
+
         $pendingRequest = $submittal->approvalRequests()->where('status', 'pending')->first();
         $step = $pendingRequest?->steps()
             ->where('approver_id', $request->user()->id)
@@ -330,10 +336,10 @@ class SubmittalController extends Controller
             return to_route('projects.submittals.show', [$project, $submittal]);
         }
 
-        $step->approve();
+        $step->approve($data['comments'] ?? null);
 
-        if ($submittal->fresh()->status === WorkflowStatus::Approved->value) {
-            $submittal->update(['approved_at' => now()]);
+        if ($pendingRequest->fresh()->isApproved()) {
+            $submittal->markApproved();
         }
 
         activity()
@@ -343,6 +349,47 @@ class SubmittalController extends Controller
             ->log('Submittal approved');
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Submittal approved.')]);
+
+        return to_route('projects.submittals.show', [$project, $submittal]);
+    }
+
+    /**
+     * Approve the submittal as noted, requiring the reviewer's notes.
+     */
+    public function approveAsNoted(Request $request, Project $project, Submittal $submittal): RedirectResponse
+    {
+        Gate::authorize('update', $project);
+
+        $data = $request->validate([
+            'comments' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $pendingRequest = $submittal->approvalRequests()->where('status', 'pending')->first();
+        $step = $pendingRequest?->steps()
+            ->where('approver_id', $request->user()->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (! $step) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('No pending approval step found for you.')]);
+
+            return to_route('projects.submittals.show', [$project, $submittal]);
+        }
+
+        $step->approveAsNoted($data['comments']);
+
+        if ($pendingRequest->fresh()->isApproved()) {
+            $submittal->markApproved();
+        }
+
+        activity()
+            ->performedOn($submittal)
+            ->causedBy($request->user())
+            ->event('approved_as_noted')
+            ->withProperties(['notes' => $data['comments']])
+            ->log('Submittal approved as noted');
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Submittal approved as noted.')]);
 
         return to_route('projects.submittals.show', [$project, $submittal]);
     }
@@ -395,6 +442,10 @@ class SubmittalController extends Controller
     {
         Gate::authorize('update', $project);
 
+        $data = $request->validate([
+            'comments' => ['nullable', 'string', 'max:2000'],
+        ]);
+
         $pendingRequest = $submittal->approvalRequests()->where('status', 'pending')->first();
         $step = $pendingRequest?->steps()
             ->where('approver_id', $request->user()->id)
@@ -407,7 +458,7 @@ class SubmittalController extends Controller
             return to_route('projects.submittals.show', [$project, $submittal]);
         }
 
-        $step->reject('Revision requested');
+        $step->reject($data['comments'] ?: 'Revision requested');
 
         $submittal->update([
             'status' => WorkflowStatus::Revision->value,

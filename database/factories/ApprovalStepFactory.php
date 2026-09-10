@@ -29,6 +29,7 @@ class ApprovalStepFactory extends Factory
             'status' => 'pending',
             'decided_at' => null,
             'comments' => null,
+            'approved_as_noted' => false,
         ];
     }
 }

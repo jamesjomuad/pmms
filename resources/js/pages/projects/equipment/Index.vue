@@ -100,8 +100,8 @@ const poStatusLabel = (status: string) => {
 
 const formatCurrency = (value: number | null) => {
     if (value === null) {
-return '—';
-}
+        return '—';
+    }
 
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -205,10 +205,7 @@ defineOptions({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow
-                        v-for="item in filteredEquipment"
-                        :key="item.id"
-                    >
+                    <TableRow v-for="item in filteredEquipment" :key="item.id">
                         <TableCell>
                             <Link
                                 :href="`/projects/${project.id}/equipment/${item.id}`"

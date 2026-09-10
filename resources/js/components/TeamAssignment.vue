@@ -98,10 +98,7 @@ const availableUsers = computed(() =>
 
         <div class="flex items-end gap-2">
             <div class="flex-1">
-                <label
-                    for="team-user"
-                    class="mb-1.5 block text-sm font-medium"
-                >
+                <label for="team-user" class="mb-1.5 block text-sm font-medium">
                     Add team member
                 </label>
                 <Select v-model="selectedUserId">
@@ -120,10 +117,7 @@ const availableUsers = computed(() =>
                 </Select>
             </div>
             <div class="w-44">
-                <label
-                    for="team-role"
-                    class="mb-1.5 block text-sm font-medium"
-                >
+                <label for="team-role" class="mb-1.5 block text-sm font-medium">
                     Role
                 </label>
                 <Select v-model="selectedRole">

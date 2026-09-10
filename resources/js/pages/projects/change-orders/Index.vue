@@ -56,9 +56,7 @@ const filteredChangeOrders = computed(() => {
 
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
-        result = result.filter((co) =>
-            co.title.toLowerCase().includes(query),
-        );
+        result = result.filter((co) => co.title.toLowerCase().includes(query));
     }
 
     if (statusFilter.value !== 'all') {
@@ -136,7 +134,10 @@ defineOptions({
 
             <div class="flex items-center gap-2">
                 <Select v-model="statusFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by status">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by status"
+                    >
                         <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -194,7 +195,11 @@ defineOptions({
                             {{ currency.format(changeOrder.cost_impact) }}
                         </TableCell>
                         <TableCell class="text-muted-foreground">
-                            {{ changeOrder.schedule_impact_days > 0 ? `${changeOrder.schedule_impact_days} days` : '—' }}
+                            {{
+                                changeOrder.schedule_impact_days > 0
+                                    ? `${changeOrder.schedule_impact_days} days`
+                                    : '—'
+                            }}
                         </TableCell>
                         <TableCell>
                             <Badge :variant="statusVariant(changeOrder.status)">
@@ -207,7 +212,9 @@ defineOptions({
                         <TableCell class="text-muted-foreground">
                             {{
                                 changeOrder.requested_at
-                                    ? new Date(changeOrder.requested_at).toLocaleDateString()
+                                    ? new Date(
+                                          changeOrder.requested_at,
+                                      ).toLocaleDateString()
                                     : '—'
                             }}
                         </TableCell>
@@ -217,7 +224,9 @@ defineOptions({
         </div>
 
         <EmptyState
-            v-else-if="changeOrders.length > 0 && filteredChangeOrders.length === 0"
+            v-else-if="
+                changeOrders.length > 0 && filteredChangeOrders.length === 0
+            "
             :icon="Search"
             title="No change orders found"
             description="No change orders match your current filters."

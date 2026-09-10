@@ -76,7 +76,8 @@ const submit = () => {
                 <DialogHeader>
                     <DialogTitle>Add New User</DialogTitle>
                     <DialogDescription>
-                        Create an account for a new team member and assign their company role.
+                        Create an account for a new team member and assign their
+                        company role.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -140,7 +141,9 @@ const submit = () => {
                         </div>
 
                         <div class="grid gap-2">
-                            <Label for="create-user-password-confirmation">Confirm Password</Label>
+                            <Label for="create-user-password-confirmation"
+                                >Confirm Password</Label
+                            >
                             <PasswordInput
                                 id="create-user-password-confirmation"
                                 v-model="form.password_confirmation"
@@ -148,7 +151,9 @@ const submit = () => {
                                 required
                                 autocomplete="new-password"
                             />
-                            <InputError :message="form.errors.password_confirmation" />
+                            <InputError
+                                :message="form.errors.password_confirmation"
+                            />
                         </div>
                     </div>
 
@@ -156,11 +161,13 @@ const submit = () => {
                         <Checkbox
                             id="create-user-verified"
                             :checked="form.email_verified"
-                            @update:checked="(val: boolean) => (form.email_verified = val)"
+                            @update:checked="
+                                (val: boolean) => (form.email_verified = val)
+                            "
                         />
                         <Label
                             for="create-user-verified"
-                            class="text-sm font-normal text-muted-foreground leading-none cursor-pointer"
+                            class="cursor-pointer text-sm leading-none font-normal text-muted-foreground"
                         >
                             Mark email as verified immediately
                         </Label>
@@ -169,7 +176,9 @@ const submit = () => {
 
                 <DialogFooter class="gap-2">
                     <DialogClose as-child>
-                        <Button variant="secondary" type="button">Cancel</Button>
+                        <Button variant="secondary" type="button"
+                            >Cancel</Button
+                        >
                     </DialogClose>
                     <Button type="submit" :disabled="form.processing">
                         {{ form.processing ? 'Creating...' : 'Create User' }}

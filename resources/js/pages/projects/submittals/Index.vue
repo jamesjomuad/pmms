@@ -123,7 +123,10 @@ defineOptions({
 
             <div class="flex items-center gap-2">
                 <Select v-model="statusFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by status">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by status"
+                    >
                         <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -133,7 +136,9 @@ defineOptions({
                         <SelectItem value="in_review">In Review</SelectItem>
                         <SelectItem value="approved">Approved</SelectItem>
                         <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="revision">Revision Required</SelectItem>
+                        <SelectItem value="revision"
+                            >Revision Required</SelectItem
+                        >
                     </SelectContent>
                 </Select>
 

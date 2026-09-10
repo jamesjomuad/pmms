@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global Punch List page at `/punch-list` with cross-project punch list item list, status and priority filtering, search, KPI stat cards, and sidebar navigation link
 - Commenting on shop drawings with add/delete, backed by a shared `CommentController` and the reusable `CommentThread` Vue component
 - Commenting on submittals with add/delete, reusing the same `CommentThread` Vue component on the submittal detail page
+- Review progress panel on the submittal detail page with workflow stepper, current approver highlight, reviewer notes, and an inline approve / request-revision decision box for the current approver
+- Approved as Noted decision on submittals, storing the reviewer's required corrections on the approval step and surfacing the disposition on the submittal detail page
 
 - Site address (street, city, state, postal code) and geo-location (latitude, longitude) fields on projects, with create/edit inputs and a Google Maps link on the project detail page
 - Project `README.md` covering tech stack, features, setup, development commands, and architecture docs
@@ -68,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sanitized user data in `HandleInertiaRequests` to only expose safe fields (id, name, email, verified_at, 2fa_confirmed_at, created_at)
 - Added `ProjectController::destroy` method for DELETE `/projects/{project}` endpoint
 - Removed unauthenticated `Gate::authorize` from `ActivityLogController` that caused 403/404 on `/activity-log`
+- Final approval of the last workflow step now marks the parent record (submittal, shop drawing, or change order) as approved with `approved_at`, instead of leaving it stuck in a pending state
 
 ### Removed
 

@@ -140,7 +140,9 @@ defineOptions({
                 <CardContent>
                     <dl class="space-y-4">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Status</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Status
+                            </dt>
                             <dd class="mt-1">
                                 <Badge :variant="statusVariant(rfi.status)">
                                     {{ statusLabel(rfi.status) }}
@@ -148,13 +150,17 @@ defineOptions({
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Question</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Question
+                            </dt>
                             <dd class="mt-1 text-sm whitespace-pre-wrap">
                                 {{ rfi.question }}
                             </dd>
                         </div>
                         <div v-if="rfi.response">
-                            <dt class="text-sm text-muted-foreground">Response</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Response
+                            </dt>
                             <dd class="mt-1 text-sm whitespace-pre-wrap">
                                 {{ rfi.response }}
                             </dd>
@@ -170,27 +176,43 @@ defineOptions({
                 <CardContent>
                     <dl class="space-y-3">
                         <div>
-                            <dt class="text-sm text-muted-foreground">Due Date</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Due Date
+                            </dt>
                             <dd class="mt-1 text-sm">
                                 {{ rfi.due_date ?? '—' }}
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Assigned To</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Assigned To
+                            </dt>
                             <dd class="mt-1 text-sm">
                                 {{ rfi.assignee?.name ?? '—' }}
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm text-muted-foreground">Created</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Created
+                            </dt>
                             <dd class="mt-1 text-sm">
-                                {{ new Date(rfi.created_at).toLocaleDateString() }}
+                                {{
+                                    new Date(
+                                        rfi.created_at,
+                                    ).toLocaleDateString()
+                                }}
                             </dd>
                         </div>
                         <div v-if="rfi.responded_at">
-                            <dt class="text-sm text-muted-foreground">Responded</dt>
+                            <dt class="text-sm text-muted-foreground">
+                                Responded
+                            </dt>
                             <dd class="mt-1 text-sm">
-                                {{ new Date(rfi.responded_at).toLocaleDateString() }}
+                                {{
+                                    new Date(
+                                        rfi.responded_at,
+                                    ).toLocaleDateString()
+                                }}
                             </dd>
                         </div>
                     </dl>
@@ -230,7 +252,11 @@ defineOptions({
                                         {{ comment.user.name }}
                                     </p>
                                     <p class="text-xs text-muted-foreground">
-                                        {{ new Date(comment.created_at).toLocaleString() }}
+                                        {{
+                                            new Date(
+                                                comment.created_at,
+                                            ).toLocaleString()
+                                        }}
                                     </p>
                                 </div>
                                 <p class="mt-2 text-sm whitespace-pre-wrap">
@@ -258,12 +284,16 @@ defineOptions({
                                 class="flex items-center justify-between rounded-lg border p-3"
                             >
                                 <div class="flex items-center gap-3">
-                                    <FileText class="h-4 w-4 text-muted-foreground" />
+                                    <FileText
+                                        class="h-4 w-4 text-muted-foreground"
+                                    />
                                     <div>
                                         <p class="text-sm font-medium">
                                             {{ attachment.name }}
                                         </p>
-                                        <p class="text-xs text-muted-foreground">
+                                        <p
+                                            class="text-xs text-muted-foreground"
+                                        >
                                             {{ attachment.human_size }}
                                         </p>
                                     </div>

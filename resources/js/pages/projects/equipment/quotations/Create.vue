@@ -20,7 +20,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(`/projects/${props.project.id}/equipment/${props.equipment.id}/quotations`);
+    form.post(
+        `/projects/${props.project.id}/equipment/${props.equipment.id}/quotations`,
+    );
 };
 
 defineOptions({
@@ -40,10 +42,14 @@ defineOptions({
 
     <h1 class="sr-only">Add Supplier Quotation</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center gap-4">
             <Button variant="ghost" size="sm" as-child>
-                <Link :href="`/projects/${project.id}/equipment/${equipment.id}/quotations`">
+                <Link
+                    :href="`/projects/${project.id}/equipment/${equipment.id}/quotations`"
+                >
                     <ArrowLeft class="mr-1 h-4 w-4" />
                     Back
                 </Link>
@@ -67,9 +73,14 @@ defineOptions({
                             id="supplier_name"
                             v-model="form.supplier_name"
                             placeholder="Supplier name"
-                            :class="{ 'border-destructive': form.errors.supplier_name }"
+                            :class="{
+                                'border-destructive': form.errors.supplier_name,
+                            }"
                         />
-                        <p v-if="form.errors.supplier_name" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.supplier_name"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.supplier_name }}
                         </p>
                     </div>
@@ -84,24 +95,38 @@ defineOptions({
                                 step="0.01"
                                 min="0"
                                 placeholder="0.00"
-                                :class="{ 'border-destructive': form.errors.quoted_cost }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.quoted_cost,
+                                }"
                             />
-                            <p v-if="form.errors.quoted_cost" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.quoted_cost"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.quoted_cost }}
                             </p>
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="quoted_lead_time_days">Lead Time (days)</Label>
+                            <Label for="quoted_lead_time_days"
+                                >Lead Time (days)</Label
+                            >
                             <Input
                                 id="quoted_lead_time_days"
                                 v-model="form.quoted_lead_time_days"
                                 type="number"
                                 min="1"
                                 placeholder="e.g. 30"
-                                :class="{ 'border-destructive': form.errors.quoted_lead_time_days }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.quoted_lead_time_days,
+                                }"
                             />
-                            <p v-if="form.errors.quoted_lead_time_days" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.quoted_lead_time_days"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.quoted_lead_time_days }}
                             </p>
                         </div>
@@ -113,16 +138,23 @@ defineOptions({
                             id="quote_date"
                             v-model="form.quote_date"
                             type="date"
-                            :class="{ 'border-destructive': form.errors.quote_date }"
+                            :class="{
+                                'border-destructive': form.errors.quote_date,
+                            }"
                         />
-                        <p v-if="form.errors.quote_date" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.quote_date"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.quote_date }}
                         </p>
                     </div>
 
                     <div class="flex justify-end gap-2">
                         <Button variant="outline" type="button" as-child>
-                            <Link :href="`/projects/${project.id}/equipment/${equipment.id}/quotations`">
+                            <Link
+                                :href="`/projects/${project.id}/equipment/${equipment.id}/quotations`"
+                            >
                                 Cancel
                             </Link>
                         </Button>

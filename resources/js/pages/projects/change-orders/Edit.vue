@@ -28,7 +28,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.patch(`/projects/${props.project.id}/change-orders/${props.changeOrder.id}`);
+    form.patch(
+        `/projects/${props.project.id}/change-orders/${props.changeOrder.id}`,
+    );
 };
 
 defineOptions({
@@ -53,7 +55,9 @@ defineOptions({
     >
         <div class="flex items-center gap-4">
             <Button variant="ghost" size="sm" as-child>
-                <Link :href="`/projects/${project.id}/change-orders/${changeOrder.id}`">
+                <Link
+                    :href="`/projects/${project.id}/change-orders/${changeOrder.id}`"
+                >
                     <ArrowLeft class="mr-1 h-4 w-4" />
                     Back
                 </Link>
@@ -79,7 +83,10 @@ defineOptions({
                             placeholder="Change order title"
                             :class="{ 'border-destructive': form.errors.title }"
                         />
-                        <p v-if="form.errors.title" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.title"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.title }}
                         </p>
                     </div>
@@ -90,9 +97,14 @@ defineOptions({
                             id="description"
                             v-model="form.description"
                             placeholder="Describe the change order..."
-                            :class="{ 'border-destructive': form.errors.description }"
+                            :class="{
+                                'border-destructive': form.errors.description,
+                            }"
                         />
-                        <p v-if="form.errors.description" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.description"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.description }}
                         </p>
                     </div>
@@ -106,24 +118,38 @@ defineOptions({
                                 type="number"
                                 min="0"
                                 placeholder="0"
-                                :class="{ 'border-destructive': form.errors.cost_impact }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.cost_impact,
+                                }"
                             />
-                            <p v-if="form.errors.cost_impact" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.cost_impact"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.cost_impact }}
                             </p>
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="schedule_impact_days">Schedule Impact (Days)</Label>
+                            <Label for="schedule_impact_days"
+                                >Schedule Impact (Days)</Label
+                            >
                             <Input
                                 id="schedule_impact_days"
                                 v-model.number="form.schedule_impact_days"
                                 type="number"
                                 min="0"
                                 placeholder="0"
-                                :class="{ 'border-destructive': form.errors.schedule_impact_days }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.schedule_impact_days,
+                                }"
                             />
-                            <p v-if="form.errors.schedule_impact_days" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.schedule_impact_days"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.schedule_impact_days }}
                             </p>
                         </div>
@@ -131,7 +157,9 @@ defineOptions({
 
                     <div class="flex justify-end gap-2">
                         <Button variant="outline" type="button" as-child>
-                            <Link :href="`/projects/${project.id}/change-orders/${changeOrder.id}`">
+                            <Link
+                                :href="`/projects/${project.id}/change-orders/${changeOrder.id}`"
+                            >
                                 Cancel
                             </Link>
                         </Button>

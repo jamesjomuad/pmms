@@ -318,8 +318,8 @@ class ShopDrawingController extends Controller
 
         $step->approve();
 
-        if ($shopDrawing->fresh()->status === WorkflowStatus::Approved->value) {
-            $shopDrawing->update(['approved_at' => now()]);
+        if ($pendingRequest->fresh()->isApproved()) {
+            $shopDrawing->markApproved();
         }
 
         activity()

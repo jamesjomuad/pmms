@@ -61,6 +61,11 @@ test('approve resolves pending step for shop drawing', function () {
         'id' => $step->id,
         'status' => 'approved',
     ]);
+    $this->assertDatabaseHas('shop_drawings', [
+        'id' => $shopDrawing->id,
+        'status' => 'approved',
+    ]);
+    $this->assertNotNull($shopDrawing->fresh()->approved_at);
 });
 
 test('requestRevision resolves pending step for shop drawing', function () {

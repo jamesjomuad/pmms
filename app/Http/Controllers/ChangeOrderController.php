@@ -318,11 +318,8 @@ class ChangeOrderController extends Controller
 
         $step->approve();
 
-        if ($changeOrder->fresh()->status === WorkflowStatus::Approved->value) {
-            $changeOrder->update([
-                'approved_by' => $request->user()->id,
-                'approved_at' => now(),
-            ]);
+        if ($pendingRequest->fresh()->isApproved()) {
+            $changeOrder->markApproved($request->user()->id);
         }
 
         activity()

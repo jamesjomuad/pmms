@@ -70,7 +70,8 @@ const filteredSubmittals = computed(() => {
         result = result.filter(
             (s) =>
                 s.title.toLowerCase().includes(query) ||
-                (s.spec_section && s.spec_section.toLowerCase().includes(query)) ||
+                (s.spec_section &&
+                    s.spec_section.toLowerCase().includes(query)) ||
                 s.project.name.toLowerCase().includes(query) ||
                 s.project.project_number.toLowerCase().includes(query),
         );
@@ -161,7 +162,9 @@ defineOptions({
 
     <h1 class="sr-only">Submittals</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center justify-between">
             <Heading
                 variant="small"
@@ -219,7 +222,10 @@ defineOptions({
 
             <div class="flex flex-wrap items-center gap-2">
                 <Select v-model="projectFilter">
-                    <SelectTrigger class="h-9 w-auto min-w-[140px] text-xs" aria-label="Filter by project">
+                    <SelectTrigger
+                        class="h-9 w-auto min-w-[140px] text-xs"
+                        aria-label="Filter by project"
+                    >
                         <SelectValue placeholder="All Projects" />
                     </SelectTrigger>
                     <SelectContent>
@@ -235,7 +241,10 @@ defineOptions({
                 </Select>
 
                 <Select v-model="statusFilter">
-                    <SelectTrigger class="h-9 w-auto text-xs" aria-label="Filter by status">
+                    <SelectTrigger
+                        class="h-9 w-auto text-xs"
+                        aria-label="Filter by status"
+                    >
                         <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -245,12 +254,18 @@ defineOptions({
                         <SelectItem value="in_review">In Review</SelectItem>
                         <SelectItem value="approved">Approved</SelectItem>
                         <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="revision">Revision Required</SelectItem>
+                        <SelectItem value="revision"
+                            >Revision Required</SelectItem
+                        >
                     </SelectContent>
                 </Select>
 
                 <Button
-                    v-if="searchQuery || statusFilter !== 'all' || projectFilter !== 'all'"
+                    v-if="
+                        searchQuery ||
+                        statusFilter !== 'all' ||
+                        projectFilter !== 'all'
+                    "
                     variant="ghost"
                     size="sm"
                     class="h-8 px-2 text-xs"
@@ -362,14 +377,12 @@ defineOptions({
             </div>
             <h3 class="mb-1 text-sm font-medium">No submittals yet</h3>
             <p class="mb-6 max-w-sm text-sm text-muted-foreground">
-                Submittals created within your projects will appear here for centralized tracking.
+                Submittals created within your projects will appear here for
+                centralized tracking.
             </p>
             <Button as-child>
-                <Link href="/projects">
-                    View Projects
-                </Link>
+                <Link href="/projects"> View Projects </Link>
             </Button>
         </div>
     </div>
 </template>
-

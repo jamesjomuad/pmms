@@ -70,10 +70,14 @@ defineOptions({
 
     <h1 class="sr-only">Edit Equipment</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div class="flex items-center gap-4">
             <Button variant="ghost" size="sm" as-child>
-                <Link :href="`/projects/${project.id}/equipment/${equipment.id}`">
+                <Link
+                    :href="`/projects/${project.id}/equipment/${equipment.id}`"
+                >
                     <ArrowLeft class="mr-1 h-4 w-4" />
                     Back
                 </Link>
@@ -99,7 +103,10 @@ defineOptions({
                             placeholder="Equipment name"
                             :class="{ 'border-destructive': form.errors.title }"
                         />
-                        <p v-if="form.errors.title" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.title"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.title }}
                         </p>
                     </div>
@@ -110,9 +117,14 @@ defineOptions({
                             id="description"
                             v-model="form.description"
                             placeholder="Describe the equipment..."
-                            :class="{ 'border-destructive': form.errors.description }"
+                            :class="{
+                                'border-destructive': form.errors.description,
+                            }"
                         />
-                        <p v-if="form.errors.description" class="text-sm text-destructive">
+                        <p
+                            v-if="form.errors.description"
+                            class="text-sm text-destructive"
+                        >
                             {{ form.errors.description }}
                         </p>
                     </div>
@@ -124,9 +136,15 @@ defineOptions({
                                 id="manufacturer"
                                 v-model="form.manufacturer"
                                 placeholder="e.g. Trane"
-                                :class="{ 'border-destructive': form.errors.manufacturer }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.manufacturer,
+                                }"
                             />
-                            <p v-if="form.errors.manufacturer" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.manufacturer"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.manufacturer }}
                             </p>
                         </div>
@@ -137,9 +155,15 @@ defineOptions({
                                 id="model_number"
                                 v-model="form.model_number"
                                 placeholder="e.g. MDL-001"
-                                :class="{ 'border-destructive': form.errors.model_number }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.model_number,
+                                }"
                             />
-                            <p v-if="form.errors.model_number" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.model_number"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.model_number }}
                             </p>
                         </div>
@@ -152,9 +176,15 @@ defineOptions({
                                 id="serial_number"
                                 v-model="form.serial_number"
                                 placeholder="e.g. SN-001"
-                                :class="{ 'border-destructive': form.errors.serial_number }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.serial_number,
+                                }"
                             />
-                            <p v-if="form.errors.serial_number" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.serial_number"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.serial_number }}
                             </p>
                         </div>
@@ -168,9 +198,14 @@ defineOptions({
                                 step="0.01"
                                 min="0"
                                 placeholder="0.00"
-                                :class="{ 'border-destructive': form.errors.cost }"
+                                :class="{
+                                    'border-destructive': form.errors.cost,
+                                }"
                             />
-                            <p v-if="form.errors.cost" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.cost"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.cost }}
                             </p>
                         </div>
@@ -184,9 +219,14 @@ defineOptions({
                                 v-model.number="form.quantity"
                                 type="number"
                                 min="1"
-                                :class="{ 'border-destructive': form.errors.quantity }"
+                                :class="{
+                                    'border-destructive': form.errors.quantity,
+                                }"
                             />
-                            <p v-if="form.errors.quantity" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.quantity"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.quantity }}
                             </p>
                         </div>
@@ -195,15 +235,24 @@ defineOptions({
                             <Label>Assigned To</Label>
                             <Select v-model="form.assigned_to">
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select team member" />
+                                    <SelectValue
+                                        placeholder="Select team member"
+                                    />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem v-for="user in users" :key="user.id" :value="user.id">
+                                    <SelectItem
+                                        v-for="user in users"
+                                        :key="user.id"
+                                        :value="user.id"
+                                    >
                                         {{ user.name }}
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
-                            <p v-if="form.errors.assigned_to" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.assigned_to"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.assigned_to }}
                             </p>
                         </div>
@@ -216,22 +265,35 @@ defineOptions({
                                 id="lead_time"
                                 v-model="form.lead_time"
                                 type="date"
-                                :class="{ 'border-destructive': form.errors.lead_time }"
+                                :class="{
+                                    'border-destructive': form.errors.lead_time,
+                                }"
                             />
-                            <p v-if="form.errors.lead_time" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.lead_time"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.lead_time }}
                             </p>
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="expected_delivery">Expected Delivery</Label>
+                            <Label for="expected_delivery"
+                                >Expected Delivery</Label
+                            >
                             <Input
                                 id="expected_delivery"
                                 v-model="form.expected_delivery"
                                 type="date"
-                                :class="{ 'border-destructive': form.errors.expected_delivery }"
+                                :class="{
+                                    'border-destructive':
+                                        form.errors.expected_delivery,
+                                }"
                             />
-                            <p v-if="form.errors.expected_delivery" class="text-sm text-destructive">
+                            <p
+                                v-if="form.errors.expected_delivery"
+                                class="text-sm text-destructive"
+                            >
                                 {{ form.errors.expected_delivery }}
                             </p>
                         </div>
@@ -239,7 +301,9 @@ defineOptions({
 
                     <div class="flex justify-end gap-2">
                         <Button variant="outline" type="button" as-child>
-                            <Link :href="`/projects/${project.id}/equipment/${equipment.id}`">
+                            <Link
+                                :href="`/projects/${project.id}/equipment/${equipment.id}`"
+                            >
                                 Cancel
                             </Link>
                         </Button>

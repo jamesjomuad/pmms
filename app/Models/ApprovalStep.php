@@ -19,6 +19,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property string $status
  * @property Carbon|null $decided_at
  * @property string|null $comments
+ * @property bool $approved_as_noted
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read ApprovalRequest $approvalRequest
@@ -35,7 +36,7 @@ class ApprovalStep extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['status', 'comments'])
+            ->logOnly(['status', 'comments', 'approved_as_noted'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
@@ -48,10 +49,12 @@ class ApprovalStep extends Model
         'status',
         'decided_at',
         'comments',
+        'approved_as_noted',
     ];
 
     protected $casts = [
         'decided_at' => 'datetime',
+        'approved_as_noted' => 'boolean',
     ];
 
     /**
@@ -83,6 +86,22 @@ class ApprovalStep extends Model
             'status' => 'approved',
             'decided_at' => now(),
             'comments' => $comments,
+            'approved_as_noted' => false,
+        ]);
+
+        $this->approvalRequest->approve();
+    }
+
+    /**
+     * Approve this step with noted corrections requiring implementation.
+     */
+    public function approveAsNoted(string $comments): void
+    {
+        $this->update([
+            'status' => 'approved',
+            'decided_at' => now(),
+            'comments' => $comments,
+            'approved_as_noted' => true,
         ]);
 
         $this->approvalRequest->approve();

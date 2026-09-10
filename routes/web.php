@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('projects/{project}/submittals/{submittal}', [SubmittalController::class, 'destroy'])->name('projects.submittals.destroy');
     Route::post('projects/{project}/submittals/{submittal}/submit', [SubmittalController::class, 'submit'])->name('projects.submittals.submit');
     Route::post('projects/{project}/submittals/{submittal}/approve', [SubmittalController::class, 'approve'])->name('projects.submittals.approve');
+    Route::post('projects/{project}/submittals/{submittal}/approve-as-noted', [SubmittalController::class, 'approveAsNoted'])->name('projects.submittals.approve-as-noted');
     Route::post('projects/{project}/submittals/{submittal}/reject', [SubmittalController::class, 'reject'])->name('projects.submittals.reject');
     Route::post('projects/{project}/submittals/{submittal}/request-revision', [SubmittalController::class, 'requestRevision'])->name('projects.submittals.request-revision');
     Route::post('projects/{project}/submittals/{submittal}/new-revision', [SubmittalController::class, 'newRevision'])->name('projects.submittals.new-revision');

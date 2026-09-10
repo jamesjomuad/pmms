@@ -85,10 +85,14 @@ defineOptions({
 
     <h1 class="sr-only">Purchase Orders</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div>
             <Button variant="ghost" size="sm" as-child>
-                <Link :href="`/projects/${project.id}/equipment/${equipment.id}`">
+                <Link
+                    :href="`/projects/${project.id}/equipment/${equipment.id}`"
+                >
                     <ArrowLeft class="mr-1 h-4 w-4" />
                     Equipment
                 </Link>
@@ -158,12 +162,15 @@ defineOptions({
             v-else
             class="flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-16 text-center"
         >
-            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <div
+                class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted"
+            >
                 <ClipboardList class="h-6 w-6 text-muted-foreground/60" />
             </div>
             <h3 class="mb-1 text-sm font-medium">No purchase orders yet</h3>
             <p class="mb-6 max-w-sm text-sm text-muted-foreground">
-                Issue a purchase order once a supplier quotation has been selected.
+                Issue a purchase order once a supplier quotation has been
+                selected.
             </p>
             <Button as-child>
                 <Link :href="createUrl">

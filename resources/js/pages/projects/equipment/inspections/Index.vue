@@ -74,10 +74,14 @@ defineOptions({
 
     <h1 class="sr-only">Equipment Inspections</h1>
 
-    <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+    <div
+        class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4"
+    >
         <div>
             <Button variant="ghost" size="sm" as-child>
-                <Link :href="`/projects/${project.id}/equipment/${equipment.id}`">
+                <Link
+                    :href="`/projects/${project.id}/equipment/${equipment.id}`"
+                >
                     <ArrowLeft class="mr-1 h-4 w-4" />
                     Equipment
                 </Link>
@@ -110,7 +114,10 @@ defineOptions({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow v-for="inspection in inspections" :key="inspection.id">
+                    <TableRow
+                        v-for="inspection in inspections"
+                        :key="inspection.id"
+                    >
                         <TableCell>
                             <Link
                                 :href="`/projects/${project.id}/equipment/${equipment.id}/inspections/${inspection.id}`"
@@ -127,7 +134,9 @@ defineOptions({
                                 {{ resultLabel(inspection.result) }}
                             </Badge>
                         </TableCell>
-                        <TableCell class="max-w-xs truncate text-muted-foreground">
+                        <TableCell
+                            class="max-w-xs truncate text-muted-foreground"
+                        >
                             {{ inspection.notes ?? '—' }}
                         </TableCell>
                     </TableRow>
@@ -139,7 +148,9 @@ defineOptions({
             v-else
             class="flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-16 text-center"
         >
-            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <div
+                class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted"
+            >
                 <ClipboardCheck class="h-6 w-6 text-muted-foreground/60" />
             </div>
             <h3 class="mb-1 text-sm font-medium">No inspections yet</h3>

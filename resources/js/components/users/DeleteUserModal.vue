@@ -52,29 +52,47 @@ const submit = () => {
             <div v-if="props.user" class="space-y-4">
                 <DialogHeader>
                     <div class="flex items-center gap-3">
-                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive"
+                        >
                             <AlertTriangle class="h-5 w-5" />
                         </div>
                         <div>
                             <DialogTitle>Remove Team Member</DialogTitle>
                             <DialogDescription class="mt-1">
-                                Are you sure you want to remove <strong>{{ props.user.name }}</strong>?
+                                Are you sure you want to remove
+                                <strong>{{ props.user.name }}</strong
+                                >?
                             </DialogDescription>
                         </div>
                     </div>
                 </DialogHeader>
 
-                <div class="rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground space-y-1">
-                    <p>• The user will lose all access to this company workspace.</p>
-                    <p v-if="props.user.projects_count > 0">
-                        • They are currently assigned to <strong>{{ props.user.projects_count }}</strong> HVAC project(s). These assignments will be detached.
+                <div
+                    class="space-y-1 rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground"
+                >
+                    <p>
+                        • The user will lose all access to this company
+                        workspace.
                     </p>
-                    <p>• Historical stage transitions and audit log records will remain preserved.</p>
+                    <p v-if="props.user.projects_count > 0">
+                        • They are currently assigned to
+                        <strong>{{ props.user.projects_count }}</strong> HVAC
+                        project(s). These assignments will be detached.
+                    </p>
+                    <p>
+                        • Historical stage transitions and audit log records
+                        will remain preserved.
+                    </p>
                 </div>
 
                 <DialogFooter class="gap-2">
                     <DialogClose as-child>
-                        <Button variant="secondary" type="button" :disabled="processing">
+                        <Button
+                            variant="secondary"
+                            type="button"
+                            :disabled="processing"
+                        >
                             Cancel
                         </Button>
                     </DialogClose>

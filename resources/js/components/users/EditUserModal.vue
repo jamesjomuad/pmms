@@ -134,9 +134,11 @@ const submit = () => {
                         <InputError :message="form.errors.role" />
                     </div>
 
-                    <div class="space-y-3 pt-2 border-t">
+                    <div class="space-y-3 border-t pt-2">
                         <div class="space-y-1">
-                            <h4 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            <h4
+                                class="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                            >
                                 Reset Password (Optional)
                             </h4>
                             <p class="text-xs text-muted-foreground">
@@ -146,7 +148,9 @@ const submit = () => {
 
                         <div class="grid gap-4 sm:grid-cols-2">
                             <div class="grid gap-2">
-                                <Label for="edit-user-password">New Password</Label>
+                                <Label for="edit-user-password"
+                                    >New Password</Label
+                                >
                                 <PasswordInput
                                     id="edit-user-password"
                                     v-model="form.password"
@@ -157,14 +161,18 @@ const submit = () => {
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="edit-user-password-confirmation">Confirm Password</Label>
+                                <Label for="edit-user-password-confirmation"
+                                    >Confirm Password</Label
+                                >
                                 <PasswordInput
                                     id="edit-user-password-confirmation"
                                     v-model="form.password_confirmation"
                                     placeholder="••••••••"
                                     autocomplete="new-password"
                                 />
-                                <InputError :message="form.errors.password_confirmation" />
+                                <InputError
+                                    :message="form.errors.password_confirmation"
+                                />
                             </div>
                         </div>
                     </div>
@@ -172,7 +180,9 @@ const submit = () => {
 
                 <DialogFooter class="gap-2">
                     <DialogClose as-child>
-                        <Button variant="secondary" type="button">Cancel</Button>
+                        <Button variant="secondary" type="button"
+                            >Cancel</Button
+                        >
                     </DialogClose>
                     <Button type="submit" :disabled="form.processing">
                         {{ form.processing ? 'Saving...' : 'Save Changes' }}

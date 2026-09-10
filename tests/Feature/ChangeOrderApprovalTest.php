@@ -61,6 +61,12 @@ test('approve resolves pending step for change order', function () {
         'id' => $step->id,
         'status' => 'approved',
     ]);
+    $this->assertDatabaseHas('change_orders', [
+        'id' => $changeOrder->id,
+        'status' => 'approved',
+        'approved_by' => $approver->id,
+    ]);
+    $this->assertNotNull($changeOrder->fresh()->approved_at);
 });
 
 test('reject resolves pending step for change order', function () {
