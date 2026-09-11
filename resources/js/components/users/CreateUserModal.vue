@@ -71,7 +71,7 @@ const submit = () => {
 
 <template>
     <Dialog :open="props.open" @update:open="handleOpenChange">
-        <DialogContent class="sm:max-w-lg">
+        <DialogContent class="sm:max-w-xl">
             <form @submit.prevent="submit" class="space-y-6">
                 <DialogHeader>
                     <DialogTitle>Add New User</DialogTitle>

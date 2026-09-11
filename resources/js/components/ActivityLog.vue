@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import { Clock, User } from '@lucide/vue';
-import { ref } from 'vue';
+import { ChevronLeft, ChevronRight, Clock, User } from '@lucide/vue';
+import { computed, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -86,6 +86,46 @@ const clearFilters = () => {
     search.value = '';
     selectedEvent.value = '';
     applyFilters();
+};
+
+const currentPage = computed(() => props.activities.current_page);
+const lastPage = computed(() => props.activities.last_page);
+const perPage = computed(() => props.activities.per_page);
+const total = computed(() => props.activities.total);
+
+const pageFrom = computed(() => (currentPage.value - 1) * perPage.value + 1);
+const pageTo = computed(() =>
+    Math.min(currentPage.value * perPage.value, total.value),
+);
+
+const pageNumbers = computed<number[]>(() => {
+    if (lastPage.value <= 1) {
+        return [];
+    }
+
+    const start = Math.max(
+        1,
+        Math.min(currentPage.value - 2, lastPage.value - 4),
+    );
+    const end = Math.min(lastPage.value, start + 4);
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+});
+
+const goToPage = (page: number) => {
+    if (page < 1 || page > lastPage.value || page === currentPage.value) {
+        return;
+    }
+
+    router.get(
+        activityLogIndex(),
+        {
+            page,
+            search: search.value || undefined,
+            event: selectedEvent.value || undefined,
+        },
+        { preserveState: true, replace: true },
+    );
 };
 </script>
 
@@ -198,6 +238,73 @@ const clearFilters = () => {
                         </TableRow>
                     </TableBody>
                 </Table>
+
+                <div
+                    class="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row"
+                >
+                    <p class="text-sm text-muted-foreground">
+                        Showing
+                        <span class="font-medium text-foreground">{{
+                            pageFrom
+                        }}</span>
+                        –
+                        <span class="font-medium text-foreground">{{
+                            pageTo
+                        }}</span>
+                        of
+                        <span class="font-medium text-foreground">{{
+                            activities.total
+                        }}</span>
+                    </p>
+
+                    <div
+                        v-if="activities.last_page > 1"
+                        class="flex items-center gap-1"
+                    >
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="activities.current_page <= 1"
+                            @click="goToPage(activities.current_page - 1)"
+                        >
+                            <ChevronLeft />
+                            Previous
+                        </Button>
+
+                        <Button
+                            v-for="page in pageNumbers"
+                            :key="page"
+                            size="sm"
+                            :variant="
+                                page === activities.current_page
+                                    ? 'default'
+                                    : 'outline'
+                            "
+                            :disabled="page === activities.current_page"
+                            :aria-current="
+                                page === activities.current_page
+                                    ? 'page'
+                                    : undefined
+                            "
+                            class="hidden sm:inline-flex"
+                            @click="goToPage(page)"
+                        >
+                            {{ page }}
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="
+                                activities.current_page >= activities.last_page
+                            "
+                            @click="goToPage(activities.current_page + 1)"
+                        >
+                            Next
+                            <ChevronRight />
+                        </Button>
+                    </div>
+                </div>
             </div>
             <p v-else class="py-8 text-center text-sm text-muted-foreground">
                 No activity recorded yet.

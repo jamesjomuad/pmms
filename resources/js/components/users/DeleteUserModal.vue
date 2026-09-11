@@ -2,6 +2,7 @@
 import { router } from '@inertiajs/vue3';
 import { AlertTriangle } from '@lucide/vue';
 import { ref } from 'vue';
+import AlertError from '@/components/AlertError.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,6 +13,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { destroy } from '@/routes/users';
 import type { ManagedUser } from '@/types';
 
 type Props = {
@@ -25,8 +27,10 @@ const emit = defineEmits<{
 }>();
 
 const processing = ref(false);
+const errorMessages = ref<string[]>([]);
 
 const handleOpenChange = (value: boolean) => {
+    errorMessages.value = [];
     emit('update:open', value);
 };
 
@@ -36,11 +40,23 @@ const submit = () => {
     }
 
     processing.value = true;
-    router.delete(`/users/${props.user.id}`, {
+    errorMessages.value = [];
+    router.delete(destroy(props.user.id), {
         preserveScroll: true,
         onFinish: () => {
             processing.value = false;
+        },
+        onSuccess: () => {
+            errorMessages.value = [];
             emit('update:open', false);
+        },
+        onError: (errors) => {
+            const messages = Object.values(errors).flat();
+
+            errorMessages.value =
+                messages.length > 0
+                    ? messages.map(String)
+                    : ['Unable to remove user. Please try again.'];
         },
     });
 };
@@ -85,6 +101,12 @@ const submit = () => {
                         will remain preserved.
                     </p>
                 </div>
+
+                <AlertError
+                    v-if="errorMessages.length > 0"
+                    :errors="errorMessages"
+                    title="Unable to remove user"
+                />
 
                 <DialogFooter class="gap-2">
                     <DialogClose as-child>

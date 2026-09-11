@@ -57,7 +57,7 @@ const handleOpenChange = (value: boolean) => {
 
 <template>
     <Sheet :open="props.open" @update:open="handleOpenChange">
-        <SheetContent class="flex w-full flex-col overflow-y-auto sm:max-w-lg">
+        <SheetContent class="flex w-full flex-col overflow-y-auto p-6 sm:max-w-lg">
             <div v-if="props.user" class="flex-1 space-y-6">
                 <SheetHeader class="space-y-3 border-b pb-4">
                     <div class="flex items-center gap-3">
